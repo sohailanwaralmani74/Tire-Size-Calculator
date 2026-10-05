@@ -274,16 +274,38 @@ function WheelInputCard({
  */
 export default function WorkspaceApp() {
   const [state, setState] = useState(() => loadStateFromUrl());
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = window.localStorage.getItem('wanjaaro-theme');
+        if (saved === 'dark') return true;
+        if (saved === 'light') return false;
+      } catch {
+        // Ignore localStorage access errors
+      }
+    }
+    return false;
+  });
   const [copyStatus, setCopyStatus] = useState('');
+  const [compareCopyStatus, setCompareCopyStatus] = useState('');
 
-  // Sync dark mode class on documentElement
+  // Sync dark mode class and colorScheme on documentElement & body
   useEffect(() => {
     const root = document.documentElement;
+    const body = document.body;
     if (darkMode) {
       root.classList.add('dark');
+      body?.classList.add('dark');
+      root.style.colorScheme = 'dark';
     } else {
       root.classList.remove('dark');
+      body?.classList.remove('dark');
+      root.style.colorScheme = 'light';
+    }
+    try {
+      window.localStorage.setItem('wanjaaro-theme', darkMode ? 'dark' : 'light');
+    } catch {
+      // Ignore storage errors
     }
   }, [darkMode]);
 
@@ -329,15 +351,36 @@ export default function WorkspaceApp() {
     }));
   };
 
-  const handleCopyShareUrl = async () => {
+  const copyTextWithFallback = async (text: string): Promise<boolean> => {
     try {
-      const shareUrl = `${window.location.origin}${window.location.pathname || '/'}`;
-      await navigator.clipboard.writeText(shareUrl);
-      setCopyStatus('Link copied');
-      setTimeout(() => setCopyStatus(''), 2500);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
     } catch {
-      setCopyStatus('Copy failed');
+      // Fallback below
     }
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.top = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      const ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      return ok;
+    } catch {
+      return false;
+    }
+  };
+
+  const handleCopyShareUrl = async () => {
+    const shareUrl = `${window.location.origin}${window.location.pathname || '/'}`;
+    const ok = await copyTextWithFallback(shareUrl);
+    setCopyStatus(ok ? '✓ Link copied' : 'Copy failed');
+    setTimeout(() => setCopyStatus(''), 2500);
   };
 
   const handleCopyComparisonSummary = async (compData: any) => {
@@ -351,13 +394,9 @@ export default function WorkspaceApp() {
       `Axle Clearance Change: ${diff.axleClearanceMm > 0 ? '+' : ''}${diff.axleClearanceMm} mm (${diff.axleClearanceIn > 0 ? '+' : ''}${diff.axleClearanceIn} in)`,
       `Revs per Mile: ${Math.round(oldTire.revsPerMile)} -> ${Math.round(newTire.revsPerMile)}`,
     ].join('\n');
-    try {
-      await navigator.clipboard.writeText(summary);
-      setCopyStatus('Results copied');
-      setTimeout(() => setCopyStatus(''), 2500);
-    } catch {
-      setCopyStatus('Copy failed');
-    }
+    const ok = await copyTextWithFallback(summary);
+    setCompareCopyStatus(ok ? '✓ Results copied' : 'Copy failed');
+    setTimeout(() => setCompareCopyStatus(''), 2500);
   };
 
   // Pre-calculate shared models
@@ -453,11 +492,12 @@ export default function WorkspaceApp() {
 
           <button
             type="button"
-            onClick={() => setDarkMode(!darkMode)}
-            aria-label="Toggle color theme"
-            className="px-2.5 sm:px-3 py-1.5 text-xs font-medium border border-slate-300 dark:border-slate-700 rounded bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer"
+            onClick={() => setDarkMode((prev) => !prev)}
+            aria-pressed={darkMode}
+            aria-label="Toggle dark and light color theme"
+            className="px-2.5 sm:px-3 py-1.5 text-xs font-medium border border-slate-300 dark:border-slate-700 rounded bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer"
           >
-            {darkMode ? 'Light' : 'Dark'}
+            {darkMode ? '☀ Light' : '☾ Dark'}
           </button>
         </div>
       </div>
@@ -532,15 +572,15 @@ export default function WorkspaceApp() {
                   <button
                     type="button"
                     onClick={() => handleCopyComparisonSummary(comparePairRes.data)}
-                    className="flex-1 sm:flex-initial px-3 py-1.5 text-xs font-medium border border-slate-300 dark:border-slate-700 rounded bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer whitespace-nowrap text-center"
+                    className="flex-1 sm:flex-initial px-3 py-1.5 text-xs font-medium border border-slate-300 dark:border-slate-700 rounded bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer whitespace-nowrap text-center"
                   >
-                    Copy Results
+                    {compareCopyStatus || 'Copy Results'}
                   </button>
                 )}
                 <button
                   type="button"
                   onClick={() => window.print()}
-                  className="flex-1 sm:flex-initial px-3 py-1.5 text-xs font-medium border border-slate-300 dark:border-slate-700 rounded bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer whitespace-nowrap text-center"
+                  className="flex-1 sm:flex-initial px-3 py-1.5 text-xs font-medium border border-slate-300 dark:border-slate-700 rounded bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer whitespace-nowrap text-center"
                 >
                   Print Comparison
                 </button>
