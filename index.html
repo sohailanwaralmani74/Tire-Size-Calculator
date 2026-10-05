@@ -1,0 +1,828 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wanjaaro Tire &amp; Wheel Calculator – Size, Offset &amp; Gearing</title>
+    <meta
+      name="description"
+      content="Compare tire sizes (like 265/70R17 vs 285/75R17), wheel offset (ET), axle gearing, and speedometer difference in mm and inches. Fast, local browser geometry."
+    />
+    <link rel="canonical" href="https://wanjaaro.com/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Wanjaaro" />
+    <meta property="og:title" content="Wanjaaro Tire &amp; Wheel Calculator – Size, Offset &amp; Gearing" />
+    <meta
+      property="og:description"
+      content="Compare tire sizes (like 265/70R17 vs 285/75R17), wheel offset (ET), axle gearing, and speedometer difference in mm and inches. Fast, local browser geometry."
+    />
+    <meta property="og:url" content="https://wanjaaro.com/" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Wanjaaro Tire &amp; Wheel Calculator – Size, Offset &amp; Gearing" />
+    <meta
+      name="twitter:description"
+      content="Compare tire sizes (like 265/70R17 vs 285/75R17), wheel offset (ET), axle gearing, and speedometer difference in mm and inches. Fast, local browser geometry."
+    />
+
+    <!-- Schema.org JSON-LD matching visible content -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "name": "Wanjaaro",
+            "url": "https://wanjaaro.com/",
+            "description": "Independent automotive reference and browser-based tire and wheel geometry tools."
+          },
+          {
+            "@type": "Person",
+            "name": "Sohail Anwar",
+            "jobTitle": "Software & Application Developer",
+            "description": "Software and application developer with 12 years of experience building deterministic browser utilities and technical calculation tools.",
+            "url": "https://heylink.me/sohailanwaralmani74",
+            "image": "https://wanjaaro.com/sohail-anwar-profile.svg",
+            "sameAs": [
+              "https://heylink.me/sohailanwaralmani74"
+            ],
+            "knowsAbout": [
+              "Software Development",
+              "Application Development",
+              "JavaScript Calculation Engines",
+              "Automotive Tire and Wheel Geometry"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "url": "https://wanjaaro.com/",
+            "name": "Wanjaaro"
+          },
+          {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Wanjaaro",
+                "item": "https://wanjaaro.com/"
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Wanjaaro Tire & Wheel Calculator",
+                "item": "https://wanjaaro.com/"
+              }
+            ]
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Wanjaaro Tire & Wheel Calculator",
+            "url": "https://wanjaaro.com/",
+            "applicationCategory": "UtilitiesApplication",
+            "operatingSystem": "All",
+            "browserRequirements": "Requires JavaScript for interactive tabs; full worked example and reference guides work without JavaScript.",
+            "isAccessibleForFree": true,
+            "author": {
+              "@type": "Person",
+              "name": "Sohail Anwar",
+              "url": "https://heylink.me/sohailanwaralmani74"
+            },
+            "creator": {
+              "@type": "Person",
+              "name": "Sohail Anwar",
+              "url": "https://heylink.me/sohailanwaralmani74"
+            },
+            "dateModified": "2026-10-05",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            }
+          },
+          {
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "How much taller is a 285/75R17 than a 265/70R17?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Mathematically, a 285/75R17 is 56.5 mm (2.22 inches) taller in overall diameter than a 265/70R17—an increase from 802.8 mm (31.61 in) to 859.3 mm (33.83 in), or +7.04%. Because half of that diameter increase sits below the wheel hub, theoretical ground clearance at the axle increases by 28.25 mm (about 1.11 inches)."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "When my speedometer reads 60 mph on larger tires, am I going faster or slower?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "With taller tires, your actual road speed is higher than what your speedometer indicates because the tire rolls farther with every axle revolution. Moving from 265/70R17 to 285/75R17 (+7.04% circumference) means an indicated 60 mph corresponds to approximately 64.2 mph actual speed."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Does a lower wheel offset push the wheel inward or outward?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Reducing positive wheel offset (or moving into negative offset) shifts the entire wheel further outward toward the fender and street. For example, keeping width constant and changing from ET+45 to ET+20 pushes the wheel's centerline and outer lip 25 mm (0.98 in) farther outward."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Why doesn't this calculator tell me if a tire will rub on my vehicle?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Sidewall and wheel codes define nominal geometry relative to the hub mounting face, not the shape of your vehicle's wheel well. Physical rubbing depends on suspension articulation, steering lock angle, caster alignment, upper control arm position, body mounts, and actual molded tire dimensions, which vary by manufacturer."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "What do the two numbers in a load index like 116/113S mean?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "In a service description like 116/113S, the first number (116 = 1,250 kg or 2,756 lbs) is the maximum load rating per tire when mounted in a single-wheel setup, and the second number (113 = 1,150 kg or 2,535 lbs) is the per-tire rating when mounted on a dual-rear-wheel (dually) axle. The letter S indicates a speed rating of up to 112 mph (180 km/h)."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body class="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased selection:bg-sky-600 selection:text-white">
+    <!-- Top Bar Contract: Brand wordmark + primary section links -->
+    <header class="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 no-print">
+      <div class="max-w-[1200px] mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-4">
+        <a href="./" class="text-lg font-bold tracking-tight text-slate-900 dark:text-white whitespace-nowrap shrink-0">
+          Wanjaaro
+        </a>
+
+        <nav aria-label="Primary page sections" class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600 dark:text-slate-300">
+          <button type="button" data-scroll-to="workspace" class="hover:text-slate-900 dark:hover:text-white hover:underline whitespace-nowrap cursor-pointer">Calculator</button>
+          <button type="button" data-scroll-to="worked-example" class="hover:text-slate-900 dark:hover:text-white hover:underline whitespace-nowrap cursor-pointer">265/70R17 vs 285/75R17</button>
+          <button type="button" data-scroll-to="editorial-guide" class="hover:text-slate-900 dark:hover:text-white hover:underline whitespace-nowrap cursor-pointer">Reference Guide</button>
+          <button type="button" data-scroll-to="methodology" class="hover:text-slate-900 dark:hover:text-white hover:underline whitespace-nowrap cursor-pointer">Methodology</button>
+          <button type="button" data-scroll-to="author-contact" class="hover:text-slate-900 dark:hover:text-white hover:underline whitespace-nowrap cursor-pointer">Developer &amp; Contact</button>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top" class="max-w-[1200px] mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-10">
+      <!-- Breadcrumb & Mobile Section Trail (Wrapped breadcrumb links, zero horizontal scroller, zero # in URL) -->
+      <div class="space-y-2.5">
+        <nav aria-label="Breadcrumb and page sections" class="text-xs text-slate-600 dark:text-slate-400 no-print">
+          <ol class="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+            <li><a href="./" class="hover:underline font-medium text-slate-900 dark:text-slate-200">Wanjaaro</a></li>
+            <li aria-hidden="true">/</li>
+            <li class="text-slate-700 dark:text-slate-300 font-medium">Tire &amp; Wheel Calculator</li>
+            <li aria-hidden="true" class="md:hidden">·</li>
+            <li class="md:hidden"><button type="button" data-scroll-to="workspace" class="underline hover:text-slate-900 dark:hover:text-white cursor-pointer">Calculator</button></li>
+            <li aria-hidden="true" class="md:hidden">/</li>
+            <li class="md:hidden"><button type="button" data-scroll-to="worked-example" class="underline hover:text-slate-900 dark:hover:text-white cursor-pointer">265/70R17 vs 285/75R17</button></li>
+            <li aria-hidden="true" class="md:hidden">/</li>
+            <li class="md:hidden"><button type="button" data-scroll-to="editorial-guide" class="underline hover:text-slate-900 dark:hover:text-white cursor-pointer">Reference Guide</button></li>
+            <li aria-hidden="true" class="md:hidden">/</li>
+            <li class="md:hidden"><button type="button" data-scroll-to="methodology" class="underline hover:text-slate-900 dark:hover:text-white cursor-pointer">Methodology</button></li>
+            <li aria-hidden="true" class="md:hidden">/</li>
+            <li class="md:hidden"><button type="button" data-scroll-to="faq" class="underline hover:text-slate-900 dark:hover:text-white cursor-pointer">FAQ</button></li>
+            <li aria-hidden="true" class="md:hidden">/</li>
+            <li class="md:hidden"><button type="button" data-scroll-to="author-contact" class="underline hover:text-slate-900 dark:hover:text-white cursor-pointer">Developer &amp; Contact</button></li>
+          </ol>
+        </nav>
+
+        <div class="flex flex-wrap items-baseline justify-between gap-4">
+          <div class="max-w-3xl space-y-1.5">
+            <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white" style="text-wrap: balance;">
+              Wanjaaro Tire &amp; Wheel Calculator
+            </h1>
+            <p class="text-sm sm:text-base text-slate-600 dark:text-slate-300">
+              Answer &ldquo;I have 265/70R17 and I&rsquo;m thinking about 285/75R17—what changes?&rdquo; in seconds. Compare tire dimensions, wheel offset (ET), effective axle ratio, and speedometer difference locally in your browser.
+            </p>
+          </div>
+          <div class="text-xs text-slate-500 dark:text-slate-400 font-mono">
+            <span>Last updated: <time datetime="2026-10-05">October 5, 2026</time></span>
+            <span aria-hidden="true"> · </span>
+            <button type="button" data-scroll-to="methodology" class="underline hover:text-slate-900 dark:hover:text-white cursor-pointer">Formulas &amp; Methodology</button>
+            <span aria-hidden="true"> · </span>
+            <button type="button" data-scroll-to="limitations" class="underline hover:text-slate-900 dark:hover:text-white cursor-pointer">Limitations</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive React Workspace Mount Point -->
+      <div id="workspace">
+        <div id="root"></div>
+        <noscript>
+          <div class="p-5 my-4 border-2 border-amber-500 rounded-lg bg-amber-50 text-slate-900 space-y-2">
+            <h2 class="text-base font-bold">JavaScript is disabled in your browser</h2>
+            <p class="text-sm">
+              The interactive 8-tab Wanjaaro Tire &amp; Wheel Calculator (custom tire comparison, wheel offset diagram, gearing calculator, speedometer table, and code decoder) runs locally in browser JavaScript. Below is the complete static worked example for <strong>265/70R17 to 285/75R17</strong> along with all formulas, reference tables, and technical guides so you can calculate any setup manually.
+            </p>
+          </div>
+        </noscript>
+      </div>
+
+      <!-- AUTHOR / DEVELOPER BIO & CONTACT BLOCK (Directly under the tool for maximum E-E-A-T & Answer Engine signals) -->
+      <section
+        id="author-contact"
+        aria-labelledby="heading-author-bio"
+        itemscope
+        itemtype="https://schema.org/Person"
+        class="border border-slate-200 dark:border-slate-800 rounded-xl p-5 sm:p-6 bg-white dark:bg-slate-900"
+      >
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <a
+              href="https://heylink.me/sohailanwaralmani74"
+              target="_blank"
+              rel="noopener noreferrer author me"
+              itemprop="url"
+              aria-label="Visit Sohail Anwar profile and contact page"
+              class="shrink-0 group block rounded-full focus:outline-none focus:ring-2 focus:ring-sky-600"
+            >
+              <img
+                src="./sohail-anwar-profile.svg"
+                alt="Sohail Anwar – Software and Application Developer"
+                width="72"
+                height="72"
+                loading="eager"
+                decoding="async"
+                referrerpolicy="no-referrer"
+                itemprop="image"
+                class="w-16 h-16 sm:w-[72px] sm:h-[72px] rounded-full object-cover border-2 border-slate-200 dark:border-slate-700 group-hover:border-sky-600 transition-colors bg-slate-900"
+              />
+            </a>
+
+            <div class="space-y-1.5 max-w-2xl">
+              <div class="flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                <span class="font-semibold text-slate-700 dark:text-slate-300">Tool Architecture &amp; Technical Verification</span>
+                <span aria-hidden="true">·</span>
+                <span itemprop="jobTitle">12 Years in Software &amp; Application Development</span>
+              </div>
+
+              <h2 id="heading-author-bio" class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                <a
+                  href="https://heylink.me/sohailanwaralmani74"
+                  target="_blank"
+                  rel="noopener noreferrer author me"
+                  class="hover:text-sky-700 dark:hover:text-sky-400 hover:underline transition-colors"
+                >
+                  <span itemprop="name">Sohail Anwar</span>
+                </a>
+              </h2>
+
+              <p itemprop="description" class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+                Designed, engineered, and maintained by <strong>Sohail Anwar</strong>, a software and application developer with 12 years of hands-on experience building deterministic calculation engines and fast, accessible browser applications. Every mathematical formula, unit conversion, and load/speed lookup table in the Wanjaaro Tire &amp; Wheel Calculator is unit-tested against verified geometric fixtures.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:items-end gap-2 shrink-0 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-200 dark:border-slate-800">
+            <a
+              href="https://heylink.me/sohailanwaralmani74"
+              target="_blank"
+              rel="noopener noreferrer author me"
+              class="inline-flex items-center justify-center px-4 py-2 text-xs font-semibold text-white bg-sky-700 hover:bg-sky-800 rounded-lg transition-colors whitespace-nowrap"
+            >
+              Contact Developer →
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- STATIC, ALWAYS-VISIBLE WORKED EXAMPLE BLOCK (Prerendered HTML Table) -->
+      <section id="worked-example" aria-labelledby="heading-worked-example" class="border border-slate-200 dark:border-slate-800 rounded-xl p-5 sm:p-6 bg-white dark:bg-slate-900 space-y-4">
+        <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
+          <div>
+            <h2 id="heading-worked-example" class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
+              Worked Example: 265/70R17 vs. 285/75R17
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-0.5">
+              Switching from a 265/70R17 to a 285/75R17 increases overall tire diameter by 56.5 mm (+2.22 in or +7.04%), adds 20 mm (+0.79 in) of section width, and raises theoretical ground clearance at the axle by 28.25 mm (about 28 mm / 1.11 in). When your speedometer reads 60 mph, your approximate actual road speed is 64.2 mph.
+            </p>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs sm:text-sm tabular-nums">
+            <caption class="sr-only">Complete geometric comparison between 265/70R17 and 285/75R17</caption>
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400">
+                <th scope="col" class="py-2.5 pr-4 font-semibold">Measurement</th>
+                <th scope="col" class="py-2.5 px-4 font-mono font-semibold text-slate-900 dark:text-white">265/70R17 (Baseline)</th>
+                <th scope="col" class="py-2.5 px-4 font-mono font-semibold text-slate-900 dark:text-white">285/75R17 (Comparison)</th>
+                <th scope="col" class="py-2.5 pl-4 font-mono font-semibold text-sky-700 dark:text-sky-400">Difference (New − Base)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 dark:divide-slate-800 font-mono">
+              <tr>
+                <th scope="row" class="py-2 pr-4 font-sans font-medium text-slate-700 dark:text-slate-300">Section Width</th>
+                <td class="py-2 px-4">265 mm (10.43 in)</td>
+                <td class="py-2 px-4">285 mm (11.22 in)</td>
+                <td class="py-2 pl-4">+20 mm (+0.79 in) · +7.55%</td>
+              </tr>
+              <tr>
+                <th scope="row" class="py-2 pr-4 font-sans font-medium text-slate-700 dark:text-slate-300">Aspect Ratio</th>
+                <td class="py-2 px-4">70%</td>
+                <td class="py-2 px-4">75%</td>
+                <td class="py-2 pl-4">+5 percentage points</td>
+              </tr>
+              <tr>
+                <th scope="row" class="py-2 pr-4 font-sans font-medium text-slate-700 dark:text-slate-300">Rim Diameter</th>
+                <td class="py-2 px-4">17 in (431.8 mm)</td>
+                <td class="py-2 px-4">17 in (431.8 mm)</td>
+                <td class="py-2 pl-4">0 mm (Same wheel diameter)</td>
+              </tr>
+              <tr>
+                <th scope="row" class="py-2 pr-4 font-sans font-medium text-slate-700 dark:text-slate-300">Sidewall Height</th>
+                <td class="py-2 px-4">185.5 mm (7.30 in)</td>
+                <td class="py-2 px-4">213.75 mm (8.42 in)</td>
+                <td class="py-2 pl-4">+28.25 mm (+1.11 in) · +15.23%</td>
+              </tr>
+              <tr class="bg-slate-50/70 dark:bg-slate-950/50 font-semibold">
+                <th scope="row" class="py-2.5 pr-4 font-sans font-semibold text-slate-900 dark:text-white">Overall Diameter</th>
+                <td class="py-2.5 px-4">802.8 mm (31.61 in)</td>
+                <td class="py-2.5 px-4">859.3 mm (33.83 in)</td>
+                <td class="py-2.5 pl-4 text-sky-700 dark:text-sky-400">+56.5 mm (+2.22 in) · +7.04%</td>
+              </tr>
+              <tr>
+                <th scope="row" class="py-2 pr-4 font-sans font-medium text-slate-700 dark:text-slate-300">Circumference</th>
+                <td class="py-2 px-4">2522.07 mm (99.29 in)</td>
+                <td class="py-2 px-4">2699.57 mm (106.28 in)</td>
+                <td class="py-2 pl-4">+177.5 mm (+6.99 in) · +7.04%</td>
+              </tr>
+              <tr>
+                <th scope="row" class="py-2 pr-4 font-sans font-medium text-slate-700 dark:text-slate-300">Axle Ground Clearance Change</th>
+                <td class="py-2 px-4">401.4 mm radius</td>
+                <td class="py-2 px-4">429.65 mm radius</td>
+                <td class="py-2 pl-4">+28.25 mm (~28 mm / +1.11 in)</td>
+              </tr>
+              <tr>
+                <th scope="row" class="py-2 pr-4 font-sans font-medium text-slate-700 dark:text-slate-300">Revolutions per Mile (km)</th>
+                <td class="py-2 px-4">638.10 /mi (396.50 /km)</td>
+                <td class="py-2 px-4">596.15 /mi (370.43 /km)</td>
+                <td class="py-2 pl-4">−41.95 revs/mi (−26.07 revs/km)</td>
+              </tr>
+              <tr>
+                <th scope="row" class="py-2 pr-4 font-sans font-medium text-slate-700 dark:text-slate-300">Speed @ 60 mph Indicated</th>
+                <td class="py-2 px-4">60.0 mph (96.6 km/h)</td>
+                <td class="py-2 px-4">64.2 mph (103.4 km/h)</td>
+                <td class="py-2 pl-4">+4.2 mph (+6.8 km/h)</td>
+              </tr>
+              <tr>
+                <th scope="row" class="py-2 pr-4 font-sans font-medium text-slate-700 dark:text-slate-300">Effective Axle Ratio (from 3.73:1)</th>
+                <td class="py-2 px-4">3.73:1</td>
+                <td class="py-2 px-4">3.48:1 effective</td>
+                <td class="py-2 pl-4">−0.25 (−6.58% mechanical leverage)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- STATIC EDITORIAL REFERENCE GUIDE (Prerendered HTML, present before JS runs) -->
+      <article id="editorial-guide" class="space-y-12 border-t border-slate-200 dark:border-slate-800 pt-10">
+        <header class="max-w-3xl space-y-2">
+          <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+            Tire &amp; Wheel Geometry Reference Guide
+          </h2>
+          <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400">
+            Written for vehicle owners comparing tire sizes, wheel offsets, and axle ratios. Every section separates what can be calculated from sidewall numbers from what must be checked physically on the vehicle.
+          </p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+          <!-- Main Editorial Column (8 cols) -->
+          <div class="lg:col-span-8 space-y-10 text-sm sm:text-base text-slate-800 dark:text-slate-200 leading-relaxed">
+            <!-- Section 1 -->
+            <section id="what-265-70r17-means" class="space-y-3">
+              <div class="flex items-baseline justify-between gap-2">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white">
+                  1. What does 265/70R17 actually mean?
+                </h3>
+              </div>
+              <p class="font-medium text-slate-900 dark:text-white">
+                A 265/70R17 tire has a nominal section width of 265 millimeters, a sidewall height equal to 70% of that width (185.5 mm), radial cord construction (R), and seats on a 17-inch (431.8 mm) wheel rim, giving an overall diameter of 802.8 mm (31.61 inches).
+              </p>
+              <p>
+                The mistake people make most often is treating the middle number—70—as a fixed measurement in millimeters. It is a percentage of the width. At a constant 17-inch rim diameter, changing either the width or the aspect ratio changes your sidewall height and overall tire diameter:
+              </p>
+              <ul class="list-disc list-inside space-y-1.5 text-sm text-slate-700 dark:text-slate-300 font-mono">
+                <li><strong>265/70R17:</strong> 265 mm × 0.70 = 185.5 mm sidewall → 431.8 + (2 × 185.5) = 802.8 mm (31.61&quot;) diameter.</li>
+                <li><strong>265/65R17 (lower aspect ratio, same width):</strong> 265 mm × 0.65 = 172.25 mm sidewall → 776.3 mm (30.56&quot;) diameter, losing 26.5 mm of height.</li>
+                <li><strong>285/70R17 (wider tire, same 70% aspect ratio):</strong> 285 mm × 0.70 = 199.5 mm sidewall → 830.8 mm (32.71&quot;) diameter, gaining 28 mm of height even though the aspect number stayed 70.</li>
+              </ul>
+            </section>
+
+            <!-- Section 2 -->
+            <section id="how-to-read-tire-size" class="space-y-3 border-t border-slate-200 dark:border-slate-800 pt-8">
+              <div class="flex items-baseline justify-between gap-2">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white">
+                  2. How to read a tire size (using 275/65R18)
+                </h3>
+              </div>
+              <p class="font-medium text-slate-900 dark:text-white">
+                In the metric code 275/65R18, 275 is the nominal cross-section width in millimeters from sidewall to sidewall, 65 is the sidewall aspect ratio in percent, R designates radial construction, and 18 is the wheel bead-seat diameter in inches.
+              </p>
+              <p>
+                Walking through the math for <code class="font-mono text-xs bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">275/65R18</code> step by step shows why metric tire codes mix millimeters and inches:
+              </p>
+              <ol class="list-decimal list-inside space-y-1.5 text-sm text-slate-700 dark:text-slate-300">
+                <li><strong>Width:</strong> <span class="font-mono">275 mm</span> ÷ 25.4 = <span class="font-mono">10.83 inches</span> wide when mounted on its industry measuring rim width.</li>
+                <li><strong>One sidewall height:</strong> 65% of 275 mm = <span class="font-mono">275 × 0.65 = 178.75 mm</span> (<span class="font-mono">7.04 inches</span>).</li>
+                <li><strong>Wheel rim diameter:</strong> <span class="font-mono">18 inches</span> × 25.4 = <span class="font-mono">457.2 mm</span>.</li>
+                <li><strong>Overall tire height (diameter):</strong> Because the wheel sits in the center with a sidewall above it and a sidewall below it, add the rim plus <em>two</em> sidewalls: <span class="font-mono">457.2 mm + (2 × 178.75 mm) = 814.7 mm</span> (<span class="font-mono">32.07 inches</span>).</li>
+              </ol>
+            </section>
+
+            <!-- Section 3 -->
+            <section id="what-changes-larger-tire" class="space-y-3 border-t border-slate-200 dark:border-slate-800 pt-8">
+              <div class="flex items-baseline justify-between gap-2">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white">
+                  3. What changes when you install a larger tire?
+                </h3>
+              </div>
+              <p class="font-medium text-slate-900 dark:text-white">
+                Installing a larger tire changes two distinct categories: pure geometric values (diameter, axle ground clearance, rolling circumference, speedometer ratio, and effective gearing) that can be calculated from the sidewall numbers, and physical vehicle clearances (fender liners, upper control arms, body mounts, and steering lock) that depend entirely on your specific vehicle.
+              </p>
+              <p>
+                Using the jump from <span class="font-mono">265/70R17</span> to <span class="font-mono">285/75R17</span> as our benchmark, here is the strict separation between math and hardware:
+              </p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                <div class="p-4 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50/60 dark:bg-slate-900/50 space-y-2">
+                  <h4 class="text-sm font-bold text-slate-900 dark:text-white">What is pure math (Calculated)</h4>
+                  <ul class="list-disc list-inside text-xs sm:text-sm space-y-1 text-slate-700 dark:text-slate-300">
+                    <li><strong>Overall diameter:</strong> increases by <span class="font-mono">+56.5 mm (+2.22 in)</span>.</li>
+                    <li><strong>Axle ground clearance:</strong> increases by half the diameter change (<span class="font-mono">+28.25 mm / +1.11 in</span>) because only the bottom radius sits between the hub and the road.</li>
+                    <li><strong>Arch gap reduction:</strong> the top radius also grows by <span class="font-mono">28.25 mm</span>, moving the tread closer to the upper fender arch.</li>
+                    <li><strong>Section width:</strong> grows by <span class="font-mono">+20 mm (+0.79 in)</span> total (<span class="font-mono">10 mm</span> per side on an identical wheel offset).</li>
+                    <li><strong>Speedometer &amp; odometer:</strong> 7.04% larger circumference means 42 fewer revolutions per mile (<span class="font-mono">638 → 596 revs/mi</span>).</li>
+                    <li><strong>Effective gearing:</strong> a 3.73 axle drops to an effective <span class="font-mono">3.48:1</span> ratio.</li>
+                  </ul>
+                </div>
+                <div class="p-4 border border-slate-200 dark:border-slate-800 rounded-lg bg-slate-50/60 dark:bg-slate-900/50 space-y-2">
+                  <h4 class="text-sm font-bold text-slate-900 dark:text-white">What depends on the vehicle (Physical)</h4>
+                  <ul class="list-disc list-inside text-xs sm:text-sm space-y-1 text-slate-700 dark:text-slate-300">
+                    <li><strong>Steering sweep arc:</strong> a tire that is 28.25 mm larger in radius and 20 mm wider swings through a much wider arc at full steering lock, often contacting front bumper valances or rear cab mounts first.</li>
+                    <li><strong>Upper control arm (UCA) clearance:</strong> on independent front suspension (IFS) trucks and SUVs, theextra 10 mm of inner sidewall width can contact the UCA ball-joint boss if wheel offset is too positive.</li>
+                    <li><strong>Suspension compression:</strong> static driveway clearance does not equal clearance when hitting a bump with the wheels turned.</li>
+                  </ul>
+                </div>
+              </div>
+            </section>
+
+            <!-- Section 4 -->
+            <section id="increasing-tire-diameter" class="space-y-3 border-t border-slate-200 dark:border-slate-800 pt-8">
+              <div class="flex items-baseline justify-between gap-2">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white">
+                  4. What happens when you increase tire diameter?
+                </h3>
+              </div>
+              <p class="font-medium text-slate-900 dark:text-white">
+                Increasing tire diameter lengthens the rolling lever arm between your axle and the road: every 1% increase in diameter increases distance traveled per wheel revolution by 1%, raises actual road speed relative to indicated speedometer speed by 1%, and reduces mechanical axle torque multiplication by nearly 1%.
+              </p>
+              <p>
+                Consider a pickup or SUV that comes from the factory with <span class="font-mono">265/70R17</span> (<span class="font-mono">802.8 mm</span> diameter) and a <span class="font-mono">3.73:1</span> rear axle ratio. If you step up to <span class="font-mono">285/75R17</span> (<span class="font-mono">859.3 mm</span> diameter, a <span class="font-mono">+7.04%</span> increase):
+              </p>
+              <ul class="list-disc list-inside space-y-1.5 text-sm text-slate-700 dark:text-slate-300">
+                <li><strong>Ground clearance vs. wheel-well room:</strong> You gain <span class="font-mono">28.25 mm (1.11 in)</span> of clearance under the differential pumpkin, while simultaneously losing <span class="font-mono">28.25 mm</span> of clearance at the top, front, and rear of the wheel opening.</li>
+                <li><strong>Speedometer under-reading:</strong> Your vehicle&rsquo;s speed sensor counts shaft revolutions and assumes each tire turn covers <span class="font-mono">2,522 mm</span>. The new tire covers <span class="font-mono">2,700 mm</span>. At an indicated <span class="font-mono">70 mph</span>, you are actually traveling <span class="font-mono">70 × (859.3 ÷ 802.8) = 74.9 mph</span>.</li>
+                <li><strong>Gearing &amp; braking leverage:</strong> The effective final drive ratio drops to <span class="font-mono">3.73 × (802.8 ÷ 859.3) = 3.48:1</span>. Restoring the factory mechanical leverage would require re-gearing the differentials to <span class="font-mono">3.73 × (859.3 ÷ 802.8) = 3.99:1</span> (commonly a <span class="font-mono">4.10:1</span> gear set). Just as the engine loses mechanical advantage to turn the taller tire, the brake rotors also act against a 7% longer lever arm.</li>
+              </ul>
+            </section>
+
+            <!-- Section 5 -->
+            <section id="tire-size-vs-wheel-size" class="space-y-3 border-t border-slate-200 dark:border-slate-800 pt-8">
+              <div class="flex items-baseline justify-between gap-2">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white">
+                  5. Tire size vs. wheel size: why a bigger wheel does not mean a bigger tire
+                </h3>
+              </div>
+              <p class="font-medium text-slate-900 dark:text-white">
+                A larger wheel diameter (rim size) does not automatically make the overall tire taller; in factory trim packages and plus-sizing, stepping up from a 17-inch to an 18-inch or 20-inch wheel is paired with a lower aspect ratio so the outer tire diameter stays virtually identical.
+              </p>
+              <p>
+                Automakers frequently offer 17-inch, 18-inch, and 20-inch wheels on the exact same truck or SUV without recalibrating the speedometer or changing suspension height. They do this by trading rubber sidewall height for aluminum wheel diameter:
+              </p>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs sm:text-sm font-mono tabular-nums border border-slate-200 dark:border-slate-800">
+                  <thead>
+                    <tr class="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 font-sans">
+                      <th class="p-2.5">Tire Size</th>
+                      <th class="p-2.5">Rim Diameter</th>
+                      <th class="p-2.5">Sidewall Height</th>
+                      <th class="p-2.5">Overall Tire Diameter</th>
+                      <th class="p-2.5">Vs. 17&quot; Baseline</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+                    <tr>
+                      <td class="p-2.5 font-semibold">275/70R17</td>
+                      <td class="p-2.5">17 in (431.8 mm)</td>
+                      <td class="p-2.5">192.5 mm (7.58 in)</td>
+                      <td class="p-2.5">816.8 mm (32.16 in)</td>
+                      <td class="p-2.5">Baseline</td>
+                    </tr>
+                    <tr>
+                      <td class="p-2.5 font-semibold">275/65R18</td>
+                      <td class="p-2.5">18 in (457.2 mm)</td>
+                      <td class="p-2.5">178.75 mm (7.04 in)</td>
+                      <td class="p-2.5">814.7 mm (32.07 in)</td>
+                      <td class="p-2.5">−2.1 mm (−0.26%)</td>
+                    </tr>
+                    <tr>
+                      <td class="p-2.5 font-semibold">275/55R20</td>
+                      <td class="p-2.5">20 in (508.0 mm)</td>
+                      <td class="p-2.5">151.25 mm (5.95 in)</td>
+                      <td class="p-2.5">810.5 mm (31.91 in)</td>
+                      <td class="p-2.5">−6.3 mm (−0.77%)</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                Notice that the 20-inch setup (<span class="font-mono">275/55R20</span> at <span class="font-mono">810.5 mm</span>) is actually 6.3 mm <em>shorter</em> in overall tire diameter than the 17-inch setup (<span class="font-mono">275/70R17</span> at <span class="font-mono">816.8 mm</span>), while having 41.25 mm less sidewall cushion between the rim flange and potholes.
+              </p>
+            </section>
+
+            <!-- Section 6 -->
+            <section id="wheel-offset-fitment" class="space-y-3 border-t border-slate-200 dark:border-slate-800 pt-8">
+              <div class="flex items-baseline justify-between gap-2">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white">
+                  6. How wheel offset changes fitment (with a numeric example)
+                </h3>
+              </div>
+              <p class="font-medium text-slate-900 dark:text-white">
+                Wheel offset (measured in millimeters and marked ET) is the distance from the wheel&rsquo;s centerline to its hub mounting surface; decreasing offset pushes the wheel outward toward the fender and increases track width, while widening a wheel adds half of the extra width to both the inner and outer edges.
+              </p>
+              <p>
+                To see how wheel width and offset combine, compare a stock <span class="font-mono">17x8 ET45</span> wheel against an aftermarket <span class="font-mono">18x9 ET20</span> wheel:
+              </p>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs sm:text-sm font-mono tabular-nums border border-slate-200 dark:border-slate-800">
+                  <caption class="sr-only">Wheel offset and width geometry comparison between 17x8 ET45 and 18x9 ET20</caption>
+                  <thead>
+                    <tr class="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 font-sans">
+                      <th scope="col" class="p-2.5 font-semibold text-slate-700 dark:text-slate-300">Wheel Parameter</th>
+                      <th scope="col" class="p-2.5 font-mono font-semibold text-slate-900 dark:text-white">Baseline: 17x8 ET45</th>
+                      <th scope="col" class="p-2.5 font-mono font-semibold text-slate-900 dark:text-white">Comparison: 18x9 ET20</th>
+                      <th scope="col" class="p-2.5 font-mono font-semibold text-sky-700 dark:text-sky-400">Net Geometric Shift</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+                    <tr>
+                      <th scope="row" class="p-2.5 font-sans font-medium text-slate-700 dark:text-slate-300">Rim Width (W)</th>
+                      <td class="p-2.5">8 × 25.4 = 203.2 mm (8.0 in)</td>
+                      <td class="p-2.5">9 × 25.4 = 228.6 mm (9.0 in)</td>
+                      <td class="p-2.5">+25.4 mm (+1.0 in wider overall)</td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="p-2.5 font-sans font-medium text-slate-700 dark:text-slate-300">Half-Width (W / 2)</th>
+                      <td class="p-2.5">101.6 mm</td>
+                      <td class="p-2.5">114.3 mm</td>
+                      <td class="p-2.5">+12.7 mm per side from width alone</td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="p-2.5 font-sans font-medium text-slate-700 dark:text-slate-300">Offset (ET)</th>
+                      <td class="p-2.5">+45 mm</td>
+                      <td class="p-2.5">+20 mm</td>
+                      <td class="p-2.5">−25 mm (pushed outward)</td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="p-2.5 font-sans font-medium text-slate-700 dark:text-slate-300">Inner Distance from Hub (W/2 + ET)</th>
+                      <td class="p-2.5">101.6 + 45 = 146.6 mm inboard</td>
+                      <td class="p-2.5">114.3 + 20 = 134.3 mm inboard</td>
+                      <td class="p-2.5 text-emerald-700 dark:text-emerald-400">−12.3 mm (12.3 mm farther away from strut)</td>
+                    </tr>
+                    <tr class="bg-slate-50/70 dark:bg-slate-950/50 font-semibold">
+                      <th scope="row" class="p-2.5 font-sans font-semibold text-slate-900 dark:text-white">Outer Distance from Hub (W/2 − ET)</th>
+                      <td class="p-2.5">101.6 − 45 = 56.6 mm outboard</td>
+                      <td class="p-2.5">114.3 − 20 = 94.3 mm outboard</td>
+                      <td class="p-2.5 text-sky-700 dark:text-sky-400">+37.7 mm (+1.48 in farther out toward fender)</td>
+                    </tr>
+                    <tr>
+                      <th scope="row" class="p-2.5 font-sans font-medium text-slate-700 dark:text-slate-300">Total Axle Track Width Change</th>
+                      <td class="p-2.5">Baseline track</td>
+                      <td class="p-2.5">2 × (45 − 20) = +50 mm</td>
+                      <td class="p-2.5">+50 mm (+1.97 in wider centerline-to-centerline)</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                Even though the new 9-inch wheel is <span class="font-mono">25.4 mm</span> wider overall, dropping the offset by <span class="font-mono">25 mm</span> (from <span class="font-mono">+45</span> to <span class="font-mono">+20</span>) moves the inner rim edge <span class="font-mono">12.3 mm farther away</span> from the suspension strut while pushing the outer rim lip <span class="font-mono">37.7 mm (1.48 in) farther outward</span> toward the fender lip.
+              </p>
+            </section>
+
+            <!-- Section 7 -->
+            <section id="similar-diameters-fit-differently" class="space-y-3 border-t border-slate-200 dark:border-slate-800 pt-8">
+              <div class="flex items-baseline justify-between gap-2">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white">
+                  7. Why two tires with similar diameters can fit differently
+                </h3>
+              </div>
+              <p class="font-medium text-slate-900 dark:text-white">
+                Two tires with nearly identical calculated diameters can fit completely differently on the vehicle because section width, wheel rim width, wheel offset, tread shoulder profile, and manufacturer molding tolerances control where the outer corner of the tire swings during steering and suspension travel.
+              </p>
+              <p>
+                Compare a tall-and-narrow <span class="font-mono">255/80R17</span> (<span class="font-mono">839.8 mm / 33.06 in</span> diameter, <span class="font-mono">255 mm</span> width) with a wider <span class="font-mono">285/70R17</span> (<span class="font-mono">830.8 mm / 32.71 in</span> diameter, <span class="font-mono">285 mm</span> width). On paper, the 255/80R17 is 9 mm taller. Yet on many four-wheel-drive trucks, the 255/80R17 clears the upper control arm and cab mount on factory wheels while the shorter 285/70R17 rubs. Why?
+              </p>
+              <ul class="list-disc list-inside space-y-1.5 text-sm text-slate-700 dark:text-slate-300">
+                <li><strong>Section and tread width:</strong> The 285 tire is 30 mm (1.18 inches) wider. Its outer shoulder sits 15 mm farther out on both sides, increasing its diagonal scrub radius when you turn the steering wheel.</li>
+                <li><strong>Measuring rim width effect:</strong> Every metric tire specification is measured on a specific reference rim width. Mounting a tire on a wheel that is 1 inch wider than the measuring rim pulls the beads apart and increases actual section width by roughly 0.4 inches (10 mm) rule-of-thumb.</li>
+                <li><strong>Actual vs. nominal manufacturer dimensions:</strong> Industry standards (ETRTO and TRA) allow tolerances of several percent around nominal sidewall codes, and mud-terrain or rugged-terrain tires with aggressive side lugs and square shoulders often measure wider at the shoulder block than highway all-season tires stamped with the exact same size code.</li>
+              </ul>
+            </section>
+
+            <!-- Section 8 -->
+            <section id="tire-pressure-note" class="space-y-3 border-t border-slate-200 dark:border-slate-800 pt-8">
+              <div class="flex items-baseline justify-between gap-2">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white">
+                  8. Tire pressure: what this tool will not tell you, and why
+                </h3>
+              </div>
+              <p class="font-medium text-slate-900 dark:text-white">
+                This calculator does not output recommended tire pressure (PSI or bar) because proper inflation pressure cannot be derived from tire dimensions alone; it is governed by your vehicle&rsquo;s axle weight ratings, tire load construction (P-metric, Euro-metric, XL, or LT), and industry load-inflation tables.
+              </p>
+              <p>
+                If you are running your vehicle&rsquo;s factory tire size and load specification, your cold inflation pressure is printed on the <strong>driver&rsquo;s door-jamb placard</strong> and in the owner&rsquo;s manual. Never inflate to the &ldquo;Max Press&rdquo; number molded into the tire sidewall unless your vehicle placard or load table specifically calls for it. Furthermore, switching from a standard passenger tire (such as a P265/70R17 113T rated at 35 PSI) to a heavy-duty Light Truck tire (such as an LT285/75R17 Load Range E) changes the internal casing construction—an LT tire typically requires higher cold inflation pressure than a P-metric tire to carry the exact same axle weight safely without overheating. Always consult the tire manufacturer&rsquo;s published load-and-inflation tables and a qualified tire technician.
+              </p>
+            </section>
+          </div>
+
+          <!-- Right Sidebar: Methodology, Rounding Rules & Limitations (4 cols) -->
+          <aside class="lg:col-span-4 space-y-6">
+            <section id="methodology" class="border border-slate-200 dark:border-slate-800 rounded-xl p-5 bg-slate-50/70 dark:bg-slate-900 space-y-3">
+              <div class="flex items-baseline justify-between">
+                <h3 class="text-base font-bold text-slate-900 dark:text-white">Methodology &amp; Formulas</h3>
+              </div>
+              <p class="text-xs text-slate-700 dark:text-slate-300">
+                Wanjaaro computes all outputs from standard nominal metric tire geometry using exact conversion constants (<span class="font-mono">1 in = 25.4 mm</span>, <span class="font-mono">1 mile = 1,609,344 mm</span>, <span class="font-mono">1 km = 1,000,000 mm</span>).
+              </p>
+              <dl class="space-y-2 text-xs font-mono text-slate-800 dark:text-slate-200 border-t border-slate-200 dark:border-slate-800 pt-3">
+                <div>
+                  <dt class="font-sans font-semibold text-slate-600 dark:text-slate-400">Sidewall Height (mm)</dt>
+                  <dd>sidewall_mm = width_mm × aspect_ratio / 100</dd>
+                </div>
+                <div>
+                  <dt class="font-sans font-semibold text-slate-600 dark:text-slate-400">Overall Diameter (mm)</dt>
+                  <dd>diameter_mm = (rim_in × 25.4) + (2 × sidewall_mm)</dd>
+                </div>
+                <div>
+                  <dt class="font-sans font-semibold text-slate-600 dark:text-slate-400">Circumference (mm)</dt>
+                  <dd>circumference_mm = π × diameter_mm</dd>
+                </div>
+                <div>
+                  <dt class="font-sans font-semibold text-slate-600 dark:text-slate-400">Revolutions per Mile &amp; km</dt>
+                  <dd>revs_mi = 1,609,344 / circumference_mm<br/>revs_km = 1,000,000 / circumference_mm</dd>
+                </div>
+                <div>
+                  <dt class="font-sans font-semibold text-slate-600 dark:text-slate-400">Axle Clearance Change (mm)</dt>
+                  <dd>axle_clearance_mm = (new_dia − old_dia) / 2</dd>
+                </div>
+                <div>
+                  <dt class="font-sans font-semibold text-slate-600 dark:text-slate-400">Speedometer &amp; Effective Gearing</dt>
+                  <dd>speed_ratio = new_dia / old_dia<br/>actual_speed = indicated × speed_ratio<br/>effective_ratio = axle_ratio × (old_dia / new_dia)</dd>
+                </div>
+                <div>
+                  <dt class="font-sans font-semibold text-slate-600 dark:text-slate-400">Wheel Offset Geometry (W in mm)</dt>
+                  <dd>inner_edge_mm = (W / 2) + ET<br/>outer_edge_mm = (W / 2) − ET</dd>
+                </div>
+              </dl>
+              <p class="text-xs text-slate-600 dark:text-slate-400 border-t border-slate-200 dark:border-slate-800 pt-2">
+                <strong>Rounding rule:</strong> Chained calculations use full double-precision floating-point values internally and round only at display time (to 0.01–0.1 units or nearest whole revolution where noted).
+              </p>
+            </section>
+
+            <section id="limitations" class="border border-slate-200 dark:border-slate-800 rounded-xl p-5 bg-slate-50/70 dark:bg-slate-900 space-y-3">
+              <div class="flex items-baseline justify-between">
+                <h3 class="text-base font-bold text-slate-900 dark:text-white">Limitations of Calculation</h3>
+              </div>
+              <p class="text-xs text-slate-700 dark:text-slate-300">
+                Mathematical tire calculators operate on unloaded, nominal cylinders. This tool cannot determine:
+              </p>
+              <ul class="list-disc list-inside text-xs space-y-1.5 text-slate-700 dark:text-slate-300">
+                <li>Physical fender, bumper, pinch-weld, or suspension clearance on your specific vehicle.</li>
+                <li>Brake caliper barrel or spoke clearance (wheel X-factor).</li>
+                <li>Static loaded radius (tire squat under vehicle weight) or tread wear depth differences.</li>
+                <li>Manufacturer-specific molding variations between brands or tread categories.</li>
+                <li>Correct tire inflation pressure or vehicle stability control / ABS calibration limits.</li>
+              </ul>
+            </section>
+          </aside>
+        </div>
+      </article>
+
+      <!-- VISIBLE FAQ SECTION (Matching JSON-LD FAQPage 1:1) -->
+      <section id="faq" aria-labelledby="heading-faq" class="border-t border-slate-200 dark:border-slate-800 pt-10 space-y-6">
+        <div class="flex items-baseline justify-between">
+          <h2 id="heading-faq" class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+            Frequently Asked Questions
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="p-5 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-900 space-y-2">
+            <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+              How much taller is a 285/75R17 than a 265/70R17?
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+              Mathematically, a 285/75R17 is 56.5 mm (2.22 inches) taller in overall diameter than a 265/70R17—an increase from 802.8 mm (31.61 in) to 859.3 mm (33.83 in), or +7.04%. Because half of that diameter increase sits below the wheel hub, theoretical ground clearance at the axle increases by 28.25 mm (about 1.11 inches).
+            </p>
+          </div>
+
+          <div class="p-5 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-900 space-y-2">
+            <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+              When my speedometer reads 60 mph on larger tires, am I going faster or slower?
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+              With taller tires, your actual road speed is higher than what your speedometer indicates because the tire rolls farther with every axle revolution. Moving from 265/70R17 to 285/75R17 (+7.04% circumference) means an indicated 60 mph corresponds to approximately 64.2 mph actual speed.
+            </p>
+          </div>
+
+          <div class="p-5 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-900 space-y-2">
+            <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+              Does a lower wheel offset push the wheel inward or outward?
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+              Reducing positive wheel offset (or moving into negative offset) shifts the entire wheel further outward toward the fender and street. For example, keeping width constant and changing from ET+45 to ET+20 pushes the wheel&rsquo;s centerline and outer lip 25 mm (0.98 in) farther outward.
+            </p>
+          </div>
+
+          <div class="p-5 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-900 space-y-2">
+            <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+              Why doesn&rsquo;t this calculator tell me if a tire will rub on my vehicle?
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+              Sidewall and wheel codes define nominal geometry relative to the hub mounting face, not the shape of your vehicle&rsquo;s wheel well. Physical rubbing depends on suspension articulation, steering lock angle, caster alignment, upper control arm position, body mounts, and actual molded tire dimensions, which vary by manufacturer.
+            </p>
+          </div>
+
+          <div class="p-5 border border-slate-200 dark:border-slate-800 rounded-lg bg-white dark:bg-slate-900 space-y-2 md:col-span-2">
+            <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+              What do the two numbers in a load index like 116/113S mean?
+            </h3>
+            <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300">
+              In a service description like 116/113S, the first number (116 = 1,250 kg or 2,756 lbs) is the maximum load rating per tire when mounted in a single-wheel setup, and the second number (113 = 1,150 kg or 2,535 lbs) is the per-tire rating when mounted on a dual-rear-wheel (dually) axle. The letter S indicates a speed rating of up to 112 mph (180 km/h).
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- HONEST ABOUT WANJAARO & TRUST FOOTER -->
+    <footer class="border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 mt-12 py-8 px-4 sm:px-6 text-xs text-slate-600 dark:text-slate-400">
+      <div class="max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div class="md:col-span-7 space-y-2">
+          <h2 class="font-bold text-slate-900 dark:text-white text-sm">About Wanjaaro &amp; Contact</h2>
+          <p>
+            Wanjaaro is an independent web utility created and maintained by <a href="https://heylink.me/sohailanwaralmani74" target="_blank" rel="noopener noreferrer author me" class="font-semibold underline hover:text-sky-700 dark:hover:text-sky-400">Sohail Anwar</a> (12 years in software and application development) to provide fast, accurate automotive geometry calculations in the browser. All calculations run locally on your device using standard nominal metric tire and wheel formulas, with no account required.
+          </p>
+          <p>
+            <strong>Safety &amp; Verification Notice:</strong> Calculations on this page represent theoretical geometric dimensions based on the numbers entered. Always verify physical clearance, load capacity, rim width compatibility, and inflation pressure with your vehicle manufacturer, the tire manufacturer&rsquo;s specification data book, and a qualified tire and wheel installer.
+          </p>
+        </div>
+        <div class="md:col-span-5 flex flex-col md:items-end justify-between gap-2">
+          <div class="flex flex-wrap gap-3 font-medium">
+            <button type="button" data-scroll-to="workspace" class="hover:underline cursor-pointer">Calculator Workspace</button>
+            <span>·</span>
+            <button type="button" data-scroll-to="worked-example" class="hover:underline cursor-pointer">Worked Example</button>
+            <span>·</span>
+            <button type="button" data-scroll-to="editorial-guide" class="hover:underline cursor-pointer">Reference Guide</button>
+            <span>·</span>
+            <button type="button" data-scroll-to="methodology" class="hover:underline cursor-pointer">Methodology</button>
+            <span>·</span>
+            <button type="button" data-scroll-to="limitations" class="hover:underline cursor-pointer">Limitations</button>
+            <span>·</span>
+            <button type="button" data-scroll-to="faq" class="hover:underline cursor-pointer">FAQ</button>
+            <span>·</span>
+            <button type="button" data-scroll-to="author-contact" class="hover:underline cursor-pointer">Developer Bio &amp; Contact</button>
+          </div>
+          <p class="font-mono text-slate-500">
+            © 2026 Wanjaaro · Built by Sohail Anwar · Last updated: October 5, 2026
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener('click', function (e) {
+        var trigger = e.target.closest('[data-scroll-to]');
+        if (!trigger) return;
+        e.preventDefault();
+        var targetId = trigger.getAttribute('data-scroll-to');
+        var el = document.getElementById(targetId);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        if (window.location.hash || window.location.search) {
+          window.history.replaceState(null, '', window.location.pathname || '/');
+        }
+      });
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

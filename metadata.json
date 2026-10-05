@@ -1,0 +1,6 @@
+{
+  "name": "Wanjaaro Tire & Wheel Calculator",
+  "description": "Compare tire sizes, wheel offset, axle gearing, and speedometer difference in mm and inches. Built for fast, local geometry comparisons like 265/70R17 vs 285/75R17.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
