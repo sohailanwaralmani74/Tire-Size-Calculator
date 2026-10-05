@@ -11,19 +11,19 @@ export default defineConfig(() => {
       react(),
       tailwindcss(),
       {
-        name: 'sync-root-assets-for-github-branch-deploy',
+        name: 'sync-compiled-bundle-into-src-and-styles',
         buildStart() {
           fs.rmSync(path.resolve(__dirname, 'public/assets'), {recursive: true, force: true});
           fs.rmSync(path.resolve(__dirname, 'assets'), {recursive: true, force: true});
         },
         closeBundle() {
-          const distAssets = path.resolve(__dirname, 'dist/assets');
-          const rootAssets = path.resolve(__dirname, 'assets');
-          if (fs.existsSync(distAssets)) {
-            fs.mkdirSync(rootAssets, {recursive: true});
-            for (const file of fs.readdirSync(distAssets)) {
-              fs.copyFileSync(path.join(distAssets, file), path.join(rootAssets, file));
-            }
+          const distBundle = path.resolve(__dirname, 'dist/src/app-bundle.js');
+          const distCss = path.resolve(__dirname, 'dist/styles/app-styles.css');
+          if (fs.existsSync(distBundle)) {
+            fs.copyFileSync(distBundle, path.resolve(__dirname, 'src/app-bundle.js'));
+          }
+          if (fs.existsSync(distCss)) {
+            fs.copyFileSync(distCss, path.resolve(__dirname, 'styles/app-styles.css'));
           }
         },
       },
@@ -32,12 +32,12 @@ export default defineConfig(() => {
       rollupOptions: {
         output: {
           inlineDynamicImports: true,
-          entryFileNames: 'assets/app-bundle.js',
+          entryFileNames: 'src/app-bundle.js',
           assetFileNames: (assetInfo) => {
             if (assetInfo.name && assetInfo.name.endsWith('.css')) {
-              return 'assets/app-styles.css';
+              return 'styles/app-styles.css';
             }
-            return 'assets/[name][extname]';
+            return 'src/[name][extname]';
           },
         },
       },
