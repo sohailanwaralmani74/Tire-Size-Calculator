@@ -28,6 +28,9 @@
       content="Compare tire sizes (like 265/70R17 vs 285/75R17), wheel offset (ET), axle gearing, and speedometer difference in mm and inches. Fast, local browser geometry."
     />
 
+    <!-- Prebuilt CSS for static GitHub Pages branch deploy (harmless in Vite dev) -->
+    <link rel="stylesheet" href="./assets/app-styles.css" />
+
     <!-- Schema.org JSON-LD matching visible content -->
     <script type="application/ld+json">
       {
@@ -824,6 +827,6 @@
         }
       });
     </script>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="./src/main.js"></script>
   </body>
 </html>
