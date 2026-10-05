@@ -1,4 +1,4 @@
-name: Deploy ReptileBirds Tire & Wheel Calculator to GitHub Pages
+name: Deploy Wanjaaro Tire & Wheel Calculator to GitHub Pages
 
 on:
   push:

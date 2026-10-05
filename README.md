@@ -44,14 +44,13 @@ npm run dev
 npm run build
 ```
 
-## Deploying on GitHub Pages
+## Deploying on GitHub Pages (`wanjaaro.com`)
 
-This project is pre-configured for zero-config deployment to **GitHub Pages** (supporting both custom domains like `wanjaaro.com` at `/` and repository subpath URLs like `https://<username>.github.io/<repo-name>/`):
-
-1. **Relative Asset Resolution**: `vite.config.ts` sets `base: './'` and `public/.nojekyll` is included so all compiled JavaScript, CSS, and SVG assets load cleanly from any path.
-2. **Automated GitHub Actions Workflow (`.github/workflows/deploy.yml`)**:
-   - Push this repository to GitHub (`main` or `master` branch).
-   - In your GitHub repository, go to **Settings → Pages**.
-   - Under **Build and deployment → Source**, select **GitHub Actions**.
-   - On every push, GitHub Actions will automatically run the unit test suite (`npm test`), build the production `dist/` bundle (`npm run build`), and publish it to GitHub Pages.
+> **Important (Why `main.tsx` MIME type error happens if deployed from a branch):**  
+> Browsers cannot execute raw `.tsx` TypeScript files directly (`MIME type "application/octet-stream"`). If GitHub Pages is set to **"Deploy from a branch"** (`main` / root), GitHub serves the uncompiled source files instead of the built JavaScript bundle.
+>
+> **How to fix in 10 seconds on GitHub:**
+> 1. In your GitHub repository, open **Settings → Pages**.
+> 2. Under **Build and deployment → Source**, change **"Deploy from a branch"** to **"GitHub Actions"**.
+> 3. The included workflow (`.github/workflows/deploy.yml`) automatically runs `npm run build` (compiling `src/main.tsx` into standard `.js` and `.css` in `dist/`, alongside `CNAME` for `wanjaaro.com` and `sohail-anwar-profile.svg`) and deploys the compiled `dist/` folder to GitHub Pages.
 

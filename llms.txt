@@ -1,0 +1,31 @@
+# Wanjaaro Tire & Wheel Calculator (Wanjaaro)
+
+> Note: This `llms.txt` file is provided as a plain-text machine-readable summary of the site's tools, formulas, and scope. Providing an `llms.txt` file is a documentation convenience and is not a search engine ranking factor.
+
+## Overview
+- **Site:** Wanjaaro (`https://wanjaaro.com/`)
+- **Application:** Wanjaaro Tire & Wheel Calculator
+- **Author & Developer:** Sohail Anwar (12 years in Software and Application Development) — Profile & Contact: `https://heylink.me/sohailanwaralmani74`
+- **Architecture:** Browser-only single-page application + prerendered static HTML reference guide at `/`.
+- **Core Question Answered:** "I have 265/70R17 and I'm thinking about 285/75R17. What changes?"
+
+## Worked Benchmark (265/70R17 -> 285/75R17)
+- **265/70R17:** Sidewall = 185.5 mm (7.30 in), Overall Diameter = 802.8 mm (31.61 in), Circumference = 2522.07 mm, Revolutions/mile = 638.10.
+- **285/75R17:** Sidewall = 213.75 mm (8.42 in), Overall Diameter = 859.3 mm (33.83 in), Circumference = 2699.57 mm, Revolutions/mile = 596.15.
+- **Net Change:** +56.5 mm (+2.22 in, +7.04%) diameter; +20 mm (+0.79 in) width; +28.25 mm (~28 mm / +1.11 in) axle ground clearance; 60 mph indicated reads ~64.2 mph actual.
+
+## Formulas Used
+- `sidewall_mm = width_mm * aspect_ratio / 100`
+- `diameter_mm = rim_in * 25.4 + 2 * sidewall_mm`
+- `circumference_mm = pi * diameter_mm`
+- `revs_per_mile = 1,609,344 / circumference_mm`
+- `revs_per_km = 1,000,000 / circumference_mm`
+- `axle_clearance_change_mm = (new_diameter_mm - old_diameter_mm) / 2`
+- `speed_ratio = new_diameter_mm / old_diameter_mm; actual_speed = indicated_speed * speed_ratio`
+- `effective_ratio = axle_ratio * (old_diameter_mm / new_diameter_mm)`
+- `wheel_inner_edge_mm = (wheel_width_mm / 2) + offset_et_mm`
+- `wheel_outer_edge_mm = (wheel_width_mm / 2) - offset_et_mm`
+
+## Safety & Scope Boundaries
+- Outputs represent nominal unloaded geometry only, never vehicle-specific fitment guarantees.
+- Tire inflation pressure (PSI/bar) is intentionally not calculated; consult the vehicle door-jamb placard, owner's manual, and tire manufacturer load-inflation tables.
