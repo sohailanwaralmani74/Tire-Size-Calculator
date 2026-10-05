@@ -11,17 +11,18 @@ export default defineConfig(() => {
       react(),
       tailwindcss(),
       {
-        name: 'sync-prebuilt-assets-for-static-branch-deploy',
+        name: 'sync-root-assets-for-github-branch-deploy',
+        buildStart() {
+          fs.rmSync(path.resolve(__dirname, 'public/assets'), {recursive: true, force: true});
+          fs.rmSync(path.resolve(__dirname, 'assets'), {recursive: true, force: true});
+        },
         closeBundle() {
           const distAssets = path.resolve(__dirname, 'dist/assets');
           const rootAssets = path.resolve(__dirname, 'assets');
-          const publicAssets = path.resolve(__dirname, 'public/assets');
           if (fs.existsSync(distAssets)) {
             fs.mkdirSync(rootAssets, {recursive: true});
-            fs.mkdirSync(publicAssets, {recursive: true});
             for (const file of fs.readdirSync(distAssets)) {
               fs.copyFileSync(path.join(distAssets, file), path.join(rootAssets, file));
-              fs.copyFileSync(path.join(distAssets, file), path.join(publicAssets, file));
             }
           }
         },
@@ -30,9 +31,14 @@ export default defineConfig(() => {
     build: {
       rollupOptions: {
         output: {
+          inlineDynamicImports: true,
           entryFileNames: 'assets/app-bundle.js',
-          chunkFileNames: 'assets/[name].js',
-          assetFileNames: 'assets/app-styles[extname]',
+          assetFileNames: (assetInfo) => {
+            if (assetInfo.name && assetInfo.name.endsWith('.css')) {
+              return 'assets/app-styles.css';
+            }
+            return 'assets/[name][extname]';
+          },
         },
       },
     },
