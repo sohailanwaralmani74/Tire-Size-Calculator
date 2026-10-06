@@ -4,6 +4,31 @@ import fs from 'fs';
 import path from 'path';
 import {defineConfig} from 'vite';
 
+function inlineIntoHtml(rawHtml: string, cssContent: string, jsContent: string): string {
+  let html = rawHtml;
+
+  // Replace or insert <style id="wanjaaro-inline-css">...</style>
+  const styleBlock = `<style id="wanjaaro-inline-css">\n${cssContent}\n</style>`;
+  if (/<style id="wanjaaro-inline-css">[\s\S]*?<\/style>/.test(html)) {
+    html = html.replace(/<style id="wanjaaro-inline-css">[\s\S]*?<\/style>/, () => styleBlock);
+  } else {
+    html = html.replace('</head>', () => `    ${styleBlock}\n  </head>`);
+  }
+
+  // Replace any external module script or existing inline bundle with <script id="wanjaaro-inline-app" type="module">...</script>
+  const safeJs = jsContent.replace(/<\/script/gi, '<\\/script');
+  const scriptBlock = `<script id="wanjaaro-inline-app" type="module">\n${safeJs}\n</script>`;
+  if (/<script id="wanjaaro-inline-app"[\s\S]*?<\/script>/.test(html)) {
+    html = html.replace(/<script id="wanjaaro-inline-app"[\s\S]*?<\/script>/, () => scriptBlock);
+  } else if (/<script type="module"[^>]*><\/script>/.test(html)) {
+    html = html.replace(/<script type="module"[^>]*><\/script>/, () => scriptBlock);
+  } else {
+    html = html.replace('</body>', () => `    ${scriptBlock}\n  </body>`);
+  }
+
+  return html;
+}
+
 export default defineConfig(() => {
   return {
     base: './',
@@ -11,50 +36,44 @@ export default defineConfig(() => {
       react(),
       tailwindcss(),
       {
-        name: 'serve-dev-or-sync-prod-bundle',
-        transformIndexHtml(html, ctx) {
-          // During `vite` dev server, swap `./src/app-bundle.js` for `/src/main.tsx` so HMR/TSX compilation works natively
-          if (ctx.server) {
-            return html.replace('./src/app-bundle.js', '/src/main.tsx');
-          }
-          return html;
+        name: 'self-contained-inline-html-and-dev-transform',
+        transformIndexHtml: {
+          order: 'pre',
+          handler(html, ctx) {
+            // In local Vite dev server, keep <style id="wanjaaro-inline-css"> intact and swap the inline JS for /src/main.tsx
+            if (ctx.server) {
+              return html.replace(
+                /<script id="wanjaaro-inline-app"[\s\S]*?<\/script>/,
+                '<script type="module" src="/src/main.tsx"></script>',
+              );
+            }
+            return html;
+          },
         },
         closeBundle() {
           const distBundle = path.resolve(__dirname, 'dist/src/app-bundle.js');
           const distCss = path.resolve(__dirname, 'dist/styles/app-styles.css');
-
-          const ensureDir = (dirPath: string) => {
-            if (!fs.existsSync(dirPath)) {
-              fs.mkdirSync(dirPath, {recursive: true});
-            }
-          };
-
-          ensureDir(path.resolve(__dirname, 'assets'));
-          ensureDir(path.resolve(__dirname, 'public/assets'));
-          ensureDir(path.resolve(__dirname, 'dist/assets'));
-
-          if (fs.existsSync(distCss)) {
-            const cssContent = fs.readFileSync(distCss, 'utf-8');
-            const injectJs = `// Auto-generated inline CSS injector so styles always load regardless of server MIME type or path\nexport function injectAppStyles() {\n  if (typeof document === 'undefined') return;\n  if (document.getElementById('wanjaaro-compiled-styles')) return;\n  const style = document.createElement('style');\n  style.id = 'wanjaaro-compiled-styles';\n  style.textContent = ${JSON.stringify(cssContent)};\n  document.head.appendChild(style);\n}\ninjectAppStyles();\n`;
-            fs.writeFileSync(path.resolve(__dirname, 'src/injectStyles.js'), injectJs, 'utf-8');
-
-            fs.copyFileSync(distCss, path.resolve(__dirname, 'styles/app-styles.css'));
-            fs.copyFileSync(distCss, path.resolve(__dirname, 'assets/app-styles.css'));
-            fs.copyFileSync(distCss, path.resolve(__dirname, 'public/assets/app-styles.css'));
-            fs.copyFileSync(distCss, path.resolve(__dirname, 'dist/assets/app-styles.css'));
-          }
-
-          if (fs.existsSync(distBundle)) {
-            fs.copyFileSync(distBundle, path.resolve(__dirname, 'src/app-bundle.js'));
-            fs.copyFileSync(distBundle, path.resolve(__dirname, 'assets/app-bundle.js'));
-            fs.copyFileSync(distBundle, path.resolve(__dirname, 'public/assets/app-bundle.js'));
-            fs.copyFileSync(distBundle, path.resolve(__dirname, 'dist/assets/app-bundle.js'));
-          }
-
           const rootHtmlPath = path.resolve(__dirname, 'index.html');
           const distHtmlPath = path.resolve(__dirname, 'dist/index.html');
-          if (fs.existsSync(rootHtmlPath)) {
-            fs.copyFileSync(rootHtmlPath, distHtmlPath);
+
+          if (fs.existsSync(distBundle) && fs.existsSync(distCss) && fs.existsSync(rootHtmlPath)) {
+            const cssContent = fs.readFileSync(distCss, 'utf-8');
+            const jsContent = fs.readFileSync(distBundle, 'utf-8');
+            const rawHtml = fs.readFileSync(rootHtmlPath, 'utf-8');
+
+            fs.copyFileSync(distBundle, path.resolve(__dirname, 'src/app-bundle.js'));
+            fs.copyFileSync(distCss, path.resolve(__dirname, 'styles/app-styles.css'));
+            fs.copyFileSync(distCss, path.resolve(__dirname, 'src/app-styles.css'));
+            fs.copyFileSync(distCss, path.resolve(__dirname, 'src/main.css'));
+
+            const rootPng = path.resolve(__dirname, 'sohail-anwar.png');
+            if (fs.existsSync(rootPng)) {
+              fs.copyFileSync(rootPng, path.resolve(__dirname, 'src/sohail-anwar.png'));
+            }
+
+            const selfContainedHtml = inlineIntoHtml(rawHtml, cssContent, jsContent);
+            fs.writeFileSync(rootHtmlPath, selfContainedHtml, 'utf-8');
+            fs.writeFileSync(distHtmlPath, selfContainedHtml, 'utf-8');
           }
         },
       },
