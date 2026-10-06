@@ -11,10 +11,17 @@ export default defineConfig(() => {
       react(),
       tailwindcss(),
       {
-        name: 'sync-compiled-bundle-for-all-deploy-modes',
+        name: 'serve-dev-or-sync-prod-bundle',
+        transformIndexHtml(html, ctx) {
+          // During `vite` dev server, swap `./src/app-bundle.js` for `/src/main.tsx` so HMR/TSX compilation works natively
+          if (ctx.server) {
+            return html.replace('./src/app-bundle.js', '/src/main.tsx');
+          }
+          return html;
+        },
         closeBundle() {
-          const distBundle = path.resolve(__dirname, 'dist/assets/app-bundle.js');
-          const distCss = path.resolve(__dirname, 'dist/assets/app-styles.css');
+          const distBundle = path.resolve(__dirname, 'dist/src/app-bundle.js');
+          const distCss = path.resolve(__dirname, 'dist/styles/app-styles.css');
 
           const ensureDir = (dirPath: string) => {
             if (!fs.existsSync(dirPath)) {
@@ -24,39 +31,30 @@ export default defineConfig(() => {
 
           ensureDir(path.resolve(__dirname, 'assets'));
           ensureDir(path.resolve(__dirname, 'public/assets'));
-          ensureDir(path.resolve(__dirname, 'dist/src'));
-          ensureDir(path.resolve(__dirname, 'dist/styles'));
-
-          if (fs.existsSync(distBundle)) {
-            fs.copyFileSync(distBundle, path.resolve(__dirname, 'assets/app-bundle.js'));
-            fs.copyFileSync(distBundle, path.resolve(__dirname, 'public/assets/app-bundle.js'));
-            fs.copyFileSync(distBundle, path.resolve(__dirname, 'src/app-bundle.js'));
-            fs.copyFileSync(distBundle, path.resolve(__dirname, 'dist/src/app-bundle.js'));
-          }
+          ensureDir(path.resolve(__dirname, 'dist/assets'));
 
           if (fs.existsSync(distCss)) {
+            const cssContent = fs.readFileSync(distCss, 'utf-8');
+            const injectJs = `// Auto-generated inline CSS injector so styles always load regardless of server MIME type or path\nexport function injectAppStyles() {\n  if (typeof document === 'undefined') return;\n  if (document.getElementById('wanjaaro-compiled-styles')) return;\n  const style = document.createElement('style');\n  style.id = 'wanjaaro-compiled-styles';\n  style.textContent = ${JSON.stringify(cssContent)};\n  document.head.appendChild(style);\n}\ninjectAppStyles();\n`;
+            fs.writeFileSync(path.resolve(__dirname, 'src/injectStyles.js'), injectJs, 'utf-8');
+
+            fs.copyFileSync(distCss, path.resolve(__dirname, 'styles/app-styles.css'));
             fs.copyFileSync(distCss, path.resolve(__dirname, 'assets/app-styles.css'));
             fs.copyFileSync(distCss, path.resolve(__dirname, 'public/assets/app-styles.css'));
-            fs.copyFileSync(distCss, path.resolve(__dirname, 'styles/app-styles.css'));
-            fs.copyFileSync(distCss, path.resolve(__dirname, 'dist/styles/app-styles.css'));
+            fs.copyFileSync(distCss, path.resolve(__dirname, 'dist/assets/app-styles.css'));
           }
 
+          if (fs.existsSync(distBundle)) {
+            fs.copyFileSync(distBundle, path.resolve(__dirname, 'src/app-bundle.js'));
+            fs.copyFileSync(distBundle, path.resolve(__dirname, 'assets/app-bundle.js'));
+            fs.copyFileSync(distBundle, path.resolve(__dirname, 'public/assets/app-bundle.js'));
+            fs.copyFileSync(distBundle, path.resolve(__dirname, 'dist/assets/app-bundle.js'));
+          }
+
+          const rootHtmlPath = path.resolve(__dirname, 'index.html');
           const distHtmlPath = path.resolve(__dirname, 'dist/index.html');
-          if (fs.existsSync(distHtmlPath)) {
-            let html = fs.readFileSync(distHtmlPath, 'utf-8');
-            if (!html.includes('app-styles.css')) {
-              html = html.replace(
-                '</head>',
-                '    <link rel="stylesheet" href="./assets/app-styles.css" />\n  </head>',
-              );
-            }
-            if (!html.includes('app-bundle.js')) {
-              html = html.replace(
-                '</body>',
-                '    <script type="module" src="./assets/app-bundle.js"></script>\n  </body>',
-              );
-            }
-            fs.writeFileSync(distHtmlPath, html, 'utf-8');
+          if (fs.existsSync(rootHtmlPath)) {
+            fs.copyFileSync(rootHtmlPath, distHtmlPath);
           }
         },
       },
@@ -64,16 +62,16 @@ export default defineConfig(() => {
     build: {
       rollupOptions: {
         input: {
-          main: path.resolve(__dirname, 'index.html'),
+          main: path.resolve(__dirname, 'src/main.tsx'),
         },
         output: {
           inlineDynamicImports: true,
-          entryFileNames: 'assets/app-bundle.js',
+          entryFileNames: 'src/app-bundle.js',
           assetFileNames: (assetInfo) => {
             if (assetInfo.name && assetInfo.name.endsWith('.css')) {
-              return 'assets/app-styles.css';
+              return 'styles/app-styles.css';
             }
-            return 'assets/[name][extname]';
+            return 'src/[name][extname]';
           },
         },
       },

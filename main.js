@@ -3,9 +3,8 @@
   if (!document.querySelector('link[href*="app-styles.css"]')) {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = new URL('./assets/app-styles.css', import.meta.url).href;
+    link.href = './styles/app-styles.css';
     document.head.appendChild(link);
   }
-  const bundleUrl = new URL('./assets/app-bundle.js', import.meta.url).href;
-  await import(bundleUrl);
+  await import('./src/app-bundle.js');
 })();
