@@ -1,198 +1,215 @@
 /**
- * @file Unit test suite for Wanjaaro Tire & Wheel Calculator pure calculation module.
+ * Unit test suite for Building Material & Cost Calculators calculation module.
  * Runnable with Node's built-in test runner (`node --test tests/calc.test.js`).
  */
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  mmToInches,
-  inchesToMm,
-  calculateTireMetrics,
-  parseTireSizeString,
-  compareTires,
-  calculateWheelGeometry,
-  compareWheels,
-  calculateCombinedFitment,
-  calculateGearing,
-  calculateSpeedometer,
-  decodeTireCode,
-} from '../src/calc/tireMath.js';
+  calculateConcrete,
+  calculateBrick,
+  calculateCmu,
+  calculateFraming,
+  calculateSheathing,
+  calculateDrywall,
+  calculatePaint,
+  calculateRoofing,
+  calculateTile,
+  calculateConstructionCost,
+  ALL_CALCULATORS,
+  CALCULATOR_CATEGORIES,
+} from '../src/calc/buildingMath.js';
 
-test('Required Fixture 1: 265/70R17 exact verification', () => {
-  const res = calculateTireMetrics({ widthMm: 265, aspectRatio: 70, rimDiameterIn: 17 });
-  assert.equal(res.valid, true);
-  const d = res.data;
-
-  // sidewall 185.5 mm
-  assert.equal(d.sidewallMm, 185.5);
-  // diameter 802.8 mm (31.61 in)
-  assert.equal(d.diameterMm, 802.8);
-  assert.equal(d.diameterIn, 31.61);
-  // circumference about 2522 mm (802.8 * pi = 2522.07058...)
-  assert.equal(Math.round(d.circumferenceMm), 2522);
-  // about 638 revs/mile (1609344 / 2522.07058 = 638.104...)
-  assert.equal(Math.round(d.revsPerMile), 638);
+test('Directory & Categories verification', () => {
+  assert.equal(CALCULATOR_CATEGORIES.length, 5);
+  assert.equal(ALL_CALCULATORS.length, 10);
 });
 
-test('Required Fixture 2: 285/75R17 exact verification', () => {
-  const res = calculateTireMetrics({ widthMm: 285, aspectRatio: 75, rimDiameterIn: 17 });
-  assert.equal(res.valid, true);
-  const d = res.data;
-
-  // sidewall 213.75 mm
-  assert.equal(d.sidewallMm, 213.75);
-  // diameter 859.3 mm (33.83 in)
-  assert.equal(d.diameterMm, 859.3);
-  assert.equal(d.diameterIn, 33.83);
-  // circumference about 2700 mm (859.3 * pi = 2699.5705...)
-  assert.equal(Math.round(d.circumferenceMm), 2700);
-  // about 596 revs/mile (1609344 / 2699.5705 = 596.148...)
-  assert.equal(Math.round(d.revsPerMile), 596);
-});
-
-test('Required Fixture 3: 265/70R17 to 285/75R17 comparison & speedometer at 60 mph', () => {
-  const comp = compareTires(
-    { widthMm: 265, aspectRatio: 70, rimDiameterIn: 17 },
-    { widthMm: 285, aspectRatio: 75, rimDiameterIn: 17 }
-  );
-  assert.equal(comp.valid, true);
-  const diff = comp.data.diff;
-
-  // +56.5 mm (+2.22 in) diameter
-  assert.equal(diff.diameterMm, 56.5);
-  assert.equal(diff.diameterIn, 2.22);
-  // +7.04%
-  assert.equal(diff.diameterPct, 7.04);
-  // +20 mm width
-  assert.equal(diff.widthMm, 20);
-  // about +28 mm at the axle (56.5 / 2 = 28.25 mm)
-  assert.equal(diff.axleClearanceMm, 28.25);
-  assert.equal(Math.round(diff.axleClearanceMm), 28);
-
-  // indicated 60 mph reads about 64.2 mph actual
-  const speed = calculateSpeedometer({
-    oldDiameterMm: comp.data.oldTire.diameterMm,
-    newDiameterMm: comp.data.newTire.diameterMm,
+test('Calculator 1: Concrete Slab 12x12 at 4" with 10% waste', () => {
+  const res = calculateConcrete({
+    shape: 'slab',
+    lengthFt: 12,
+    widthFt: 12,
+    thicknessIn: 4,
+    wastePct: 10,
+    pricePerCuYd: 150,
+    bagPrice80lb: 6.5,
+    rebarSpacingIn: 18,
   });
-  assert.equal(speed.valid, true);
-  const row60 = speed.data.rows.find((r) => r.indicatedMph === 60);
-  assert.ok(row60);
-  assert.equal(row60.actualMph, 64.2);
-});
-
-test('Common passenger size: 225/45R17 and string parsing', () => {
-  const parsed = parseTireSizeString('225/45R17');
-  assert.equal(parsed.valid, true);
-  const res = calculateTireMetrics(parsed.data);
   assert.equal(res.valid, true);
-  assert.equal(res.data.sidewallMm, 101.25);
-  assert.equal(res.data.diameterMm, 634.3);
+  // Raw volume: 12 * 12 * (4/12) = 48 cu ft = 1.78 cu yds
+  assert.equal(res.rawCuFt, 48);
+  assert.equal(res.rawCuYd, 1.78);
+  // With 10% waste: 48 * 1.10 = 52.8 cu ft = 1.96 cu yds
+  assert.equal(res.totalCuFt, 52.8);
+  assert.equal(res.totalCuYd, 1.96);
+  // 80 lb bags needed: ceil(52.8 / 0.6) = 88 bags
+  assert.equal(res.bags80, 88);
+  assert.ok(res.rebarSticks20ft > 0);
 });
 
-test('Small and large tires & decimal inputs', () => {
-  // Small compact tire: 145/80R12
-  const small = calculateTireMetrics({ widthMm: 145, aspectRatio: 80, rimDiameterIn: 12 });
-  assert.equal(small.valid, true);
-  assert.equal(small.data.sidewallMm, 116);
-  assert.equal(small.data.diameterMm, 536.8);
-
-  // Large commercial/off-road metric tire: 385/65R22.5 (decimal rim)
-  const large = calculateTireMetrics({ widthMm: 385, aspectRatio: 65, rimDiameterIn: 22.5 });
-  assert.equal(large.valid, true);
-  assert.equal(large.data.sidewallMm, 250.25);
-  assert.equal(large.data.diameterMm, 1072);
+test('Calculator 2: Brick & Mortar for 20x8 ft wall', () => {
+  const res = calculateBrick({
+    wallLengthFt: 20,
+    wallHeightFt: 8,
+    openingsSqFt: 20,
+    brickType: 'modular',
+    wytheCount: 1,
+    mortarJointIn: 0.375,
+    wastePct: 5,
+    brickUnitPrice: 0.90,
+    mortarBagPrice: 12,
+  });
+  assert.equal(res.valid, true);
+  // Gross area = 160 sq ft, Net area = 140 sq ft
+  assert.equal(res.grossAreaSqFt, 160);
+  assert.equal(res.netAreaSqFt, 140);
+  // Modular brick (7.5 x 2.25) with 3/8" joint = (7.875 * 2.625) = 20.67 sq in
+  // Bricks per sq ft ~ 6.965
+  assert.ok(res.bricksPerSqFt > 6.8 && res.bricksPerSqFt < 7.1);
+  assert.ok(res.totalBricks > 900);
+  assert.ok(res.mortarBags > 5);
 });
 
-test('Unit conversion helpers (mm <-> inches)', () => {
-  assert.equal(inchesToMm(1), 25.4);
-  assert.equal(Number(inchesToMm(17).toFixed(2)), 431.8);
-  assert.equal(mmToInches(25.4), 1);
-  assert.equal(mmToInches(802.8).toFixed(2), '31.61');
+test('Calculator 3: Concrete Block (CMU) for 24x8 ft wall', () => {
+  const res = calculateCmu({
+    wallLengthFt: 24,
+    wallHeightFt: 8,
+    openingsSqFt: 0,
+    blockSize: '8x8x16',
+    groutFillSpacingIn: 32,
+    wastePct: 5,
+    blockUnitPrice: 2.50,
+    mortarBagPrice: 13,
+  });
+  assert.equal(res.valid, true);
+  // 24 * 8 = 192 sq ft * 1.125 blocks/sq ft = 216 raw blocks
+  assert.equal(res.rawBlocks, 216);
+  // With 5% waste = ceil(216 * 1.05) = 227 blocks
+  assert.equal(res.totalBlocks, 227);
+  assert.ok(res.mortarBags > 5);
+  assert.ok(res.coreFillCuYds > 0);
 });
 
-test('Invalid, missing, and out-of-range inputs return structured errors and never NaN', () => {
-  const missingWidth = calculateTireMetrics({ widthMm: '', aspectRatio: 70, rimDiameterIn: 17 });
-  assert.equal(missingWidth.valid, false);
-  assert.equal(missingWidth.error.code, 'MISSING_WIDTH');
-
-  const nonNumeric = calculateTireMetrics({ widthMm: 'abc', aspectRatio: 70, rimDiameterIn: 17 });
-  assert.equal(nonNumeric.valid, false);
-  assert.equal(nonNumeric.error.code, 'NON_NUMERIC_WIDTH');
-
-  const outOfRangeRim = calculateTireMetrics({ widthMm: 265, aspectRatio: 70, rimDiameterIn: 50 });
-  assert.equal(outOfRangeRim.valid, false);
-  assert.equal(outOfRangeRim.error.code, 'OUT_OF_RANGE_RIM');
-
-  const badString = parseTireSizeString('not-a-tire');
-  assert.equal(badString.valid, false);
-  assert.equal(badString.error.code, 'INVALID_FORMAT');
+test('Calculator 4: Wall Framing 30 ft wall at 16" o.c.', () => {
+  const res = calculateFraming({
+    wallLengthFt: 30,
+    wallHeightFt: 8,
+    studSpacingIn: 16,
+    cornerCount: 4,
+    doorCount: 1,
+    windowCount: 2,
+    wastePct: 10,
+    studPrice: 6,
+    platePrice16ft: 15,
+  });
+  assert.equal(res.valid, true);
+  // Common studs: ceil(30 / 1.333) + 1 = 23 + 1 = 24 studs
+  assert.equal(res.commonStuds, 24);
+  assert.ok(res.totalStuds > 35);
+  assert.ok(res.plateBoards16ft > 5);
 });
 
-test('Wheel offset geometry: positive, zero, and negative offsets + comparison', () => {
-  // Positive offset: 17x8 ET45 (W = 203.2 mm)
-  const pos = calculateWheelGeometry({ rimDiameterIn: 17, rimWidthIn: 8, offsetMm: 45 });
-  assert.equal(pos.valid, true);
-  assert.equal(pos.data.widthMm, 203.2);
-  // W/2 + ET = 101.6 + 45 = 146.6 mm inner
-  assert.equal(pos.data.innerEdgeMm, 146.6);
-  // W/2 - ET = 101.6 - 45 = 56.6 mm outer
-  assert.equal(pos.data.outerEdgeMm, 56.6);
-
-  // Zero offset: 17x8 ET0
-  const zero = calculateWheelGeometry({ rimDiameterIn: 17, rimWidthIn: 8, offsetMm: 0 });
-  assert.equal(zero.valid, true);
-  assert.equal(zero.data.innerEdgeMm, 101.6);
-  assert.equal(zero.data.outerEdgeMm, 101.6);
-
-  // Negative offset: 17x9 ET-12 (W = 228.6 mm, W/2 = 114.3 mm)
-  const neg = calculateWheelGeometry({ rimDiameterIn: 17, rimWidthIn: 9, offsetMm: -12 });
-  assert.equal(neg.valid, true);
-  assert.equal(neg.data.innerEdgeMm, 102.3);
-  assert.equal(neg.data.outerEdgeMm, 126.3);
-
-  // Compare 17x8 ET45 vs 18x9 ET20
-  const comp = compareWheels(
-    { rimDiameterIn: 17, rimWidthIn: 8, offsetMm: 45 },
-    { rimDiameterIn: 18, rimWidthIn: 9, offsetMm: 20 }
-  );
-  assert.equal(comp.valid, true);
-  // 18x9 ET20 has W/2 = 114.3 => inner = 134.3, outer = 94.3
-  // Inner change = 134.3 - 146.6 = -12.3 mm (12.3 mm more inner clearance)
-  // Outer change = 94.3 - 56.6 = +37.7 mm (37.7 mm farther outward)
-  assert.equal(comp.data.diff.innerEdgeMm, -12.3);
-  assert.equal(comp.data.diff.outerEdgeMm, 37.7);
-  assert.equal(comp.data.diff.trackWidthChangeMm, 50);
+test('Calculator 5: Sheathing 640 sq ft with 4x8 OSB', () => {
+  const res = calculateSheathing({
+    areaSqFt: 640,
+    sheetSize: '4x8',
+    wastePct: 10,
+    pricePerSheet: 25,
+  });
+  assert.equal(res.valid, true);
+  assert.equal(res.rawSheets, 20);
+  assert.equal(res.totalSheets, 22);
 });
 
-test('Combined fitment, axle gearing, and decoder strict verification', () => {
-  const fit = calculateCombinedFitment(
-    { widthMm: 265, aspectRatio: 70, rimDiameterIn: 17, rimWidthIn: 7.5, offsetMm: 30 },
-    { widthMm: 285, aspectRatio: 75, rimDiameterIn: 17, rimWidthIn: 8.5, offsetMm: 0 }
-  );
-  assert.equal(fit.valid, true);
-  // Tire outer movement: (285/2 - 0) - (265/2 - 30) = 142.5 - 102.5 = +40 mm outward
-  assert.equal(fit.data.combinedGeometry.tireOuterDiffMm, 40);
+test('Calculator 6: Drywall for 16x14 ft room with 9 ft walls + ceiling', () => {
+  const res = calculateDrywall({
+    roomLengthFt: 16,
+    roomWidthFt: 14,
+    wallHeightFt: 9,
+    includeCeiling: true,
+    openingsSqFt: 40,
+    sheetSize: '4x8',
+    wastePct: 10,
+    sheetPrice: 16,
+    bucketCompoundPrice: 18,
+  });
+  assert.equal(res.valid, true);
+  // Wall area: 2 * (16 + 14) * 9 - 40 = 500 sq ft. Ceiling: 16 * 14 = 224 sq ft. Total = 724 sq ft.
+  assert.equal(res.totalAreaSqFt, 724);
+  assert.ok(res.totalSheets >= 24);
+  assert.ok(res.compoundBuckets >= 2);
+});
 
-  // Gearing: 802.8 mm to 859.3 mm with 3.73 axle ratio
-  const gear = calculateGearing({ oldDiameterMm: 802.8, newDiameterMm: 859.3, axleRatio: 3.73 });
-  assert.equal(gear.valid, true);
-  // 3.73 * (802.8 / 859.3) = 3.4847 => 3.48
-  assert.equal(gear.data.effectiveRatio, 3.48);
+test('Calculator 7: Paint Coverage for 800 sq ft with 2 coats + primer', () => {
+  const res = calculatePaint({
+    surfaceAreaSqFt: 800,
+    coats: 2,
+    includePrimer: true,
+    coveragePerGal: 350,
+    paintPricePerGal: 50,
+    primerPricePerGal: 30,
+  });
+  assert.equal(res.valid, true);
+  // Total paint area: 1600 sq ft / 350 = 4.57 -> 5 gallons
+  assert.equal(res.paintGallons, 5);
+  // Primer: 800 / 350 = 2.28 -> 3 gallons
+  assert.equal(res.primerGallons, 3);
+});
 
-  // Decoder: 285/75R16 116/113S
-  const dec = decodeTireCode('285/75R16 116/113S');
-  assert.equal(dec.valid, true);
-  assert.equal(dec.data.metrics.widthMm, 285);
-  assert.equal(dec.data.loadSingle.index, 116);
-  assert.equal(dec.data.loadSingle.kg, 1250);
-  assert.equal(dec.data.loadDual.index, 113);
-  assert.equal(dec.data.loadDual.kg, 1150);
-  assert.equal(dec.data.speedRating.symbol, 'S');
-  assert.equal(dec.data.speedRating.mph, 112);
+test('Calculator 8: Roofing for 1800 sq ft footprint at 6/12 pitch', () => {
+  const res = calculateRoofing({
+    footprintAreaSqFt: 1800,
+    pitchRiseOver12: 6,
+    ridgeLengthFt: 40,
+    eaveLengthFt: 120,
+    shingleBundlePrice: 38,
+    wastePct: 12,
+  });
+  assert.equal(res.valid, true);
+  // Pitch factor for 6/12 = sqrt(1 + 0.25) = 1.118
+  assert.equal(res.pitchFactor, 1.118);
+  assert.ok(res.trueRoofAreaSqFt > 2000);
+  assert.ok(res.totalSquares > 22);
+  assert.ok(res.totalBundles > 65);
+});
 
-  // Decoder with prefix/suffix flags unverified tokens honestly
-  const decPrefix = decodeTireCode('LT285/75R16 116/113S E');
-  assert.equal(decPrefix.valid, true);
-  assert.equal(decPrefix.data.notDecodedItems.length, 2);
+test('Calculator 9: Tile for 240 sq ft bathroom with 12x12 tile and 1/8" grout', () => {
+  const res = calculateTile({
+    areaSqFt: 240,
+    tileLengthIn: 12,
+    tileWidthIn: 12,
+    tileThicknessIn: 0.375,
+    jointWidthIn: 0.125,
+    sqFtPerBox: 15,
+    wastePct: 10,
+    boxPrice: 40,
+    groutBagPrice: 20,
+  });
+  assert.equal(res.valid, true);
+  assert.equal(res.netAreaSqFt, 240);
+  assert.ok(res.totalBoxes >= 17);
+  assert.ok(res.groutPounds > 10);
+});
+
+test('Calculator 10: Construction Cost & Budget Estimator', () => {
+  const res = calculateConstructionCost({
+    projectType: 'addition',
+    squareFootage: 400,
+    materialBaseCost: 15000,
+    laborRatePerSqFt: 45,
+    equipmentPermitCost: 1200,
+    contractorMarkupPct: 15,
+    contingencyPct: 10,
+  });
+  assert.equal(res.valid, true);
+  // Direct: 15000 (materials) + (400 * 45 = 18000 labor) + 1200 = 34200
+  assert.equal(res.directSubtotal, 34200);
+  // Markup: 34200 * 0.15 = 5130
+  assert.equal(res.markupAmount, 5130);
+  // Subtotal with markup: 39330. Contingency: 39330 * 0.10 = 3933
+  assert.equal(res.contingencyAmount, 3933);
+  // Total: 43263
+  assert.equal(res.totalEstimatedCost, 43263);
+  assert.ok(res.costPerSqFt > 100);
 });

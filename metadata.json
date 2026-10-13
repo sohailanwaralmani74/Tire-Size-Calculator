@@ -1,6 +1,6 @@
 {
   "name": "Wanjaaro Tire & Wheel Calculator",
-  "description": "Compare tire sizes, wheel offset, axle gearing, and speedometer difference in mm and inches. Built for fast, local geometry comparisons like 265/70R17 vs 285/75R17.",
+  "description": "Building material and construction cost calculators: Concrete slabs, footings, bricks, CMU blocks, framing studs, OSB sheathing, drywall, paint coverage, roofing squares, tile, and comprehensive project cost estimation.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

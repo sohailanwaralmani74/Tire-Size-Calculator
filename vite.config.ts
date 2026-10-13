@@ -2,7 +2,9 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import fs from 'fs';
 import path from 'path';
-import {defineConfig} from 'vite';
+import { defineConfig } from 'vite';
+import { generateAllStaticPages } from './src/generatePages.js';
+import { ALL_CALCULATORS } from './src/calc/buildingMath.js';
 
 function inlineIntoHtml(rawHtml: string, cssContent: string, jsContent: string): string {
   let html = rawHtml;
@@ -40,12 +42,20 @@ export default defineConfig(() => {
         transformIndexHtml: {
           order: 'pre',
           handler(html, ctx) {
-            // In local Vite dev server, keep <style id="wanjaaro-inline-css"> intact and swap the inline JS for /src/main.tsx
+            // In local Vite dev server, swap the inline JS or static script for /src/main.tsx
             if (ctx.server) {
-              return html.replace(
-                /<script id="wanjaaro-inline-app"[\s\S]*?<\/script>/,
-                '<script type="module" src="/src/main.tsx"></script>',
-              );
+              if (/<script id="wanjaaro-inline-app"[\s\S]*?<\/script>/.test(html)) {
+                return html.replace(
+                  /<script id="wanjaaro-inline-app"[\s\S]*?<\/script>/,
+                  '<script type="module" src="/src/main.tsx"></script>',
+                );
+              }
+              if (/<script type="module" src="\.\/src\/app-bundle\.js"><\/script>/.test(html)) {
+                return html.replace(
+                  /<script type="module" src="\.\/src\/app-bundle\.js"><\/script>/,
+                  '<script type="module" src="/src/main.tsx"></script>',
+                );
+              }
             }
             return html;
           },
@@ -53,13 +63,13 @@ export default defineConfig(() => {
         closeBundle() {
           const distBundle = path.resolve(__dirname, 'dist/src/app-bundle.js');
           const distCss = path.resolve(__dirname, 'dist/styles/app-styles.css');
-          const rootHtmlPath = path.resolve(__dirname, 'index.html');
-          const distHtmlPath = path.resolve(__dirname, 'dist/index.html');
 
-          if (fs.existsSync(distBundle) && fs.existsSync(distCss) && fs.existsSync(rootHtmlPath)) {
+          // 1. Generate all static pages
+          generateAllStaticPages();
+
+          if (fs.existsSync(distBundle) && fs.existsSync(distCss)) {
             const cssContent = fs.readFileSync(distCss, 'utf-8');
             const jsContent = fs.readFileSync(distBundle, 'utf-8');
-            const rawHtml = fs.readFileSync(rootHtmlPath, 'utf-8');
 
             fs.copyFileSync(distBundle, path.resolve(__dirname, 'src/app-bundle.js'));
             fs.copyFileSync(distCss, path.resolve(__dirname, 'styles/app-styles.css'));
@@ -69,11 +79,31 @@ export default defineConfig(() => {
             const rootPng = path.resolve(__dirname, 'sohail-anwar.png');
             if (fs.existsSync(rootPng)) {
               fs.copyFileSync(rootPng, path.resolve(__dirname, 'src/sohail-anwar.png'));
+              fs.copyFileSync(rootPng, path.resolve(__dirname, 'dist/sohail-anwar.png'));
             }
 
-            const selfContainedHtml = inlineIntoHtml(rawHtml, cssContent, jsContent);
-            fs.writeFileSync(rootHtmlPath, selfContainedHtml, 'utf-8');
-            fs.writeFileSync(distHtmlPath, selfContainedHtml, 'utf-8');
+            // Sync sitemap and 404 to dist
+            const sitemapPath = path.resolve(__dirname, 'sitemap.xml');
+            if (fs.existsSync(sitemapPath)) {
+              fs.copyFileSync(sitemapPath, path.resolve(__dirname, 'dist/sitemap.xml'));
+            }
+            const errorPagePath = path.resolve(__dirname, '404.html');
+            if (fs.existsSync(errorPagePath)) {
+              fs.copyFileSync(errorPagePath, path.resolve(__dirname, 'dist/404.html'));
+            }
+
+            // Inline and copy all calculator pages + index.html
+            const allFilesToProcess = ['index.html', ...ALL_CALCULATORS.map((c) => c.slug)];
+            for (const filename of allFilesToProcess) {
+              const rootPath = path.resolve(__dirname, filename);
+              const distPath = path.resolve(__dirname, 'dist', filename);
+              if (fs.existsSync(rootPath)) {
+                const rawHtml = fs.readFileSync(rootPath, 'utf-8');
+                const selfContainedHtml = inlineIntoHtml(rawHtml, cssContent, jsContent);
+                fs.writeFileSync(rootPath, selfContainedHtml, 'utf-8');
+                fs.writeFileSync(distPath, selfContainedHtml, 'utf-8');
+              }
+            }
           }
         },
       },
@@ -102,9 +132,7 @@ export default defineConfig(() => {
     },
     server: {
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modify—file watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
-      // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
     },
   };

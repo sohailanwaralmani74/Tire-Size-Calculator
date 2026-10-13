@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import WorkspaceApp from './ui/WorkspaceApp.tsx';
+import BuildingWorkspace from './ui/BuildingWorkspace.tsx';
 
 export default function App() {
-  return <WorkspaceApp />;
+  return <BuildingWorkspace />;
 }
