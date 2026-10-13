@@ -4,202 +4,174 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>404 Page Not Found – Wanjaaro Building Material &amp; Cost Calculators</title>
-    <meta
-      name="description"
-      content="The requested construction calculator page could not be found on Wanjaaro. Browse all building material and cost calculators below."
-    />
-    <meta name="robots" content="noindex, follow" />
-    <link rel="canonical" href="https://wanjaaro.com/" />
-
+    <meta name="description" content="The requested calculator page could not be found. Explore our complete directory of building material and construction cost calculators." />
+    <link rel="canonical" href="https://wanjaaro.com/404.html" />
     <!-- Ahrefs Analytics -->
     <script src="https://analytics.ahrefs.com/analytics.js" data-key="V4gUcl5Cbnx6QFjz2rjL2Q" async></script>
-
+    <link rel="stylesheet" href="/styles/app-styles.css" data-vite-ignore />
     <style>
-      :root {
-        --bg: #ffffff;
-        --bg-card: #f8fafc;
-        --text: #0f172a;
-        --text-muted: #475569;
-        --border: #e2e8f0;
-        --accent: #0369a1;
-        --accent-hover: #075985;
-      }
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --bg: #020617;
-          --bg-card: #0f172a;
-          --text: #f8fafc;
-          --text-muted: #94a3b8;
-          --border: #1e293b;
-          --accent: #38bdf8;
-          --accent-hover: #7dd3fc;
-        }
-      }
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
       body {
-        background-color: var(--bg);
-        color: var(--text);
-        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        line-height: 1.6;
-        min-height: 100vh;
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        background-color: #f8fafc;
+        color: #0f172a;
         display: flex;
         flex-direction: column;
+        min-height: 100vh;
       }
-      .header {
-        border-bottom: 1px solid var(--border);
-        background-color: var(--bg);
-      }
-      .header-inner {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0.875rem 1.25rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-      .brand {
-        font-size: 1.125rem;
-        font-weight: 700;
-        color: var(--text);
-        text-decoration: none;
-      }
-      .main {
-        flex: 1;
+      .container {
         max-width: 900px;
-        width: 100%;
-        margin: 2rem auto;
-        padding: 0 1.25rem;
+        margin: 0 auto;
+        padding: 3rem 1.5rem;
+        flex: 1;
       }
-      .badge-404 {
-        font-family: monospace;
-        font-size: 0.875rem;
-        color: var(--accent);
+      .card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 1rem;
+        padding: 2.5rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      }
+      .badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        font-size: 0.75rem;
+        font-family: ui-monospace, monospace;
         font-weight: 700;
-        margin-bottom: 0.5rem;
+        background: #fee2e2;
+        color: #991b1b;
+        border-radius: 9999px;
+        margin-bottom: 1rem;
       }
       h1 {
-        font-size: 1.875rem;
+        font-size: 2rem;
         font-weight: 800;
-        letter-spacing: -0.025em;
-        margin-bottom: 0.75rem;
+        margin: 0 0 0.5rem 0;
+        color: #0f172a;
       }
-      .desc {
-        color: var(--text-muted);
-        margin-bottom: 2rem;
+      p.subtitle {
+        color: #475569;
         font-size: 1rem;
+        margin: 0 0 2rem 0;
+        line-height: 1.5;
       }
       .grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
         gap: 1rem;
-        margin-bottom: 2.5rem;
+        margin-top: 1.5rem;
       }
-      .card {
-        border: 1px solid var(--border);
-        background: var(--bg-card);
-        border-radius: 0.5rem;
+      .calc-link {
+        display: block;
         padding: 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
         text-decoration: none;
         color: inherit;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
+        background: #f8fafc;
+        transition: all 0.15s ease;
       }
-      .card:hover {
-        border-color: var(--accent);
+      .calc-link:hover {
+        border-color: #0284c7;
+        background: #f0f9ff;
+        transform: translateY(-2px);
       }
-      .card-title {
-        font-weight: 600;
+      .calc-title {
+        font-weight: 700;
         font-size: 0.95rem;
-        margin-bottom: 0.35rem;
+        color: #0369a1;
+        margin-bottom: 0.25rem;
       }
-      .card-desc {
+      .calc-desc {
         font-size: 0.8rem;
-        color: var(--text-muted);
+        color: #64748b;
+        line-height: 1.4;
       }
-      .footer {
-        border-top: 1px solid var(--border);
-        padding: 1.5rem;
-        font-size: 0.8rem;
-        color: var(--text-muted);
-        text-align: center;
+      .btn-home {
+        display: inline-block;
+        margin-top: 2rem;
+        padding: 0.75rem 1.5rem;
+        background: #0284c7;
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 0.875rem;
+        text-decoration: none;
+        border-radius: 0.5rem;
+        transition: background 0.15s ease;
+      }
+      .btn-home:hover {
+        background: #0369a1;
       }
     </style>
+    <script>
+      // Smart router: If URL has .html extension, smoothly rewrite to clean path
+      (function() {
+        var p = window.location.pathname;
+        if (p && p.endsWith('.html') && p !== '/404.html') {
+          var clean = p.replace(/\.html$/, '');
+          window.location.replace(clean + window.location.search);
+        }
+      })();
+    </script>
   </head>
   <body>
-    <header class="header">
-      <div class="header-inner">
-        <a href="./" class="brand">Wanjaaro Construction Calculators</a>
-        <a href="./" style="font-size: 0.875rem; color: var(--accent); text-decoration: none; font-weight: 600;">← Back to Home</a>
+    <div class="container">
+      <div class="card">
+        <span class="badge">HTTP 404</span>
+        <h1>Calculator Page Not Found</h1>
+        <p class="subtitle">
+          The requested page could not be located. You can return directly to the
+          <strong>Wanjaaro Homepage</strong> or select from our building material and cost calculators below:
+        </p>
+
+        <a href="/" class="btn-home">← Back to Wanjaaro Homepage</a>
+
+        <h2 style="font-size: 1.15rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 0.5rem;">
+          Popular Construction Calculators
+        </h2>
+        <div class="grid">
+          <a href="/concrete-calculator" class="calc-link">
+            <div class="calc-title">Concrete Slab &amp; Footing</div>
+            <div class="calc-desc">Cubic yards, 40/60/80 lb bags, and rebar grid requirements.</div>
+          </a>
+          <a href="/brick-mortar-calculator" class="calc-link">
+            <div class="calc-title">Brick &amp; Mortar Calculator</div>
+            <div class="calc-desc">Modular, king, queen bricks, mortar bags, and tons of sand.</div>
+          </a>
+          <a href="/block-cmu-calculator" class="calc-link">
+            <div class="calc-title">Concrete Block (CMU)</div>
+            <div class="calc-desc">Standard 8x8x16 CMU blocks, core-fill grout, and vertical rebar.</div>
+          </a>
+          <a href="/framing-calculator" class="calc-link">
+            <div class="calc-title">Wall Framing &amp; Studs</div>
+            <div class="calc-desc">Common studs (16" &amp; 24" O.C.), top/bottom plates, headers, and board feet.</div>
+          </a>
+          <a href="/sheathing-calculator" class="calc-link">
+            <div class="calc-title">Plywood &amp; OSB Sheathing</div>
+            <div class="calc-desc">4x8 &amp; 4x10 panels for walls, subfloors, and roof decks.</div>
+          </a>
+          <a href="/drywall-calculator" class="calc-link">
+            <div class="calc-title">Drywall &amp; Sheetrock</div>
+            <div class="calc-desc">Drywall sheets, joint compound buckets, screws, and tape rolls.</div>
+          </a>
+          <a href="/paint-calculator" class="calc-link">
+            <div class="calc-title">Paint &amp; Primer Coverage</div>
+            <div class="calc-desc">Gallons of paint and primer with window and door deductions.</div>
+          </a>
+          <a href="/roofing-calculator" class="calc-link">
+            <div class="calc-title">Roofing Shingles &amp; Pitch</div>
+            <div class="calc-desc">Roofing squares, architectural bundles, pitch multipliers, and felt.</div>
+          </a>
+          <a href="/flooring-tile-calculator" class="calc-link">
+            <div class="calc-title">Tile &amp; Grout Calculator</div>
+            <div class="calc-desc">Tile square footage, box count with waste, and grout lbs.</div>
+          </a>
+          <a href="/construction-cost-calculator" class="calc-link">
+            <div class="calc-title">Construction Cost &amp; Budget</div>
+            <div class="calc-desc">Material takeoff totals, labor rates, contractor markup, and contingency.</div>
+          </a>
+        </div>
       </div>
-    </header>
-
-    <main class="main">
-      <div class="badge-404">ERROR 404</div>
-      <h1>Page Not Found</h1>
-      <p class="desc">
-        The requested URL was not found on this server. Select any building material or cost calculator below to compute your takeoff:
-      </p>
-
-      <div class="grid">
-        <a href="./concrete-calculator.html" class="card">
-          <div class="card-title">Concrete Slab &amp; Footing Calculator</div>
-          <div class="card-desc">Cubic yards, 40/60/80 lb bags, rebar grid sticks</div>
-        </a>
-
-        <a href="./brick-mortar-calculator.html" class="card">
-          <div class="card-title">Brick &amp; Mortar Calculator</div>
-          <div class="card-desc">Modular, king, queen bricks, mortar bags, sand tons</div>
-        </a>
-
-        <a href="./block-cmu-calculator.html" class="card">
-          <div class="card-title">Concrete Block (CMU) Calculator</div>
-          <div class="card-desc">8x8x16 blocks, core-fill grout volume, rebar</div>
-        </a>
-
-        <a href="./framing-calculator.html" class="card">
-          <div class="card-title">Wall Framing &amp; Stud Calculator</div>
-          <div class="card-desc">16" &amp; 24" o.c. studs, top/bottom plates, headers</div>
-        </a>
-
-        <a href="./sheathing-calculator.html" class="card">
-          <div class="card-title">Plywood &amp; OSB Sheathing Calculator</div>
-          <div class="card-desc">4x8 &amp; 4x10 panels for walls, floors, roofs</div>
-        </a>
-
-        <a href="./drywall-calculator.html" class="card">
-          <div class="card-title">Drywall &amp; Sheetrock Calculator</div>
-          <div class="card-desc">Sheets, ready-mix mud buckets, screws, tape</div>
-        </a>
-
-        <a href="./paint-calculator.html" class="card">
-          <div class="card-title">Paint &amp; Primer Coverage Calculator</div>
-          <div class="card-desc">Gallons of paint and primer with coat multiplier</div>
-        </a>
-
-        <a href="./roofing-calculator.html" class="card">
-          <div class="card-title">Roofing Shingle &amp; Pitch Calculator</div>
-          <div class="card-desc">Roofing squares, bundles, pitch factor, felt rolls</div>
-        </a>
-
-        <a href="./flooring-tile-calculator.html" class="card">
-          <div class="card-title">Tile, Grout &amp; Flooring Calculator</div>
-          <div class="card-desc">Tile boxes, grout pounds, thin-set mortar bags</div>
-        </a>
-
-        <a href="./construction-cost-calculator.html" class="card">
-          <div class="card-title">Construction Cost &amp; Budget Estimator</div>
-          <div class="card-desc">Direct labor, material subtotal, GC markup, contingency</div>
-        </a>
-      </div>
-    </main>
-
-    <footer class="footer">
-      © 2026 Wanjaaro · Built by Sohail Anwar · Deterministic browser-based calculation tools.
-    </footer>
+    </div>
   </body>
 </html>

@@ -61,8 +61,9 @@ export default defineConfig(() => {
           },
         },
         closeBundle() {
-          const distBundle = path.resolve(__dirname, 'dist/src/app-bundle.js');
-          const distCss = path.resolve(__dirname, 'dist/styles/app-styles.css');
+          const rootDir = process.cwd();
+          const distBundle = path.resolve(rootDir, 'dist/src/app-bundle.js');
+          const distCss = path.resolve(rootDir, 'dist/styles/app-styles.css');
 
           // 1. Generate all static pages
           generateAllStaticPages();
@@ -71,37 +72,78 @@ export default defineConfig(() => {
             const cssContent = fs.readFileSync(distCss, 'utf-8');
             const jsContent = fs.readFileSync(distBundle, 'utf-8');
 
-            fs.copyFileSync(distBundle, path.resolve(__dirname, 'src/app-bundle.js'));
-            fs.copyFileSync(distCss, path.resolve(__dirname, 'styles/app-styles.css'));
-            fs.copyFileSync(distCss, path.resolve(__dirname, 'src/app-styles.css'));
-            fs.copyFileSync(distCss, path.resolve(__dirname, 'src/main.css'));
+            // Copy bundle to all potential entry paths for legacy / direct script links
+            const jsDestinations = [
+              'src/app-bundle.js',
+              'app-bundle.js',
+              'main.js',
+              'dist/app-bundle.js',
+              'dist/main.js',
+            ];
+            for (const rel of jsDestinations) {
+              fs.writeFileSync(path.resolve(rootDir, rel), jsContent, 'utf-8');
+            }
 
-            const rootPng = path.resolve(__dirname, 'sohail-anwar.png');
+            // Copy CSS to all potential entry paths to prevent any 404s
+            const cssDestinations = [
+              'styles/app-styles.css',
+              'styles/main.css',
+              'src/app-styles.css',
+              'src/main.css',
+              'app-styles.css',
+              'main.css',
+              'dist/app-styles.css',
+              'dist/main.css',
+              'dist/src/app-styles.css',
+              'dist/src/main.css',
+              'dist/styles/main.css',
+            ];
+            for (const rel of cssDestinations) {
+              const fullPath = path.resolve(rootDir, rel);
+              fs.mkdirSync(path.dirname(fullPath), { recursive: true });
+              fs.writeFileSync(fullPath, cssContent, 'utf-8');
+            }
+
+            const rootPng = path.resolve(rootDir, 'sohail-anwar.png');
             if (fs.existsSync(rootPng)) {
-              fs.copyFileSync(rootPng, path.resolve(__dirname, 'src/sohail-anwar.png'));
-              fs.copyFileSync(rootPng, path.resolve(__dirname, 'dist/sohail-anwar.png'));
+              fs.copyFileSync(rootPng, path.resolve(rootDir, 'src/sohail-anwar.png'));
+              fs.copyFileSync(rootPng, path.resolve(rootDir, 'dist/sohail-anwar.png'));
             }
 
-            // Sync sitemap and 404 to dist
-            const sitemapPath = path.resolve(__dirname, 'sitemap.xml');
-            if (fs.existsSync(sitemapPath)) {
-              fs.copyFileSync(sitemapPath, path.resolve(__dirname, 'dist/sitemap.xml'));
-            }
-            const errorPagePath = path.resolve(__dirname, '404.html');
-            if (fs.existsSync(errorPagePath)) {
-              fs.copyFileSync(errorPagePath, path.resolve(__dirname, 'dist/404.html'));
+            // Sync sitemap, robots, CNAME, .nojekyll, and 404 to dist
+            for (const metaFile of ['sitemap.xml', 'robots.txt', 'CNAME', '.nojekyll', '404.html']) {
+              const sourcePath = path.resolve(rootDir, metaFile);
+              if (fs.existsSync(sourcePath)) {
+                fs.copyFileSync(sourcePath, path.resolve(rootDir, 'dist', metaFile));
+              }
             }
 
-            // Inline and copy all calculator pages + index.html
-            const allFilesToProcess = ['index.html', ...ALL_CALCULATORS.map((c) => c.slug)];
-            for (const filename of allFilesToProcess) {
-              const rootPath = path.resolve(__dirname, filename);
-              const distPath = path.resolve(__dirname, 'dist', filename);
-              if (fs.existsSync(rootPath)) {
-                const rawHtml = fs.readFileSync(rootPath, 'utf-8');
+            // Inline and copy index.html and all clean-URL directories + legacy .html files
+            const indexRoot = path.resolve(rootDir, 'index.html');
+            const indexDist = path.resolve(rootDir, 'dist/index.html');
+            if (fs.existsSync(indexRoot)) {
+              const rawHtml = fs.readFileSync(indexRoot, 'utf-8');
+              const selfContainedHtml = inlineIntoHtml(rawHtml, cssContent, jsContent);
+              fs.writeFileSync(indexRoot, selfContainedHtml, 'utf-8');
+              fs.writeFileSync(indexDist, selfContainedHtml, 'utf-8');
+            }
+
+            for (const calc of ALL_CALCULATORS) {
+              const dirHtmlPath = path.resolve(rootDir, calc.slug, 'index.html');
+              const distDir = path.resolve(rootDir, 'dist', calc.slug);
+              fs.mkdirSync(distDir, { recursive: true });
+              const distDirHtmlPath = path.resolve(distDir, 'index.html');
+
+              const legacyHtmlPath = path.resolve(rootDir, `${calc.slug}.html`);
+              const distLegacyHtmlPath = path.resolve(rootDir, 'dist', `${calc.slug}.html`);
+
+              if (fs.existsSync(dirHtmlPath)) {
+                const rawHtml = fs.readFileSync(dirHtmlPath, 'utf-8');
                 const selfContainedHtml = inlineIntoHtml(rawHtml, cssContent, jsContent);
-                fs.writeFileSync(rootPath, selfContainedHtml, 'utf-8');
-                fs.writeFileSync(distPath, selfContainedHtml, 'utf-8');
+                fs.writeFileSync(dirHtmlPath, selfContainedHtml, 'utf-8');
+                fs.writeFileSync(distDirHtmlPath, selfContainedHtml, 'utf-8');
+                fs.writeFileSync(legacyHtmlPath, selfContainedHtml, 'utf-8');
+                fs.writeFileSync(distLegacyHtmlPath, selfContainedHtml, 'utf-8');
               }
             }
           }
@@ -111,7 +153,7 @@ export default defineConfig(() => {
     build: {
       rollupOptions: {
         input: {
-          main: path.resolve(__dirname, 'src/main.tsx'),
+          main: path.resolve(process.cwd(), 'src/main.tsx'),
         },
         output: {
           inlineDynamicImports: true,

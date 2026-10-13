@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Drywall & Sheetrock Calculator – Wanjaaro Material & Cost Calculator</title>
     <meta name="description" content="Calculate 4x8, 4x10, 4x12 drywall sheets, joint compound buckets, screws, and tape rolls. Free, instant deterministic calculations with waste margin, material takeoffs, and contractor cost breakdown." />
-    <link rel="canonical" href="https://wanjaaro.com/drywall-calculator.html" />
+    <link rel="canonical" href="https://wanjaaro.com/drywall-calculator" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Wanjaaro" />
     <meta property="og:title" content="Drywall & Sheetrock Calculator – Wanjaaro Material & Cost Calculator" />
     <meta property="og:description" content="Calculate 4x8, 4x10, 4x12 drywall sheets, joint compound buckets, screws, and tape rolls. Free, instant deterministic calculations with waste margin, material takeoffs, and contractor cost breakdown." />
-    <meta property="og:url" content="https://wanjaaro.com/drywall-calculator.html" />
+    <meta property="og:url" content="https://wanjaaro.com/drywall-calculator" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -60,20 +60,20 @@
           "@type": "ListItem",
           "position": 2,
           "name": "Drywall & Paint",
-          "item": "https://wanjaaro.com/drywall-calculator.html"
+          "item": "https://wanjaaro.com/drywall-calculator"
         },
         {
           "@type": "ListItem",
           "position": 3,
           "name": "Drywall & Sheetrock Calculator",
-          "item": "https://wanjaaro.com/drywall-calculator.html"
+          "item": "https://wanjaaro.com/drywall-calculator"
         }
       ]
     },
     {
       "@type": "WebApplication",
       "name": "Drywall & Sheetrock Calculator",
-      "url": "https://wanjaaro.com/drywall-calculator.html",
+      "url": "https://wanjaaro.com/drywall-calculator",
       "applicationCategory": "UtilitiesApplication",
       "operatingSystem": "All",
       "browserRequirements": "Requires JavaScript for live interactive sliders and takeoff exports.",
@@ -95,18 +95,18 @@
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "How many sheets of drywall do I need for a 12x14 foot room with 8-foot ceilings?",
+          "name": "Should drywall be hung horizontally or vertically on walls?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "The wall perimeter is (12 + 14) × 2 = 52 linear feet. Multiplied by 8 ft height = 416 sq ft. Subtracting ~40 sq ft for a door and window = 376 sq ft of walls. Ceiling area is 12 × 14 = 168 sq ft. Total area = 544 sq ft. Using 4x8 sheets (32 sq ft/sheet) gives 17 sheets; with 10% waste, order 19 sheets."
+            "text": "Hanging 12-foot or 8-foot drywall sheets horizontally reduces total linear feet of joints by up to 25%, bridges minor stud misalignment, and places the tapered seam at comfortable chest height for finishing."
           }
         },
         {
           "@type": "Question",
-          "name": "How much joint compound (mud) is required per drywall sheet?",
+          "name": "How many buckets of joint compound and rolls of tape are needed per 100 sq ft of drywall?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "A general rule of thumb is 1 bucket (4.5 gallons / 61 lbs) of ready-mix all-purpose joint compound per 400 square feet of drywall (approximately 12 to 13 sheets of 4x8 drywall)."
+            "text": "Plan on approximately 0.05 to 0.06 gallons of premixed all-purpose joint compound per square foot (about one 4.5-gallon pail per 8 sheets of 4x8 drywall). Plan on 370 feet of paper tape per 1,000 square feet of board."
           }
         }
       ]
@@ -114,7 +114,7 @@
   ]
 }
     </script>
-    <link rel="stylesheet" href="./styles/app-styles.css" data-vite-ignore />
+    <link rel="stylesheet" href="/styles/app-styles.css" data-vite-ignore />
   </head>
   <body class="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased selection:bg-sky-600 selection:text-white">
     <!-- Interactive React Mount Point -->
@@ -123,21 +123,34 @@
     <!-- Noscript & SEO Fallback for Bots -->
     <noscript>
       <div style="max-width: 1200px; margin: 2rem auto; padding: 1.5rem; font-family: system-ui, sans-serif;">
-        <h1 style="font-size: 1.75rem; font-weight: bold; margin-bottom: 0.5rem;">Drywall & Sheetrock Calculator</h1>
-        <p style="color: #475569; margin-bottom: 1.5rem;">Calculate 4x8, 4x10, 4x12 drywall sheets, joint compound buckets, screws, and tape rolls.</p>
-        <p><strong>Category:</strong> Drywall & Paint</p>
-        <p><strong>Last Modified:</strong> 2026-10-08</p>
+        <h1 style="font-size: 1.75rem; font-weight: bold; margin-bottom: 0.5rem;">Drywall & Sheetrock Calculator – Wanjaaro Material & Cost Calculator</h1>
+        <p style="color: #475569; margin-bottom: 1.5rem;">Calculate 4x8, 4x10, 4x12 drywall sheets, joint compound buckets, screws, and tape rolls. Free, instant deterministic calculations with waste margin, material takeoffs, and contractor cost breakdown.</p>
+        <p><strong>Category:</strong> Drywall & Paint</p><p><strong>Last Modified:</strong> 2026-10-08</p>
+
+        <h2 style="font-size: 1.25rem; font-weight: bold; margin-top: 1.5rem;">Available Building Material Calculators</h2>
+        <ul style="margin-top: 0.5rem; line-height: 1.8;">
+          <li><a href="/concrete-calculator">Concrete Slab & Footing Calculator</a> – Calculate volume in cubic yards, pre-mixed bags (40, 60, 80 lb), and rebar grid requirements.</li>
+          <li><a href="/brick-mortar-calculator">Brick & Mortar Calculator</a> – Calculate total modular, king, or queen bricks, mortar bags (Type N/S), and tons of sand.</li>
+          <li><a href="/block-cmu-calculator">Concrete Block (CMU) Calculator</a> – Estimate standard CMU blocks, core-fill grout volume, mortar bags, and vertical rebar.</li>
+          <li><a href="/framing-calculator">Wall Framing & Stud Calculator</a> – Calculate common studs, double top plates, bottom sill, headers, corners, and board feet.</li>
+          <li><a href="/sheathing-calculator">Plywood & OSB Sheathing Calculator</a> – Determine 4x8 / 4x10 sheets for walls, subfloors, and roof decks plus framing nail counts.</li>
+          <li><a href="/drywall-calculator">Drywall & Sheetrock Calculator</a> – Calculate 4x8, 4x10, 4x12 drywall sheets, joint compound buckets, screws, and tape rolls.</li>
+          <li><a href="/paint-calculator">Paint & Primer Coverage Calculator</a> – Estimate gallons of wall/ceiling paint and primer with window and door deduction.</li>
+          <li><a href="/roofing-calculator">Roofing Shingle & Pitch Calculator</a> – Calculate roofing squares, architectural bundles, pitch multipliers, felt, and ridge caps.</li>
+          <li><a href="/flooring-tile-calculator">Tile, Grout & Flooring Calculator</a> – Calculate square footage, tile boxes with waste, grout weight (lbs), and thin-set bags.</li>
+          <li><a href="/construction-cost-calculator">Construction Cost & Budget Estimator</a> – Estimate total project budget with material subtotal, labor rates, GC markup, and contingency.</li>
+        </ul>
 
         <h2 style="font-size: 1.25rem; font-weight: bold; margin-top: 1.5rem;">Frequently Asked Questions</h2>
         
           <div style="margin-top: 1rem;">
-            <h3 style="font-size: 1rem; font-weight: 600;">How many sheets of drywall do I need for a 12x14 foot room with 8-foot ceilings?</h3>
-            <p style="color: #334155; margin-top: 0.25rem;">The wall perimeter is (12 + 14) × 2 = 52 linear feet. Multiplied by 8 ft height = 416 sq ft. Subtracting ~40 sq ft for a door and window = 376 sq ft of walls. Ceiling area is 12 × 14 = 168 sq ft. Total area = 544 sq ft. Using 4x8 sheets (32 sq ft/sheet) gives 17 sheets; with 10% waste, order 19 sheets.</p>
+            <h3 style="font-size: 1rem; font-weight: 600;">Should drywall be hung horizontally or vertically on walls?</h3>
+            <p style="color: #334155; margin-top: 0.25rem;">Hanging 12-foot or 8-foot drywall sheets horizontally reduces total linear feet of joints by up to 25%, bridges minor stud misalignment, and places the tapered seam at comfortable chest height for finishing.</p>
           </div>
         
           <div style="margin-top: 1rem;">
-            <h3 style="font-size: 1rem; font-weight: 600;">How much joint compound (mud) is required per drywall sheet?</h3>
-            <p style="color: #334155; margin-top: 0.25rem;">A general rule of thumb is 1 bucket (4.5 gallons / 61 lbs) of ready-mix all-purpose joint compound per 400 square feet of drywall (approximately 12 to 13 sheets of 4x8 drywall).</p>
+            <h3 style="font-size: 1rem; font-weight: 600;">How many buckets of joint compound and rolls of tape are needed per 100 sq ft of drywall?</h3>
+            <p style="color: #334155; margin-top: 0.25rem;">Plan on approximately 0.05 to 0.06 gallons of premixed all-purpose joint compound per square foot (about one 4.5-gallon pail per 8 sheets of 4x8 drywall). Plan on 370 feet of paper tape per 1,000 square feet of board.</p>
           </div>
         
       </div>
@@ -284,6 +297,6 @@
     </script>
 
     <!-- Application Bundle -->
-    <script type="module" src="./src/app-bundle.js"></script>
+    <script type="module" src="/src/app-bundle.js"></script>
   </body>
 </html>

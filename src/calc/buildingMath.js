@@ -11,7 +11,7 @@ export const CALCULATOR_CATEGORIES = [
     calculators: [
       {
         id: 'concrete',
-        slug: 'concrete-calculator.html',
+        slug: 'concrete-calculator',
         name: 'Concrete Slab & Footing Calculator',
         shortTitle: 'Concrete Slab',
         badge: 'Cubic Yards & Bags',
@@ -20,7 +20,7 @@ export const CALCULATOR_CATEGORIES = [
       },
       {
         id: 'brick-mortar',
-        slug: 'brick-mortar-calculator.html',
+        slug: 'brick-mortar-calculator',
         name: 'Brick & Mortar Calculator',
         shortTitle: 'Brick & Mortar',
         badge: 'Bricks, Sand & Bags',
@@ -29,7 +29,7 @@ export const CALCULATOR_CATEGORIES = [
       },
       {
         id: 'block-cmu',
-        slug: 'block-cmu-calculator.html',
+        slug: 'block-cmu-calculator',
         name: 'Concrete Block (CMU) Calculator',
         shortTitle: 'CMU Blocks',
         badge: '8x8x16 & Core Fill',
@@ -46,7 +46,7 @@ export const CALCULATOR_CATEGORIES = [
     calculators: [
       {
         id: 'framing',
-        slug: 'framing-calculator.html',
+        slug: 'framing-calculator',
         name: 'Wall Framing & Stud Calculator',
         shortTitle: 'Wall Studs',
         badge: '16" & 24" O.C.',
@@ -55,7 +55,7 @@ export const CALCULATOR_CATEGORIES = [
       },
       {
         id: 'sheathing',
-        slug: 'sheathing-calculator.html',
+        slug: 'sheathing-calculator',
         name: 'Plywood & OSB Sheathing Calculator',
         shortTitle: 'OSB Sheathing',
         badge: '4x8 & 4x10 Sheets',
@@ -72,7 +72,7 @@ export const CALCULATOR_CATEGORIES = [
     calculators: [
       {
         id: 'drywall',
-        slug: 'drywall-calculator.html',
+        slug: 'drywall-calculator',
         name: 'Drywall & Sheetrock Calculator',
         shortTitle: 'Drywall Sheets',
         badge: 'Sheets, Mud & Tape',
@@ -81,7 +81,7 @@ export const CALCULATOR_CATEGORIES = [
       },
       {
         id: 'paint',
-        slug: 'paint-calculator.html',
+        slug: 'paint-calculator',
         name: 'Paint & Primer Coverage Calculator',
         shortTitle: 'Paint Coverage',
         badge: 'Gallons & Coats',
@@ -98,7 +98,7 @@ export const CALCULATOR_CATEGORIES = [
     calculators: [
       {
         id: 'roofing',
-        slug: 'roofing-calculator.html',
+        slug: 'roofing-calculator',
         name: 'Roofing Shingle & Pitch Calculator',
         shortTitle: 'Roof Shingles',
         badge: 'Squares & Bundles',
@@ -107,7 +107,7 @@ export const CALCULATOR_CATEGORIES = [
       },
       {
         id: 'flooring-tile',
-        slug: 'flooring-tile-calculator.html',
+        slug: 'flooring-tile-calculator',
         name: 'Tile, Grout & Flooring Calculator',
         shortTitle: 'Tile & Grout',
         badge: 'Boxes & Grout Lbs',
@@ -124,7 +124,7 @@ export const CALCULATOR_CATEGORIES = [
     calculators: [
       {
         id: 'construction-cost',
-        slug: 'construction-cost-calculator.html',
+        slug: 'construction-cost-calculator',
         name: 'Construction Cost & Budget Estimator',
         shortTitle: 'Project Budget',
         badge: 'Labor, Material & Markup',

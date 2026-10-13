@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Paint & Primer Coverage Calculator – Wanjaaro Material & Cost Calculator</title>
     <meta name="description" content="Estimate gallons of wall/ceiling paint and primer with window and door deduction. Free, instant deterministic calculations with waste margin, material takeoffs, and contractor cost breakdown." />
-    <link rel="canonical" href="https://wanjaaro.com/paint-calculator.html" />
+    <link rel="canonical" href="https://wanjaaro.com/paint-calculator" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Wanjaaro" />
     <meta property="og:title" content="Paint & Primer Coverage Calculator – Wanjaaro Material & Cost Calculator" />
     <meta property="og:description" content="Estimate gallons of wall/ceiling paint and primer with window and door deduction. Free, instant deterministic calculations with waste margin, material takeoffs, and contractor cost breakdown." />
-    <meta property="og:url" content="https://wanjaaro.com/paint-calculator.html" />
+    <meta property="og:url" content="https://wanjaaro.com/paint-calculator" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -60,20 +60,20 @@
           "@type": "ListItem",
           "position": 2,
           "name": "Drywall & Paint",
-          "item": "https://wanjaaro.com/drywall-calculator.html"
+          "item": "https://wanjaaro.com/drywall-calculator"
         },
         {
           "@type": "ListItem",
           "position": 3,
           "name": "Paint & Primer Coverage Calculator",
-          "item": "https://wanjaaro.com/paint-calculator.html"
+          "item": "https://wanjaaro.com/paint-calculator"
         }
       ]
     },
     {
       "@type": "WebApplication",
       "name": "Paint & Primer Coverage Calculator",
-      "url": "https://wanjaaro.com/paint-calculator.html",
+      "url": "https://wanjaaro.com/paint-calculator",
       "applicationCategory": "UtilitiesApplication",
       "operatingSystem": "All",
       "browserRequirements": "Requires JavaScript for live interactive sliders and takeoff exports.",
@@ -98,15 +98,15 @@
           "name": "How many square feet does one gallon of paint cover?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "One gallon of quality interior wall paint typically covers 350 to 400 square feet on smooth, primed drywall. On rough, textured, or porous unprimed surfaces, coverage drops to 250 to 300 square feet per gallon."
+            "text": "A standard gallon of quality architectural interior acrylic latex covers approximately 350 to 400 square feet on smooth, primed surfaces. On rough, unprimed drywall or masonry, coverage drops to 200 to 250 square feet per gallon."
           }
         },
         {
           "@type": "Question",
-          "name": "Do I really need primer before painting new drywall?",
+          "name": "Why is a dedicated primer coat necessary on fresh drywall?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes. Bare drywall paper and joint compound absorb paint at radically different rates. Without a PVA primer or sealer, the joint compound lines will flash through the topcoat with an uneven sheen, even after two coats of premium paint."
+            "text": "New drywall paper and joint compound absorb paint at vastly different rates (called \"flashing\" or banding). A PVA drywall primer seals the porosity evenly, guaranteeing uniform sheen and color."
           }
         }
       ]
@@ -114,7 +114,7 @@
   ]
 }
     </script>
-    <link rel="stylesheet" href="./styles/app-styles.css" data-vite-ignore />
+    <link rel="stylesheet" href="/styles/app-styles.css" data-vite-ignore />
   </head>
   <body class="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased selection:bg-sky-600 selection:text-white">
     <!-- Interactive React Mount Point -->
@@ -123,21 +123,34 @@
     <!-- Noscript & SEO Fallback for Bots -->
     <noscript>
       <div style="max-width: 1200px; margin: 2rem auto; padding: 1.5rem; font-family: system-ui, sans-serif;">
-        <h1 style="font-size: 1.75rem; font-weight: bold; margin-bottom: 0.5rem;">Paint & Primer Coverage Calculator</h1>
-        <p style="color: #475569; margin-bottom: 1.5rem;">Estimate gallons of wall/ceiling paint and primer with window and door deduction.</p>
-        <p><strong>Category:</strong> Drywall & Paint</p>
-        <p><strong>Last Modified:</strong> 2026-10-07</p>
+        <h1 style="font-size: 1.75rem; font-weight: bold; margin-bottom: 0.5rem;">Paint & Primer Coverage Calculator – Wanjaaro Material & Cost Calculator</h1>
+        <p style="color: #475569; margin-bottom: 1.5rem;">Estimate gallons of wall/ceiling paint and primer with window and door deduction. Free, instant deterministic calculations with waste margin, material takeoffs, and contractor cost breakdown.</p>
+        <p><strong>Category:</strong> Drywall & Paint</p><p><strong>Last Modified:</strong> 2026-10-07</p>
+
+        <h2 style="font-size: 1.25rem; font-weight: bold; margin-top: 1.5rem;">Available Building Material Calculators</h2>
+        <ul style="margin-top: 0.5rem; line-height: 1.8;">
+          <li><a href="/concrete-calculator">Concrete Slab & Footing Calculator</a> – Calculate volume in cubic yards, pre-mixed bags (40, 60, 80 lb), and rebar grid requirements.</li>
+          <li><a href="/brick-mortar-calculator">Brick & Mortar Calculator</a> – Calculate total modular, king, or queen bricks, mortar bags (Type N/S), and tons of sand.</li>
+          <li><a href="/block-cmu-calculator">Concrete Block (CMU) Calculator</a> – Estimate standard CMU blocks, core-fill grout volume, mortar bags, and vertical rebar.</li>
+          <li><a href="/framing-calculator">Wall Framing & Stud Calculator</a> – Calculate common studs, double top plates, bottom sill, headers, corners, and board feet.</li>
+          <li><a href="/sheathing-calculator">Plywood & OSB Sheathing Calculator</a> – Determine 4x8 / 4x10 sheets for walls, subfloors, and roof decks plus framing nail counts.</li>
+          <li><a href="/drywall-calculator">Drywall & Sheetrock Calculator</a> – Calculate 4x8, 4x10, 4x12 drywall sheets, joint compound buckets, screws, and tape rolls.</li>
+          <li><a href="/paint-calculator">Paint & Primer Coverage Calculator</a> – Estimate gallons of wall/ceiling paint and primer with window and door deduction.</li>
+          <li><a href="/roofing-calculator">Roofing Shingle & Pitch Calculator</a> – Calculate roofing squares, architectural bundles, pitch multipliers, felt, and ridge caps.</li>
+          <li><a href="/flooring-tile-calculator">Tile, Grout & Flooring Calculator</a> – Calculate square footage, tile boxes with waste, grout weight (lbs), and thin-set bags.</li>
+          <li><a href="/construction-cost-calculator">Construction Cost & Budget Estimator</a> – Estimate total project budget with material subtotal, labor rates, GC markup, and contingency.</li>
+        </ul>
 
         <h2 style="font-size: 1.25rem; font-weight: bold; margin-top: 1.5rem;">Frequently Asked Questions</h2>
         
           <div style="margin-top: 1rem;">
             <h3 style="font-size: 1rem; font-weight: 600;">How many square feet does one gallon of paint cover?</h3>
-            <p style="color: #334155; margin-top: 0.25rem;">One gallon of quality interior wall paint typically covers 350 to 400 square feet on smooth, primed drywall. On rough, textured, or porous unprimed surfaces, coverage drops to 250 to 300 square feet per gallon.</p>
+            <p style="color: #334155; margin-top: 0.25rem;">A standard gallon of quality architectural interior acrylic latex covers approximately 350 to 400 square feet on smooth, primed surfaces. On rough, unprimed drywall or masonry, coverage drops to 200 to 250 square feet per gallon.</p>
           </div>
         
           <div style="margin-top: 1rem;">
-            <h3 style="font-size: 1rem; font-weight: 600;">Do I really need primer before painting new drywall?</h3>
-            <p style="color: #334155; margin-top: 0.25rem;">Yes. Bare drywall paper and joint compound absorb paint at radically different rates. Without a PVA primer or sealer, the joint compound lines will flash through the topcoat with an uneven sheen, even after two coats of premium paint.</p>
+            <h3 style="font-size: 1rem; font-weight: 600;">Why is a dedicated primer coat necessary on fresh drywall?</h3>
+            <p style="color: #334155; margin-top: 0.25rem;">New drywall paper and joint compound absorb paint at vastly different rates (called "flashing" or banding). A PVA drywall primer seals the porosity evenly, guaranteeing uniform sheen and color.</p>
           </div>
         
       </div>
@@ -284,6 +297,6 @@
     </script>
 
     <!-- Application Bundle -->
-    <script type="module" src="./src/app-bundle.js"></script>
+    <script type="module" src="/src/app-bundle.js"></script>
   </body>
 </html>

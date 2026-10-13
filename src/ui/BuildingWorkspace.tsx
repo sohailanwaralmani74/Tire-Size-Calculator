@@ -19,24 +19,38 @@ interface BuildingWorkspaceProps {
 }
 
 export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspaceProps) {
-  // Determine active calculator from initial prop, URL search param, or pathname
+  // Determine active calculator or home view from initial prop, URL search param, or clean pathname
   const [activeCalcId, setActiveCalcId] = useState<string>(() => {
-    if (initialCalcId && ALL_CALCULATORS.some((c) => c.id === initialCalcId)) {
-      return initialCalcId;
+    if (initialCalcId) {
+      if (initialCalcId === 'home') return 'home';
+      if (ALL_CALCULATORS.some((c) => c.id === initialCalcId)) return initialCalcId;
     }
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
       const paramCalc = urlParams.get('calc');
-      if (paramCalc && ALL_CALCULATORS.some((c) => c.id === paramCalc)) {
-        return paramCalc;
+      if (paramCalc) {
+        if (paramCalc === 'home') return 'home';
+        if (ALL_CALCULATORS.some((c) => c.id === paramCalc)) return paramCalc;
       }
-      const path = window.location.pathname.replace(/^\//, '');
-      const matched = ALL_CALCULATORS.find((c) => c.slug === path);
-      if (matched) return matched.id;
+      // Clean path: strip leading/trailing slashes and .html
+      const cleanPath = window.location.pathname.replace(/^\/|\/$/g, '').replace(/\.html$/, '');
+      if (!cleanPath || cleanPath === 'index') {
+        return 'home';
+      }
+      const matched = ALL_CALCULATORS.find((c) => c.slug === cleanPath || c.id === cleanPath);
+      if (matched) {
+        // If loaded with .html, cleanly replace in browser address bar without page reload
+        if (window.location.pathname.includes('.html')) {
+          window.history.replaceState({ calcId: matched.id }, '', `/${matched.slug}`);
+        }
+        return matched.id;
+      }
     }
-    return 'concrete';
+    return 'home';
   });
 
+  const [homeSearch, setHomeSearch] = useState('');
+  const [homeCategoryFilter, setHomeCategoryFilter] = useState('all');
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
   const [mobileCategoryOpen, setMobileCategoryOpen] = useState(false);
   const [copiedText, setCopiedText] = useState('');
@@ -69,28 +83,39 @@ export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspacePr
     } catch {}
   }, [themeDark]);
 
-  // Synchronize browser history / URL when changing active calculator
+  // Synchronize browser history / clean URL when changing active calculator
   const switchCalculator = (calcId: string) => {
     setActiveCalcId(calcId);
     setHoveredCategory(null);
     setMobileCategoryOpen(false);
     if (typeof window !== 'undefined' && window.history?.pushState) {
-      const calcObj = ALL_CALCULATORS.find((c) => c.id === calcId);
-      if (calcObj) {
-        // Keep smooth experience without page refresh
-        const targetUrl = `./${calcObj.slug}`;
-        window.history.pushState({ calcId }, '', targetUrl);
+      if (calcId === 'home') {
+        window.history.pushState({ calcId: 'home' }, '', '/');
+        document.title = 'Wanjaaro Building Material & Construction Cost Calculators';
+      } else {
+        const calcObj = ALL_CALCULATORS.find((c) => c.id === calcId);
+        if (calcObj) {
+          window.history.pushState({ calcId }, '', `/${calcObj.slug}`);
+          document.title = `${calcObj.name} – Wanjaaro Material & Cost Calculator`;
+        }
       }
     }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Listen to popstate (back/forward navigation)
   useEffect(() => {
     const handlePopState = () => {
-      const path = window.location.pathname.replace(/^\//, '');
-      const matched = ALL_CALCULATORS.find((c) => c.slug === path);
-      if (matched) {
-        setActiveCalcId(matched.id);
+      const cleanPath = window.location.pathname.replace(/^\/|\/$/g, '').replace(/\.html$/, '');
+      if (!cleanPath || cleanPath === 'index') {
+        setActiveCalcId('home');
+      } else {
+        const matched = ALL_CALCULATORS.find((c) => c.slug === cleanPath || c.id === cleanPath);
+        if (matched) {
+          setActiveCalcId(matched.id);
+        } else {
+          setActiveCalcId('home');
+        }
       }
     };
     window.addEventListener('popstate', handlePopState);
@@ -283,12 +308,12 @@ export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspacePr
             {/* Brand Logo & Tagline */}
             <div className="flex items-center gap-3 shrink-0">
               <a
-                href="./"
+                href="/"
                 onClick={(e) => {
                   e.preventDefault();
-                  switchCalculator('concrete');
+                  switchCalculator('home');
                 }}
-                className="text-lg font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2 hover:opacity-90"
+                className="text-lg font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2 hover:opacity-90 cursor-pointer"
               >
                 <span className="w-8 h-8 rounded-lg bg-sky-700 text-white flex items-center justify-center font-mono font-bold text-sm">
                   W
@@ -433,105 +458,335 @@ export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspacePr
             <ol className="flex flex-wrap items-center gap-x-2 gap-y-1.5 font-medium">
               <li>
                 <a
-                  href="./"
+                  href="/"
                   onClick={(e) => {
                     e.preventDefault();
-                    switchCalculator('concrete');
+                    switchCalculator('home');
                   }}
-                  className="hover:underline text-slate-900 dark:text-slate-200"
+                  className={`hover:underline cursor-pointer ${
+                    activeCalcId === 'home'
+                      ? 'text-sky-700 dark:text-sky-400 font-bold'
+                      : 'text-slate-900 dark:text-slate-200'
+                  }`}
                 >
-                  Wanjaaro
+                  Home
                 </a>
               </li>
-              <li aria-hidden="true" className="text-slate-400">/</li>
 
-              {/* Mobile Category Dropdown / Breadcrumb Segment */}
-              <li className="relative">
-                <button
-                  type="button"
-                  onClick={() => setMobileCategoryOpen(!mobileCategoryOpen)}
-                  className="font-semibold text-sky-700 dark:text-sky-400 hover:underline flex items-center gap-1 cursor-pointer bg-sky-50 dark:bg-sky-950/40 px-2 py-0.5 rounded"
-                  title="Click to switch category on mobile"
-                >
-                  <span>{currentCategory.name}</span>
-                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
+              {activeCalcId !== 'home' && (
+                <>
+                  <li aria-hidden="true" className="text-slate-400">/</li>
+                  {/* Mobile Category Dropdown / Breadcrumb Segment */}
+                  <li className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setMobileCategoryOpen(!mobileCategoryOpen)}
+                      className="font-semibold text-sky-700 dark:text-sky-400 hover:underline flex items-center gap-1 cursor-pointer bg-sky-50 dark:bg-sky-950/40 px-2 py-0.5 rounded"
+                      title="Click to switch category on mobile"
+                    >
+                      <span>{currentCategory.name}</span>
+                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
 
-                {/* Mobile Category Switcher Modal/Dropdown */}
-                {mobileCategoryOpen && (
-                  <div className="absolute left-0 top-full mt-1 w-64 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-lg p-2 z-50">
-                    <div className="text-[10px] font-mono uppercase text-slate-400 px-2 py-1">
-                      Select Category
-                    </div>
-                    {CALCULATOR_CATEGORIES.map((c) => (
-                      <button
-                        key={c.id}
-                        type="button"
-                        onClick={() => {
-                          switchCalculator(c.calculators[0].id);
-                          setMobileCategoryOpen(false);
-                        }}
-                        className={`w-full text-left px-2.5 py-1.5 text-xs rounded transition-colors cursor-pointer flex items-center justify-between ${
-                          c.id === currentCategory.id
-                            ? 'bg-sky-100 dark:bg-sky-900 text-sky-900 dark:text-white font-bold'
-                            : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
-                        }`}
-                      >
-                        <span>{c.name}</span>
-                        <span className="text-[10px] font-mono text-slate-400">({c.calculators.length})</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </li>
+                    {/* Mobile Category Switcher Modal/Dropdown */}
+                    {mobileCategoryOpen && (
+                      <div className="absolute left-0 top-full mt-1 w-64 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-lg p-2 z-50">
+                        <div className="text-[10px] font-mono uppercase text-slate-400 px-2 py-1">
+                          Select Category
+                        </div>
+                        {CALCULATOR_CATEGORIES.map((c) => (
+                          <button
+                            key={c.id}
+                            type="button"
+                            onClick={() => {
+                              switchCalculator(c.calculators[0].id);
+                              setMobileCategoryOpen(false);
+                            }}
+                            className={`w-full text-left px-2.5 py-1.5 text-xs rounded transition-colors cursor-pointer flex items-center justify-between ${
+                              c.id === currentCategory.id
+                                ? 'bg-sky-100 dark:bg-sky-900 text-sky-900 dark:text-white font-bold'
+                                : 'hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
+                            }`}
+                          >
+                            <span>{c.name}</span>
+                            <span className="text-[10px] font-mono text-slate-400">({c.calculators.length})</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </li>
 
-              <li aria-hidden="true" className="text-slate-400">/</li>
-              <li className="text-slate-800 dark:text-slate-300 truncate max-w-[200px] sm:max-w-none">
-                {currentCalc.name}
-              </li>
+                  <li aria-hidden="true" className="text-slate-400">/</li>
+                  <li className="text-slate-800 dark:text-slate-300 truncate max-w-[200px] sm:max-w-none">
+                    {currentCalc.name}
+                  </li>
+                </>
+              )}
             </ol>
           </nav>
 
-          {/* PAGE TITLE & META HEADER */}
-          <div className="space-y-2 border-b border-slate-200 dark:border-slate-800 pb-5">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-                {currentCalc.name}
-              </h1>
-              <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
-                Last modified: <time dateTime={currentCalc.lastmod}>{currentCalc.lastmod}</time>
-              </span>
-            </div>
-            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300">
-              {currentCalc.summary} Instant deterministic contractor takeoff with customizable dimensions, waste factor, and cost estimates.
-            </p>
-          </div>
+          {/* ============================================================== */}
+          {/* HOME VIEW: DIRECTORY OF ALL 10 CALCULATORS & PRESETS */}
+          {/* ============================================================== */}
+          {activeCalcId === 'home' ? (
+            <div className="space-y-8 animate-in fade-in">
+              {/* Hero Banner */}
+              <div className="border border-slate-200 dark:border-slate-800 bg-gradient-to-br from-slate-50 via-white to-sky-50/40 dark:from-slate-900 dark:via-slate-900 dark:to-sky-950/20 p-6 sm:p-8 rounded-2xl shadow-xs space-y-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-sky-100 dark:bg-sky-950 text-sky-800 dark:text-sky-300 border border-sky-300 dark:border-sky-800">
+                  <span>🏗 10 Dedicated Construction Takeoff Calculators</span>
+                </div>
+                <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
+                  Building Material &amp; Cost Calculators
+                </h1>
+                <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-3xl leading-relaxed">
+                  Fast, deterministic civil and structural material estimators for contractors, framers, masons, and homeowners. Calculate concrete cubic yards, brick and CMU block counts, wall stud framing, OSB sheathing, drywall, paint coverage, roofing squares, and complete job budgeting.
+                </p>
 
-          {/* QUICK CALCULATOR TABS BAR (Horizontal switcher between all tools in current category) */}
-          <div className="flex flex-wrap items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-900 rounded-lg no-print">
-            <span className="text-xs font-medium text-slate-500 dark:text-slate-400 px-2">
-              {currentCategory.shortName}:
-            </span>
-            {currentCategory.calculators.map((calc) => {
-              const active = calc.id === activeCalcId;
-              return (
-                <button
-                  key={calc.id}
-                  type="button"
-                  onClick={() => switchCalculator(calc.id)}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors cursor-pointer ${
-                    active
-                      ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-semibold shadow-xs'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }`}
-                >
-                  {calc.shortTitle}
-                </button>
-              );
-            })}
-          </div>
+                {/* Search & Filter Controls */}
+                <div className="pt-2 flex flex-col sm:flex-row gap-3">
+                  <div className="relative flex-1">
+                    <input
+                      type="text"
+                      value={homeSearch}
+                      onChange={(e) => setHomeSearch(e.target.value)}
+                      placeholder="Search calculators (e.g. concrete slab, studs, drywall, shingles, tile, cost)..."
+                      className="w-full px-4 py-2.5 text-xs sm:text-sm font-sans border border-slate-300 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-600"
+                    />
+                    {homeSearch && (
+                      <button
+                        type="button"
+                        onClick={() => setHomeSearch('')}
+                        className="absolute right-3 top-2.5 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Category Pills */}
+                <div className="flex flex-wrap items-center gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setHomeCategoryFilter('all')}
+                    className={`px-3 py-1.5 rounded-md text-xs font-semibold cursor-pointer transition-colors ${
+                      homeCategoryFilter === 'all'
+                        ? 'bg-sky-700 text-white'
+                        : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700'
+                    }`}
+                  >
+                    All Tools ({ALL_CALCULATORS.length})
+                  </button>
+                  {CALCULATOR_CATEGORIES.map((cat) => (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => setHomeCategoryFilter(cat.id)}
+                      className={`px-3 py-1.5 rounded-md text-xs font-semibold cursor-pointer transition-colors ${
+                        homeCategoryFilter === cat.id
+                          ? 'bg-sky-700 text-white'
+                          : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700'
+                      }`}
+                    >
+                      {cat.name} ({cat.calculators.length})
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Popular Project Quick Presets Bar */}
+              <div className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 sm:p-5 rounded-xl space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 font-mono">
+                    ⚡ Quick Launch Common Projects
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setConcreteState((prev) => ({ ...prev, shape: 'slab', lengthFt: 12, widthFt: 12, thicknessIn: 4 }));
+                      switchCalculator('concrete');
+                    }}
+                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/60 hover:border-sky-600 hover:bg-sky-50/50 dark:hover:bg-sky-950/30 transition-all cursor-pointer"
+                  >
+                    🚗 12×12 Patio Slab (4″)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setBrickState((prev) => ({ ...prev, wallLengthFt: 20, wallHeightFt: 8 }));
+                      switchCalculator('brick-mortar');
+                    }}
+                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/60 hover:border-sky-600 hover:bg-sky-50/50 dark:hover:bg-sky-950/30 transition-all cursor-pointer"
+                  >
+                    🧱 20×8 Brick Veneer Wall
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCmuState((prev) => ({ ...prev, wallLengthFt: 24, wallHeightFt: 8 }));
+                      switchCalculator('block-cmu');
+                    }}
+                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/60 hover:border-sky-600 hover:bg-sky-50/50 dark:hover:bg-sky-950/30 transition-all cursor-pointer"
+                  >
+                    🏗 24×8 CMU Block Wall
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFramingState((prev) => ({ ...prev, wallLengthFt: 30, studSpacingIn: 16 }));
+                      switchCalculator('framing');
+                    }}
+                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/60 hover:border-sky-600 hover:bg-sky-50/50 dark:hover:bg-sky-950/30 transition-all cursor-pointer"
+                  >
+                    🔨 30 ft Stud Wall (16″ O.C.)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDrywallState((prev) => ({ ...prev, roomLengthFt: 16, roomWidthFt: 14, wallHeightFt: 9, includeCeiling: true }));
+                      switchCalculator('drywall');
+                    }}
+                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/60 hover:border-sky-600 hover:bg-sky-50/50 dark:hover:bg-sky-950/30 transition-all cursor-pointer"
+                  >
+                    🏠 16×14 Room Drywall &amp; Ceiling
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setRoofingState((prev) => ({ ...prev, footprintAreaSqFt: 1800, pitchNumerator: 6 }));
+                      switchCalculator('roofing');
+                    }}
+                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/60 hover:border-sky-600 hover:bg-sky-50/50 dark:hover:bg-sky-950/30 transition-all cursor-pointer"
+                  >
+                    📐 1,800 sq ft Roof (6/12 pitch)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => switchCalculator('construction-cost')}
+                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-sky-300 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/40 text-sky-800 dark:text-sky-300 hover:bg-sky-100 transition-all cursor-pointer"
+                  >
+                    📊 Total Construction Project Budget
+                  </button>
+                </div>
+              </div>
+
+              {/* Calculators Cards Grid */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-bold text-slate-900 dark:text-white">
+                    Available Calculators
+                  </h2>
+                  <span className="text-xs font-mono text-slate-500">
+                    Clean URLs: /{`{calculator-name}`}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {ALL_CALCULATORS.filter((c) => {
+                    const matchesCategory =
+                      homeCategoryFilter === 'all' || c.categoryId === homeCategoryFilter;
+                    const matchesSearch =
+                      !homeSearch.trim() ||
+                      c.name.toLowerCase().includes(homeSearch.toLowerCase()) ||
+                      c.summary.toLowerCase().includes(homeSearch.toLowerCase()) ||
+                      c.badge.toLowerCase().includes(homeSearch.toLowerCase());
+                    return matchesCategory && matchesSearch;
+                  }).map((calc) => {
+                    const cat = CALCULATOR_CATEGORIES.find((c) => c.id === calc.categoryId);
+                    return (
+                      <div
+                        key={calc.id}
+                        className="border border-slate-200 dark:border-slate-800 rounded-xl p-5 bg-white dark:bg-slate-900 hover:border-sky-600 dark:hover:border-sky-500 transition-all shadow-2xs hover:shadow-md flex flex-col justify-between group"
+                      >
+                        <div className="space-y-2.5">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-[11px] font-mono uppercase tracking-wider font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                              {cat?.name || 'Calculator'}
+                            </span>
+                            <span className="text-[11px] font-mono text-sky-700 dark:text-sky-400 font-bold bg-sky-50 dark:bg-sky-950/40 px-2 py-0.5 rounded">
+                              {calc.badge}
+                            </span>
+                          </div>
+                          <h3 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-sky-700 dark:group-hover:text-sky-400 transition-colors">
+                            {calc.name}
+                          </h3>
+                          <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                            {calc.summary}
+                          </p>
+                        </div>
+
+                        <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                          <span className="text-[10px] font-mono text-slate-400">
+                            /{calc.slug}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => switchCalculator(calc.id)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-sky-700 hover:bg-sky-800 text-white text-xs font-semibold cursor-pointer transition-colors"
+                          >
+                            <span>Open Calculator</span>
+                            <span>→</span>
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <>
+              {/* PAGE TITLE & META HEADER */}
+              <div className="space-y-2 border-b border-slate-200 dark:border-slate-800 pb-5">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => switchCalculator('home')}
+                      className="px-2.5 py-1 text-xs font-semibold rounded border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+                    >
+                      ← All Calculators
+                    </button>
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
+                      {currentCalc.name}
+                    </h1>
+                  </div>
+                  <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
+                    Last modified: <time dateTime={currentCalc.lastmod}>{currentCalc.lastmod}</time>
+                  </span>
+                </div>
+                <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300">
+                  {currentCalc.summary} Instant deterministic contractor takeoff with customizable dimensions, waste factor, and cost estimates.
+                </p>
+              </div>
+
+              {/* QUICK CALCULATOR TABS BAR (Horizontal switcher between all tools in current category) */}
+              <div className="flex flex-wrap items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-900 rounded-lg no-print">
+                <span className="text-xs font-medium text-slate-500 dark:text-slate-400 px-2">
+                  {currentCategory.shortName}:
+                </span>
+                {currentCategory.calculators.map((calc) => {
+                  const active = calc.id === activeCalcId;
+                  return (
+                    <button
+                      key={calc.id}
+                      type="button"
+                      onClick={() => switchCalculator(calc.id)}
+                      className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors cursor-pointer ${
+                        active
+                          ? 'bg-white dark:bg-slate-800 text-sky-700 dark:text-sky-400 font-bold shadow-xs'
+                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                      }`}
+                    >
+                      {calc.shortTitle}
+                    </button>
+                  );
+                })}
+              </div>
 
           {/* ============================================================== */}
           {/* 3. CALCULATOR WORKSPACES */}
@@ -1900,6 +2155,8 @@ export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspacePr
                 </div>
               </div>
             </div>
+          )}
+            </>
           )}
 
           {/* ============================================================== */}
