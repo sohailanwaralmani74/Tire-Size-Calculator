@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Plywood & OSB Sheathing Calculator – Wanjaaro Material & Cost Calculator</title>
     <meta name="description" content="Determine 4x8 / 4x10 sheets for walls, subfloors, and roof decks plus framing nail counts. Free, instant deterministic calculations with waste margin, material takeoffs, and contractor cost breakdown." />
-    <link rel="canonical" href="https://wanjaaro.com/sheathing-calculator.html" />
+    <link rel="canonical" href="https://wanjaaro.com/sheathing-calculator" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Wanjaaro" />
     <meta property="og:title" content="Plywood & OSB Sheathing Calculator – Wanjaaro Material & Cost Calculator" />
     <meta property="og:description" content="Determine 4x8 / 4x10 sheets for walls, subfloors, and roof decks plus framing nail counts. Free, instant deterministic calculations with waste margin, material takeoffs, and contractor cost breakdown." />
-    <meta property="og:url" content="https://wanjaaro.com/sheathing-calculator.html" />
+    <meta property="og:url" content="https://wanjaaro.com/sheathing-calculator" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -60,20 +60,20 @@
           "@type": "ListItem",
           "position": 2,
           "name": "Framing & Lumber",
-          "item": "https://wanjaaro.com/framing-calculator.html"
+          "item": "https://wanjaaro.com/framing-calculator"
         },
         {
           "@type": "ListItem",
           "position": 3,
           "name": "Plywood & OSB Sheathing Calculator",
-          "item": "https://wanjaaro.com/sheathing-calculator.html"
+          "item": "https://wanjaaro.com/sheathing-calculator"
         }
       ]
     },
     {
       "@type": "WebApplication",
       "name": "Plywood & OSB Sheathing Calculator",
-      "url": "https://wanjaaro.com/sheathing-calculator.html",
+      "url": "https://wanjaaro.com/sheathing-calculator",
       "applicationCategory": "UtilitiesApplication",
       "operatingSystem": "All",
       "browserRequirements": "Requires JavaScript for live interactive sliders and takeoff exports.",
@@ -95,18 +95,18 @@
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "How many 4x8 OSB or plywood sheets cover 1,000 square feet?",
+          "name": "What size gap should be left between OSB or plywood sheathing panels?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "A single 4x8 sheet covers 32 square feet. 1,000 ÷ 32 = 31.25 sheets. Adding an industry-standard 10% allowance for cutting angles, window cutouts, and waste gives 35 sheets total."
+            "text": "Leave a 1/8-inch gap on all panel edges and ends when installing OSB or plywood. This expansion space prevents edge buckling and waviness when sheets absorb humidity and moisture."
           }
         },
         {
           "@type": "Question",
-          "name": "What nail spacing is required for exterior wall sheathing?",
+          "name": "How many nails are required per 4x8 sheet of wall sheathing?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Building codes typically mandate 8d common or ring-shank nails spaced 6 inches apart along supported panel edges (perimeter) and 12 inches apart along intermediate framing studs (field)."
+            "text": "Code (IRC) typically mandates 6-inch spacing along panel edges and 12-inch spacing along intermediate studs (field). A standard 4x8 sheet over studs at 16\" o.c. requires approximately 38 to 45 nails (8d common or ring-shank)."
           }
         }
       ]
@@ -114,7 +114,7 @@
   ]
 }
     </script>
-    <link rel="stylesheet" href="./styles/app-styles.css" data-vite-ignore />
+    <link rel="stylesheet" href="/styles/app-styles.css" data-vite-ignore />
   </head>
   <body class="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased selection:bg-sky-600 selection:text-white">
     <!-- Interactive React Mount Point -->
@@ -123,21 +123,35 @@
     <!-- Noscript & SEO Fallback for Bots -->
     <noscript>
       <div style="max-width: 1200px; margin: 2rem auto; padding: 1.5rem; font-family: system-ui, sans-serif;">
-        <h1 style="font-size: 1.75rem; font-weight: bold; margin-bottom: 0.5rem;">Plywood & OSB Sheathing Calculator</h1>
-        <p style="color: #475569; margin-bottom: 1.5rem;">Determine 4x8 / 4x10 sheets for walls, subfloors, and roof decks plus framing nail counts.</p>
-        <p><strong>Category:</strong> Framing & Lumber</p>
-        <p><strong>Last Modified:</strong> 2026-10-09</p>
+        <h1 style="font-size: 1.75rem; font-weight: bold; margin-bottom: 0.5rem;">Plywood & OSB Sheathing Calculator – Wanjaaro Material & Cost Calculator</h1>
+        <p style="color: #475569; margin-bottom: 1.5rem;">Determine 4x8 / 4x10 sheets for walls, subfloors, and roof decks plus framing nail counts. Free, instant deterministic calculations with waste margin, material takeoffs, and contractor cost breakdown.</p>
+        <p><strong>Category:</strong> Framing & Lumber</p><p><strong>Last Modified:</strong> 2026-10-09</p>
+
+        <h2 style="font-size: 1.25rem; font-weight: bold; margin-top: 1.5rem;">Available Building Material Calculators</h2>
+        <ul style="margin-top: 0.5rem; line-height: 1.8;">
+          <li><a href="/concrete-calculator">Concrete Slab & Footing Calculator</a> – Calculate volume in cubic yards, pre-mixed bags (40, 60, 80 lb), and rebar grid requirements.</li>
+          <li><a href="/brick-mortar-calculator">Brick & Mortar Calculator</a> – Calculate total modular, king, or queen bricks, mortar bags (Type N/S), and tons of sand.</li>
+          <li><a href="/block-cmu-calculator">Concrete Block (CMU) Calculator</a> – Estimate standard CMU blocks, core-fill grout volume, mortar bags, and vertical rebar.</li>
+          <li><a href="/framing-calculator">Wall Framing & Stud Calculator</a> – Calculate common studs, double top plates, bottom sill, headers, corners, and board feet.</li>
+          <li><a href="/stair-handrail-calculator">Stair & Handrail Calculator</a> – Calculate stair risers, tread run, stringer boards, handrail length, baluster spacing, and ADA/IRC code compliance.</li>
+          <li><a href="/sheathing-calculator">Plywood & OSB Sheathing Calculator</a> – Determine 4x8 / 4x10 sheets for walls, subfloors, and roof decks plus framing nail counts.</li>
+          <li><a href="/drywall-calculator">Drywall & Sheetrock Calculator</a> – Calculate 4x8, 4x10, 4x12 drywall sheets, joint compound buckets, screws, and tape rolls.</li>
+          <li><a href="/paint-calculator">Paint & Primer Coverage Calculator</a> – Estimate gallons of wall/ceiling paint and primer with window and door deduction.</li>
+          <li><a href="/roofing-calculator">Roofing Shingle & Pitch Calculator</a> – Calculate roofing squares, architectural bundles, pitch multipliers, felt, and ridge caps.</li>
+          <li><a href="/flooring-tile-calculator">Tile, Grout & Flooring Calculator</a> – Calculate square footage, tile boxes with waste, grout weight (lbs), and thin-set bags.</li>
+          <li><a href="/construction-cost-calculator">Construction Cost & Budget Estimator</a> – Estimate total project budget with material subtotal, labor rates, GC markup, and contingency.</li>
+        </ul>
 
         <h2 style="font-size: 1.25rem; font-weight: bold; margin-top: 1.5rem;">Frequently Asked Questions</h2>
         
           <div style="margin-top: 1rem;">
-            <h3 style="font-size: 1rem; font-weight: 600;">How many 4x8 OSB or plywood sheets cover 1,000 square feet?</h3>
-            <p style="color: #334155; margin-top: 0.25rem;">A single 4x8 sheet covers 32 square feet. 1,000 ÷ 32 = 31.25 sheets. Adding an industry-standard 10% allowance for cutting angles, window cutouts, and waste gives 35 sheets total.</p>
+            <h3 style="font-size: 1rem; font-weight: 600;">What size gap should be left between OSB or plywood sheathing panels?</h3>
+            <p style="color: #334155; margin-top: 0.25rem;">Leave a 1/8-inch gap on all panel edges and ends when installing OSB or plywood. This expansion space prevents edge buckling and waviness when sheets absorb humidity and moisture.</p>
           </div>
         
           <div style="margin-top: 1rem;">
-            <h3 style="font-size: 1rem; font-weight: 600;">What nail spacing is required for exterior wall sheathing?</h3>
-            <p style="color: #334155; margin-top: 0.25rem;">Building codes typically mandate 8d common or ring-shank nails spaced 6 inches apart along supported panel edges (perimeter) and 12 inches apart along intermediate framing studs (field).</p>
+            <h3 style="font-size: 1rem; font-weight: 600;">How many nails are required per 4x8 sheet of wall sheathing?</h3>
+            <p style="color: #334155; margin-top: 0.25rem;">Code (IRC) typically mandates 6-inch spacing along panel edges and 12-inch spacing along intermediate studs (field). A standard 4x8 sheet over studs at 16" o.c. requires approximately 38 to 45 nails (8d common or ring-shank).</p>
           </div>
         
       </div>
@@ -284,6 +298,6 @@
     </script>
 
     <!-- Application Bundle -->
-    <script type="module" src="./src/app-bundle.js"></script>
+    <script type="module" src="/src/app-bundle.js"></script>
   </body>
 </html>

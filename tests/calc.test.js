@@ -16,13 +16,17 @@ import {
   calculateRoofing,
   calculateTile,
   calculateConstructionCost,
+  calculateStairHandrail,
   ALL_CALCULATORS,
   CALCULATOR_CATEGORIES,
 } from '../src/calc/buildingMath.js';
 
 test('Directory & Categories verification', () => {
   assert.equal(CALCULATOR_CATEGORIES.length, 5);
-  assert.equal(ALL_CALCULATORS.length, 10);
+  assert.equal(ALL_CALCULATORS.length, 11);
+  const stairCalc = ALL_CALCULATORS.find((c) => c.slug === 'stair-handrail-calculator');
+  assert.ok(stairCalc, 'stair-handrail-calculator exists');
+  assert.equal(stairCalc.id, 'stair-handrail');
 });
 
 test('Calculator 1: Concrete Slab 12x12 at 4" with 10% waste', () => {
@@ -213,3 +217,59 @@ test('Calculator 10: Construction Cost & Budget Estimator', () => {
   assert.equal(res.totalEstimatedCost, 43263);
   assert.ok(res.costPerSqFt > 100);
 });
+
+test('Calculator 11: Stair & Handrail Calculator (108" Total Rise, 9ft ceiling)', () => {
+  const res = calculateStairHandrail({
+    totalRiseIn: 108,
+    targetRiserHeightIn: 7.5,
+    treadRunIn: 10.5,
+    nosingIn: 1.0,
+    stairWidthIn: 36,
+    buildingCode: 'irc',
+    handrailSides: 'both',
+    handrailHeightIn: 36,
+    adaExtensions: false,
+    balusterSpacingIn: 3.5,
+    stringerSpacingIn: 16,
+    wastePct: 10,
+    stringerBoardPrice: 38.50,
+    treadPrice: 18.00,
+    riserBoardPrice: 11.50,
+    handrailPricePerFt: 4.75,
+    newelPostPrice: 42.00,
+    balusterPrice: 3.25,
+    hardwareAllowance: 65.00,
+    laborRatePerHour: 55.00,
+    estimatedLaborHours: 16.0,
+  });
+
+  assert.equal(res.valid, true);
+  // 108 / 7.5 = 14.4 -> rounds to 14 risers
+  assert.equal(res.numRisers, 14);
+  // 108 / 14 = 7.714"
+  assert.equal(res.exactRiserHeightIn, 7.714);
+  assert.equal(res.riserFraction, '7 11/16"');
+  // 14 risers - 1 = 13 treads
+  assert.equal(res.numTreads, 13);
+  // 13 * 10.5 = 136.5 inches total run
+  assert.equal(res.totalRunIn, 136.5);
+  // Incline angle: atan(7.714 / 10.5) ~ 36.3 degrees (optimal 30-37 deg)
+  assert.ok(res.inclineAngleDeg >= 35 && res.inclineAngleDeg <= 37);
+  assert.equal(res.angleOptimal, true);
+  // Code compliance for IRC: 7.714" <= 7.75" max riser, 10.5" >= 10" min tread
+  assert.equal(res.riserCompliant, true);
+  assert.equal(res.treadCompliant, true);
+  assert.equal(res.allCodePassed, true);
+  // 36" wide with 16" o.c. stringers = 4 stringers
+  assert.equal(res.stringerCount, 4);
+  // Blondel: 2 * 7.714 + 10.5 = 25.93"
+  assert.equal(res.blondelValue, 25.93);
+  // Material takeoff costs should be populated
+  assert.ok(res.stringersCost > 0);
+  assert.ok(res.treadsCost > 0);
+  assert.ok(res.risersCost > 0);
+  assert.ok(res.handrailCost > 0);
+  assert.ok(res.materialsSubtotal > 500);
+  assert.ok(res.totalProjectCost > 1000);
+});
+

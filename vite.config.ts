@@ -45,17 +45,18 @@ export default defineConfig(() => {
             // In local Vite dev server, swap the inline JS or static script for /src/main.tsx
             if (ctx.server) {
               if (/<script id="wanjaaro-inline-app"[\s\S]*?<\/script>/.test(html)) {
-                return html.replace(
+                html = html.replace(
                   /<script id="wanjaaro-inline-app"[\s\S]*?<\/script>/,
                   '<script type="module" src="/src/main.tsx"></script>',
                 );
               }
-              if (/<script type="module" src="\.\/src\/app-bundle\.js"><\/script>/.test(html)) {
-                return html.replace(
-                  /<script type="module" src="\.\/src\/app-bundle\.js"><\/script>/,
+              if (/<script type="module" src="[^"]*app-bundle\.js"><\/script>/.test(html)) {
+                html = html.replace(
+                  /<script type="module" src="[^"]*app-bundle\.js"><\/script>/,
                   '<script type="module" src="/src/main.tsx"></script>',
                 );
               }
+              return html;
             }
             return html;
           },

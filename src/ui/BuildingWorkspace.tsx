@@ -12,6 +12,7 @@ import {
   calculateRoofing,
   calculateTile,
   calculateConstructionCost,
+  calculateStairHandrail,
 } from '../calc/buildingMath.js';
 
 interface BuildingWorkspaceProps {
@@ -35,6 +36,9 @@ export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspacePr
       // Clean path: strip leading/trailing slashes and .html
       const cleanPath = window.location.pathname.replace(/^\/|\/$/g, '').replace(/\.html$/, '');
       if (!cleanPath || cleanPath === 'index') {
+        if (window.location.pathname.includes('.html')) {
+          window.history.replaceState({ calcId: 'home' }, '', '/');
+        }
         return 'home';
       }
       const matched = ALL_CALCULATORS.find((c) => c.slug === cleanPath || c.id === cleanPath);
@@ -258,6 +262,31 @@ export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspacePr
     contingencyPct: 10,
   });
 
+  // 11. Stair & Handrail (IRC / IBC / ADA)
+  const [stairState, setStairState] = useState({
+    totalRiseIn: 108,
+    targetRiserHeightIn: 7.5,
+    treadRunIn: 10.5,
+    nosingIn: 1.0,
+    stairWidthIn: 36,
+    buildingCode: 'irc' as 'irc' | 'ibc_ada',
+    handrailSides: 'both' as 'one' | 'both' | 'wall_and_guard',
+    handrailHeightIn: 36,
+    adaExtensions: false,
+    balusterSpacingIn: 3.5,
+    stringerSpacingIn: 16 as 12 | 16,
+    wastePct: 10,
+    stringerBoardPrice: 38.50,
+    treadPrice: 18.00,
+    riserBoardPrice: 11.50,
+    handrailPricePerFt: 4.75,
+    newelPostPrice: 42.00,
+    balusterPrice: 3.25,
+    hardwareAllowance: 65.00,
+    laborRatePerHour: 55.00,
+    estimatedLaborHours: 16.0,
+  });
+
   // Calculate results
   const concreteRes = calculateConcrete(concreteState);
   const brickRes = calculateBrick(brickState);
@@ -269,6 +298,7 @@ export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspacePr
   const roofingRes = calculateRoofing(roofingState);
   const tileRes = calculateTile(tileState);
   const costRes = calculateConstructionCost(costState);
+  const stairRes = calculateStairHandrail(stairState);
 
   // Copy results helper
   const copyTakeoff = async (text: string) => {
@@ -663,6 +693,26 @@ export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspacePr
                     className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/60 hover:border-sky-600 hover:bg-sky-50/50 dark:hover:bg-sky-950/30 transition-all cursor-pointer"
                   >
                     📐 1,800 sq ft Roof (6/12 pitch)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStairState((prev) => ({ ...prev, totalRiseIn: 108, targetRiserHeightIn: 7.5, treadRunIn: 10.5, buildingCode: 'irc' }));
+                      switchCalculator('stair-handrail');
+                    }}
+                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/60 hover:border-sky-600 hover:bg-sky-50/50 dark:hover:bg-sky-950/30 transition-all cursor-pointer"
+                  >
+                    🪜 9 ft Interior Stairs (14 risers)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStairState((prev) => ({ ...prev, totalRiseIn: 84, targetRiserHeightIn: 7.0, treadRunIn: 11.0, buildingCode: 'ibc_ada', adaExtensions: true }));
+                      switchCalculator('stair-handrail');
+                    }}
+                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/60 hover:border-sky-600 hover:bg-sky-50/50 dark:hover:bg-sky-950/30 transition-all cursor-pointer"
+                  >
+                    🦽 ADA Commercial Stair &amp; Handrail
                   </button>
                   <button
                     type="button"
@@ -2151,6 +2201,940 @@ export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspacePr
                         </tr>
                       </tbody>
                     </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 11. STAIR & HANDRAIL CALCULATOR (IRC / IBC / ADA) */}
+          {activeCalcId === 'stair-handrail' && (
+            <div className="space-y-6">
+              {/* Presets Bar */}
+              <div className="flex flex-wrap items-center gap-2 p-3 bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-xl no-print">
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                  Quick Presets:
+                </span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setStairState((prev) => ({
+                      ...prev,
+                      totalRiseIn: 105,
+                      targetRiserHeightIn: 7.5,
+                      treadRunIn: 10.5,
+                      buildingCode: 'irc',
+                      adaExtensions: false,
+                    }))
+                  }
+                  className="px-2.5 py-1 text-xs rounded border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+                >
+                  8 ft Ceiling (105″ Rise · 14 Risers)
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setStairState((prev) => ({
+                      ...prev,
+                      totalRiseIn: 114,
+                      targetRiserHeightIn: 7.6,
+                      treadRunIn: 10.5,
+                      buildingCode: 'irc',
+                      adaExtensions: false,
+                    }))
+                  }
+                  className="px-2.5 py-1 text-xs rounded border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+                >
+                  9 ft Ceiling (114″ Rise · 15 Risers)
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setStairState((prev) => ({
+                      ...prev,
+                      totalRiseIn: 126,
+                      targetRiserHeightIn: 7.41,
+                      treadRunIn: 11.0,
+                      buildingCode: 'irc',
+                      adaExtensions: false,
+                    }))
+                  }
+                  className="px-2.5 py-1 text-xs rounded border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+                >
+                  10 ft Ceiling (126″ Rise · 17 Risers)
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setStairState((prev) => ({
+                      ...prev,
+                      totalRiseIn: 48,
+                      targetRiserHeightIn: 6.85,
+                      treadRunIn: 11.0,
+                      buildingCode: 'irc',
+                      handrailSides: 'both',
+                      adaExtensions: false,
+                    }))
+                  }
+                  className="px-2.5 py-1 text-xs rounded border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+                >
+                  Porch / Deck (48″ Rise · 7 Risers)
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setStairState((prev) => ({
+                      ...prev,
+                      totalRiseIn: 84,
+                      targetRiserHeightIn: 7.0,
+                      treadRunIn: 11.0,
+                      buildingCode: 'ibc_ada',
+                      handrailSides: 'both',
+                      adaExtensions: true,
+                      stairWidthIn: 44,
+                    }))
+                  }
+                  className="px-2.5 py-1 text-xs rounded border border-sky-300 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/40 text-sky-800 dark:text-sky-300 hover:bg-sky-100 cursor-pointer font-medium"
+                >
+                  Commercial ADA (84″ Rise · 12 Risers @ 7.0″)
+                </button>
+              </div>
+
+              {/* Main Workspace: Inputs & Diagnostics */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                {/* Form Controls (5 Cols) */}
+                <div className="lg:col-span-5 space-y-4 border border-slate-200 dark:border-slate-800 p-4 sm:p-5 rounded-xl bg-slate-50/50 dark:bg-slate-900/40">
+                  <div className="border-b border-slate-200 dark:border-slate-800 pb-2">
+                    <h2 className="text-sm font-bold text-slate-900 dark:text-slate-100">
+                      Stair &amp; Railing Dimensions
+                    </h2>
+                    <p className="text-xs text-slate-500">
+                      Deterministic geometry according to IRC R311.7, IBC 1014, and ADA 505.
+                    </p>
+                  </div>
+
+                  {/* Building Code Standard */}
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                      Applicable Building Code
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setStairState((prev) => ({
+                            ...prev,
+                            buildingCode: 'irc',
+                            targetRiserHeightIn: Math.min(prev.targetRiserHeightIn, 7.75),
+                            adaExtensions: false,
+                          }))
+                        }
+                        className={`px-3 py-2 text-xs font-semibold rounded border cursor-pointer text-left transition-all ${
+                          stairState.buildingCode === 'irc'
+                            ? 'bg-sky-50 dark:bg-sky-950/40 border-sky-600 text-sky-900 dark:text-sky-300 ring-1 ring-sky-600'
+                            : 'bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-400'
+                        }`}
+                      >
+                        <div className="font-bold">IRC 2024 (Residential)</div>
+                        <div className="text-[10px] text-slate-500 font-normal">Max 7-3/4″ Rise · Min 10″ Tread</div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setStairState((prev) => ({
+                            ...prev,
+                            buildingCode: 'ibc_ada',
+                            targetRiserHeightIn: Math.min(prev.targetRiserHeightIn, 7.0),
+                            treadRunIn: Math.max(prev.treadRunIn, 11.0),
+                            stairWidthIn: Math.max(prev.stairWidthIn, 44),
+                            adaExtensions: true,
+                          }))
+                        }
+                        className={`px-3 py-2 text-xs font-semibold rounded border cursor-pointer text-left transition-all ${
+                          stairState.buildingCode === 'ibc_ada'
+                            ? 'bg-sky-50 dark:bg-sky-950/40 border-sky-600 text-sky-900 dark:text-sky-300 ring-1 ring-sky-600'
+                            : 'bg-white dark:bg-slate-950 border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-400'
+                        }`}
+                      >
+                        <div className="font-bold">IBC / ADA 505 (Commercial)</div>
+                        <div className="text-[10px] text-slate-500 font-normal">Max 7.0″ Rise · Min 11″ Tread · 12″ Ext</div>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Total Vertical Rise */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+                        Total Vertical Rise (finished floor to floor)
+                      </label>
+                      <span className="text-[11px] font-mono text-slate-500">
+                        = {(stairState.totalRiseIn / 12).toFixed(2)} ft ({stairRes.riserFraction} per step)
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="number"
+                        step="0.25"
+                        min="12"
+                        max="240"
+                        value={stairState.totalRiseIn}
+                        onChange={(e) => setStairState({ ...stairState, totalRiseIn: Number(e.target.value) })}
+                        className="w-full px-3 py-2 text-xs font-mono border border-slate-300 dark:border-slate-700 rounded bg-white dark:bg-slate-950 text-slate-900 dark:text-white"
+                      />
+                      <span className="text-xs font-mono text-slate-500">inches</span>
+                    </div>
+                    <p className="text-[10px] text-slate-500 mt-1">
+                      Measure exactly from finished lower floor to finished upper floor surface (including subfloor/flooring).
+                    </p>
+                  </div>
+
+                  {/* Target Riser Height & Tread Run */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                        Target Riser Height
+                      </label>
+                      <input
+                        type="number"
+                        step="0.125"
+                        min="4"
+                        max={stairState.buildingCode === 'ibc_ada' ? 7.0 : 7.75}
+                        value={stairState.targetRiserHeightIn}
+                        onChange={(e) => setStairState({ ...stairState, targetRiserHeightIn: Number(e.target.value) })}
+                        className="w-full px-2.5 py-1.5 text-xs font-mono border border-slate-300 dark:border-slate-700 rounded bg-white dark:bg-slate-950"
+                      />
+                      <span className="text-[10px] text-slate-500 font-mono">
+                        Max: {stairState.buildingCode === 'ibc_ada' ? '7.0″ (IBC)' : '7.75″ (IRC)'}
+                      </span>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                        Tread Run / Depth
+                      </label>
+                      <input
+                        type="number"
+                        step="0.25"
+                        min={stairState.buildingCode === 'ibc_ada' ? 11.0 : 10.0}
+                        max="16"
+                        value={stairState.treadRunIn}
+                        onChange={(e) => setStairState({ ...stairState, treadRunIn: Number(e.target.value) })}
+                        className="w-full px-2.5 py-1.5 text-xs font-mono border border-slate-300 dark:border-slate-700 rounded bg-white dark:bg-slate-950"
+                      />
+                      <span className="text-[10px] text-slate-500 font-mono">
+                        Min: {stairState.buildingCode === 'ibc_ada' ? '11.0″ (IBC)' : '10.0″ (IRC)'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Nosing & Stair Width */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                        Nosing Overhang (inches)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.125"
+                        min="0"
+                        max="1.5"
+                        value={stairState.nosingIn}
+                        onChange={(e) => setStairState({ ...stairState, nosingIn: Number(e.target.value) })}
+                        className="w-full px-2.5 py-1.5 text-xs font-mono border border-slate-300 dark:border-slate-700 rounded bg-white dark:bg-slate-950"
+                      />
+                      <span className="text-[10px] text-slate-500 font-mono">IRC: 0.75″–1.25″</span>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                        Clear Stair Width
+                      </label>
+                      <input
+                        type="number"
+                        step="1"
+                        min="28"
+                        max="96"
+                        value={stairState.stairWidthIn}
+                        onChange={(e) => setStairState({ ...stairState, stairWidthIn: Number(e.target.value) })}
+                        className="w-full px-2.5 py-1.5 text-xs font-mono border border-slate-300 dark:border-slate-700 rounded bg-white dark:bg-slate-950"
+                      />
+                      <span className="text-[10px] text-slate-500 font-mono">
+                        Min: {stairState.buildingCode === 'ibc_ada' ? '44″ (IBC)' : '36″ (IRC)'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Handrail Configuration */}
+                  <div className="border-t border-slate-200 dark:border-slate-800 pt-3 space-y-3">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+                      Handrail &amp; Guardrail Parameters
+                    </h3>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
+                          Handrail Placement
+                        </label>
+                        <select
+                          value={stairState.handrailSides}
+                          onChange={(e) => setStairState({ ...stairState, handrailSides: e.target.value as any })}
+                          className="w-full px-2 py-1.5 text-xs font-mono border border-slate-300 dark:border-slate-700 rounded bg-white dark:bg-slate-950"
+                        >
+                          <option value="both">Both Sides (ADA / IBC)</option>
+                          <option value="one">One Side Only (IRC Min)</option>
+                          <option value="wall_and_guard">Wall Rail + Open Guard</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
+                          Handrail Height (above nosing)
+                        </label>
+                        <input
+                          type="number"
+                          step="0.5"
+                          min="34"
+                          max="38"
+                          value={stairState.handrailHeightIn}
+                          onChange={(e) => setStairState({ ...stairState, handrailHeightIn: Number(e.target.value) })}
+                          className="w-full px-2.5 py-1.5 text-xs font-mono border border-slate-300 dark:border-slate-700 rounded bg-white dark:bg-slate-950"
+                        />
+                        <span className="text-[10px] text-slate-500 font-mono">Code range: 34″–38″</span>
+                      </div>
+                    </div>
+
+                    {/* ADA Extensions Checkbox */}
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="adaExtToggle"
+                        checked={stairState.adaExtensions}
+                        onChange={(e) => setStairState({ ...stairState, adaExtensions: e.target.checked })}
+                        className="rounded border-slate-300 text-sky-600 focus:ring-sky-500 cursor-pointer"
+                      />
+                      <label htmlFor="adaExtToggle" className="text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
+                        Include ADA 12″ Top &amp; Bottom Safety Extensions
+                      </label>
+                    </div>
+
+                    {/* Baluster spacing & Stringer spacing */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
+                          Baluster Max Gap (inches)
+                        </label>
+                        <input
+                          type="number"
+                          step="0.25"
+                          min="2"
+                          max="4"
+                          value={stairState.balusterSpacingIn}
+                          onChange={(e) => setStairState({ ...stairState, balusterSpacingIn: Number(e.target.value) })}
+                          className="w-full px-2.5 py-1.5 text-xs font-mono border border-slate-300 dark:border-slate-700 rounded bg-white dark:bg-slate-950"
+                        />
+                        <span className="text-[10px] text-slate-500 font-mono">IRC Max: 4.0″ (Sphere Rule)</span>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
+                          Stringer Spacing (on-center)
+                        </label>
+                        <select
+                          value={stairState.stringerSpacingIn}
+                          onChange={(e) => setStairState({ ...stairState, stringerSpacingIn: Number(e.target.value) as any })}
+                          className="w-full px-2 py-1.5 text-xs font-mono border border-slate-300 dark:border-slate-700 rounded bg-white dark:bg-slate-950"
+                        >
+                          <option value="16">16″ O.C. (Standard Residential)</option>
+                          <option value="12">12″ O.C. (Composite / High Load)</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Unit Costs & Labor */}
+                  <div className="border-t border-slate-200 dark:border-slate-800 pt-3 space-y-3">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+                      Material Prices &amp; Carpentry Labor
+                    </h3>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+                      <div>
+                        <label className="block text-[11px] text-slate-500">2×12 Stringer ($/ea)</label>
+                        <input
+                          type="number"
+                          step="1"
+                          value={stairState.stringerBoardPrice}
+                          onChange={(e) => setStairState({ ...stairState, stringerBoardPrice: Number(e.target.value) })}
+                          className="w-full px-2 py-1 font-mono border border-slate-300 dark:border-slate-700 rounded bg-white dark:bg-slate-950"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] text-slate-500">Tread Board ($/ea)</label>
+                        <input
+                          type="number"
+                          step="1"
+                          value={stairState.treadPrice}
+                          onChange={(e) => setStairState({ ...stairState, treadPrice: Number(e.target.value) })}
+                          className="w-full px-2 py-1 font-mono border border-slate-300 dark:border-slate-700 rounded bg-white dark:bg-slate-950"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] text-slate-500">Riser Board ($/ea)</label>
+                        <input
+                          type="number"
+                          step="1"
+                          value={stairState.riserBoardPrice}
+                          onChange={(e) => setStairState({ ...stairState, riserBoardPrice: Number(e.target.value) })}
+                          className="w-full px-2 py-1 font-mono border border-slate-300 dark:border-slate-700 rounded bg-white dark:bg-slate-950"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] text-slate-500">Handrail ($/lin ft)</label>
+                        <input
+                          type="number"
+                          step="0.5"
+                          value={stairState.handrailPricePerFt}
+                          onChange={(e) => setStairState({ ...stairState, handrailPricePerFt: Number(e.target.value) })}
+                          className="w-full px-2 py-1 font-mono border border-slate-300 dark:border-slate-700 rounded bg-white dark:bg-slate-950"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] text-slate-500">Newel Post ($/ea)</label>
+                        <input
+                          type="number"
+                          step="1"
+                          value={stairState.newelPostPrice}
+                          onChange={(e) => setStairState({ ...stairState, newelPostPrice: Number(e.target.value) })}
+                          className="w-full px-2 py-1 font-mono border border-slate-300 dark:border-slate-700 rounded bg-white dark:bg-slate-950"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] text-slate-500">Baluster ($/ea)</label>
+                        <input
+                          type="number"
+                          step="0.25"
+                          value={stairState.balusterPrice}
+                          onChange={(e) => setStairState({ ...stairState, balusterPrice: Number(e.target.value) })}
+                          className="w-full px-2 py-1 font-mono border border-slate-300 dark:border-slate-700 rounded bg-white dark:bg-slate-950"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 pt-1">
+                      <div>
+                        <label className="block text-[11px] text-slate-500">Labor Rate ($/hour)</label>
+                        <input
+                          type="number"
+                          step="5"
+                          value={stairState.laborRatePerHour}
+                          onChange={(e) => setStairState({ ...stairState, laborRatePerHour: Number(e.target.value) })}
+                          className="w-full px-2 py-1 font-mono border border-slate-300 dark:border-slate-700 rounded bg-white dark:bg-slate-950"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] text-slate-500">Labor Hours (Framing + Finish)</label>
+                        <input
+                          type="number"
+                          step="1"
+                          value={stairState.estimatedLaborHours}
+                          onChange={(e) => setStairState({ ...stairState, estimatedLaborHours: Number(e.target.value) })}
+                          className="w-full px-2 py-1 font-mono border border-slate-300 dark:border-slate-700 rounded bg-white dark:bg-slate-950"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Results & Visual Elevation (7 Cols) */}
+                <div className="lg:col-span-7 space-y-5">
+                  {/* Total Estimated Cost Banner */}
+                  <div className="border border-sky-300 dark:border-sky-800 bg-sky-50/50 dark:bg-sky-950/20 p-4 sm:p-5 rounded-xl">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div>
+                        <span className="text-xs uppercase font-mono tracking-wider text-sky-800 dark:text-sky-300">
+                          Total Estimated Stair &amp; Handrail Cost
+                        </span>
+                        <div className="text-3xl font-extrabold font-mono text-slate-900 dark:text-white mt-0.5">
+                          ${stairRes.totalProjectCost.toLocaleString()}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-xs font-mono text-slate-600 dark:text-slate-400 block">
+                          Materials: <strong>${stairRes.materialsSubtotal.toLocaleString()}</strong>
+                        </span>
+                        <span className="text-xs font-mono text-slate-600 dark:text-slate-400 block">
+                          Carpentry Labor: <strong>${stairRes.laborCost.toLocaleString()}</strong> ({stairState.estimatedLaborHours} hrs)
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Code Compliance Diagnostics Box */}
+                  <div
+                    className={`border p-4 rounded-xl transition-colors ${
+                      stairRes.allCodePassed
+                        ? 'border-emerald-300 dark:border-emerald-800 bg-emerald-50/60 dark:bg-emerald-950/30'
+                        : 'border-amber-300 dark:border-amber-800 bg-amber-50/60 dark:bg-amber-950/30'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between pb-2 mb-2 border-b border-emerald-200 dark:border-emerald-800/60">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`w-3 h-3 rounded-full ${
+                            stairRes.allCodePassed ? 'bg-emerald-500' : 'bg-amber-500'
+                          }`}
+                        />
+                        <span className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white font-mono">
+                          {stairRes.allCodePassed
+                            ? `✓ Complies with ${stairRes.codeStandard}`
+                            : `⚠ Attention Required for ${stairRes.codeStandard}`}
+                        </span>
+                      </div>
+                      <span className="text-[11px] font-mono font-semibold text-slate-600 dark:text-slate-400">
+                        Incline: {stairRes.inclineAngleDeg}° ({stairRes.angleOptimal ? 'Optimal' : 'Steep'})
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+                      <div className="bg-white/80 dark:bg-slate-900/80 p-2 rounded border border-slate-200 dark:border-slate-800">
+                        <span className="text-[10px] text-slate-500 block">Riser Height</span>
+                        <span className="font-bold font-mono">
+                          {stairRes.riserFraction} ({stairRes.exactRiserHeightIn}″)
+                        </span>
+                        <span className="text-[10px] text-emerald-600 dark:text-emerald-400 block">
+                          Max: {stairRes.maxRiserLimit}″
+                        </span>
+                      </div>
+
+                      <div className="bg-white/80 dark:bg-slate-900/80 p-2 rounded border border-slate-200 dark:border-slate-800">
+                        <span className="text-[10px] text-slate-500 block">Tread Run</span>
+                        <span className="font-bold font-mono">
+                          {stairRes.treadFraction} ({stairRes.treadRunIn}″)
+                        </span>
+                        <span className="text-[10px] text-emerald-600 dark:text-emerald-400 block">
+                          Min: {stairRes.minTreadLimit}″
+                        </span>
+                      </div>
+
+                      <div className="bg-white/80 dark:bg-slate-900/80 p-2 rounded border border-slate-200 dark:border-slate-800">
+                        <span className="text-[10px] text-slate-500 block">Blondel (2R + T)</span>
+                        <span className="font-bold font-mono">{stairRes.blondelValue}″</span>
+                        <span className="text-[10px] text-slate-500 block">
+                          {stairRes.blondelStatus} (Ideal 24″–25.5″)
+                        </span>
+                      </div>
+
+                      <div className="bg-white/80 dark:bg-slate-900/80 p-2 rounded border border-slate-200 dark:border-slate-800">
+                        <span className="text-[10px] text-slate-500 block">Clear Width</span>
+                        <span className="font-bold font-mono">{stairRes.stairWidthIn}″</span>
+                        <span className="text-[10px] text-slate-500 block">
+                          Min: {stairRes.minStairWidth}″
+                        </span>
+                      </div>
+
+                      <div className="bg-white/80 dark:bg-slate-900/80 p-2 rounded border border-slate-200 dark:border-slate-800">
+                        <span className="text-[10px] text-slate-500 block">Handrail Height</span>
+                        <span className="font-bold font-mono">{stairRes.handrailHeightIn}″</span>
+                        <span className="text-[10px] text-emerald-600 dark:text-emerald-400 block">
+                          Range: 34″–38″
+                        </span>
+                      </div>
+
+                      <div className="bg-white/80 dark:bg-slate-900/80 p-2 rounded border border-slate-200 dark:border-slate-800">
+                        <span className="text-[10px] text-slate-500 block">Baluster 4″ Rule</span>
+                        <span className="font-bold font-mono">{stairState.balusterSpacingIn}″ gap</span>
+                        <span className="text-[10px] text-emerald-600 dark:text-emerald-400 block">
+                          &lt; 4.0″ Sphere
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* INTERACTIVE SVG ELEVATION CROSS-SECTION DIAGRAM */}
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-4 bg-white dark:bg-slate-900 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+                        📐 Stairway &amp; Handrail Cross-Section Elevation (To Scale)
+                      </span>
+                      <span className="text-[10px] font-mono text-slate-400">
+                        Angle: {stairRes.inclineAngleDeg}°
+                      </span>
+                    </div>
+
+                    <div className="w-full overflow-x-auto bg-slate-50 dark:bg-slate-950/60 p-2 rounded-lg border border-slate-100 dark:border-slate-800">
+                      <svg
+                        viewBox="0 0 640 320"
+                        className="w-full h-auto min-w-[540px] max-h-[300px]"
+                        role="img"
+                        aria-label="Stair elevation cross section diagram with risers, treads, and handrail"
+                      >
+                        <defs>
+                          <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#0284c7" />
+                          </marker>
+                          <pattern id="hatch" width="8" height="8" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+                            <line x1="0" y1="0" x2="0" y2="8" stroke="#cbd5e1" strokeWidth="1" />
+                          </pattern>
+                        </defs>
+
+                        {/* Background gridlines */}
+                        <line x1="40" y1="270" x2="600" y2="270" stroke="#94a3b8" strokeWidth="2" />
+                        <line x1="40" y1="60" x2="600" y2="60" stroke="#94a3b8" strokeWidth="1" strokeDasharray="4 4" />
+
+                        {/* Floor Labels */}
+                        <text x="50" y="290" fill="#64748b" fontSize="11" fontFamily="monospace" fontWeight="bold">
+                          Lower Finished Floor Level (0.0″)
+                        </text>
+                        <text x="360" y="50" fill="#64748b" fontSize="11" fontFamily="monospace" fontWeight="bold">
+                          Upper Finished Landing ({stairRes.totalRiseIn}″ / {stairRes.totalRiseFt} ft)
+                        </text>
+
+                        {/* Calculate step rendering parameters */}
+                        {(() => {
+                          const stepsCount = Math.min(stairRes.numRisers, 18);
+                          const startX = 80;
+                          const startY = 270;
+                          const totalVisualWidth = 400;
+                          const totalVisualHeight = 210;
+                          const stepW = totalVisualWidth / stepsCount;
+                          const stepH = totalVisualHeight / stepsCount;
+
+                          // Build stringer polygon points
+                          const points: string[] = [`${startX},${startY}`];
+                          for (let i = 0; i < stepsCount; i++) {
+                            const curX = startX + i * stepW;
+                            const nextX = startX + (i + 1) * stepW;
+                            const curY = startY - (i + 1) * stepH;
+                            points.push(`${curX},${curY}`);
+                            points.push(`${nextX},${curY}`);
+                          }
+                          const topX = startX + stepsCount * stepW;
+                          const topY = startY - totalVisualHeight;
+                          points.push(`${topX + 50},${topY}`);
+                          points.push(`${topX + 50},${startY}`);
+                          points.push(`${startX},${startY}`);
+
+                          // Handrail line parallel to stair slope: offset 45px up
+                          const railYOffset = 40;
+                          const railStartTopY = topY - railYOffset;
+                          const railStartBottomY = startY - railYOffset;
+                          const adaTopExt = stairState.adaExtensions ? 30 : 0;
+                          const adaBottomExt = stairState.adaExtensions ? 30 : 0;
+
+                          return (
+                            <g>
+                              {/* Stringer solid fill */}
+                              <polygon points={points.join(' ')} fill="#e2e8f0" className="dark:fill-slate-800" stroke="#64748b" strokeWidth="1.5" />
+
+                              {/* Treads & Nosing highlight */}
+                              {Array.from({ length: stepsCount }).map((_, idx) => {
+                                const tx = startX + idx * stepW;
+                                const ty = startY - (idx + 1) * stepH;
+                                return (
+                                  <g key={idx}>
+                                    {/* Tread cap with 3px nosing overhang */}
+                                    <rect x={tx - 4} y={ty - 3} width={stepW + 5} height={6} fill="#b45309" rx="1" opacity="0.85" />
+                                    {/* Vertical Baluster per step */}
+                                    <line
+                                      x1={tx + stepW / 2}
+                                      y1={ty}
+                                      x2={tx + stepW / 2}
+                                      y2={ty - railYOffset + 4}
+                                      stroke="#475569"
+                                      strokeWidth="2"
+                                    />
+                                    {/* 2nd baluster if wide step */}
+                                    {stepW > 25 && (
+                                      <line
+                                        x1={tx + (stepW * 3) / 4}
+                                        y1={ty}
+                                        x2={tx + (stepW * 3) / 4}
+                                        y2={ty - railYOffset + 4}
+                                        stroke="#475569"
+                                        strokeWidth="2"
+                                      />
+                                    )}
+                                  </g>
+                                );
+                              })}
+
+                              {/* Bottom Newel Post */}
+                              <rect x={startX - 6} y={startY - 60} width="12" height="60" fill="#334155" rx="1" />
+                              {/* Top Newel Post */}
+                              <rect x={topX - 6} y={topY - 60} width="12" height="60" fill="#334155" rx="1" />
+
+                              {/* Handrail (sloped bar with extensions) */}
+                              <line
+                                x1={startX - adaBottomExt}
+                                y1={railStartBottomY}
+                                x2={topX + adaTopExt}
+                                y2={railStartTopY}
+                                stroke="#0284c7"
+                                strokeWidth="6"
+                                strokeLinecap="round"
+                              />
+
+                              {/* Handrail Height Annotation */}
+                              <line x1={startX + 60} y1={startY - (3 * stepH)} x2={startX + 60} y2={startY - (3 * stepH) - railYOffset} stroke="#0284c7" strokeWidth="1" strokeDasharray="2 2" />
+                              <text x={startX + 68} y={startY - (3 * stepH) - 18} fill="#0284c7" fontSize="10" fontFamily="monospace" fontWeight="bold">
+                                {stairRes.handrailHeightIn}″ Handrail
+                              </text>
+
+                              {/* Incline Angle Arc */}
+                              <path d={`M ${startX + 50} ${startY} A 50 50 0 0 0 ${startX + 40} ${startY - 30}`} fill="none" stroke="#d97706" strokeWidth="2" />
+                              <text x={startX + 55} y={startY - 15} fill="#d97706" fontSize="11" fontFamily="monospace" fontWeight="bold">
+                                {stairRes.inclineAngleDeg}°
+                              </text>
+                            </g>
+                          );
+                        })()}
+
+                        {/* Total Rise Dimension Line (Right side) */}
+                        <line x1="530" y1="270" x2="530" y2="60" stroke="#0284c7" strokeWidth="1.5" markerStart="url(#arrow)" markerEnd="url(#arrow)" />
+                        <text x="540" y="170" fill="#0284c7" fontSize="12" fontFamily="monospace" fontWeight="bold">
+                          Rise: {stairRes.totalRiseIn}″ ({stairRes.numRisers} risers @ {stairRes.riserFraction})
+                        </text>
+
+                        {/* Total Run Dimension Line (Bottom) */}
+                        <line x1="80" y1="305" x2="480" y2="305" stroke="#0284c7" strokeWidth="1.5" markerStart="url(#arrow)" markerEnd="url(#arrow)" />
+                        <text x="220" y="318" fill="#0284c7" fontSize="12" fontFamily="monospace" fontWeight="bold">
+                          Total Run: {stairRes.totalRunIn}″ ({stairRes.totalRunFt} ft · {stairRes.numTreads} treads)
+                        </text>
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* Summary Takeoff Metrics Cards */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div className="border border-slate-200 dark:border-slate-800 p-3 rounded-xl bg-white dark:bg-slate-900">
+                      <span className="text-[10px] text-slate-500 uppercase font-mono block">Risers</span>
+                      <span className="text-xl font-bold font-mono text-slate-900 dark:text-white">
+                        {stairRes.numRisers}
+                      </span>
+                      <span className="text-[11px] text-sky-700 dark:text-sky-400 font-mono block">
+                        @ {stairRes.riserFraction} each
+                      </span>
+                    </div>
+
+                    <div className="border border-slate-200 dark:border-slate-800 p-3 rounded-xl bg-white dark:bg-slate-900">
+                      <span className="text-[10px] text-slate-500 uppercase font-mono block">Treads</span>
+                      <span className="text-xl font-bold font-mono text-slate-900 dark:text-white">
+                        {stairRes.numTreads}
+                      </span>
+                      <span className="text-[11px] text-sky-700 dark:text-sky-400 font-mono block">
+                        @ {stairRes.treadFraction} run
+                      </span>
+                    </div>
+
+                    <div className="border border-slate-200 dark:border-slate-800 p-3 rounded-xl bg-white dark:bg-slate-900">
+                      <span className="text-[10px] text-slate-500 uppercase font-mono block">Stringers (2×12)</span>
+                      <span className="text-xl font-bold font-mono text-slate-900 dark:text-white">
+                        {stairRes.stringerCount}
+                      </span>
+                      <span className="text-[11px] text-slate-500 font-mono block">
+                        {stairRes.standardBoardFt} ft boards
+                      </span>
+                    </div>
+
+                    <div className="border border-slate-200 dark:border-slate-800 p-3 rounded-xl bg-white dark:bg-slate-900">
+                      <span className="text-[10px] text-slate-500 uppercase font-mono block">Handrail</span>
+                      <span className="text-xl font-bold font-mono text-slate-900 dark:text-white">
+                        {stairRes.totalHandrailFt} LF
+                      </span>
+                      <span className="text-[11px] text-slate-500 font-mono block">
+                        {stairRes.totalBrackets} Brackets · {stairRes.totalNewelPosts} Posts
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Complete Bill of Materials & Takeoff Table */}
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-4 bg-white dark:bg-slate-900 overflow-x-auto">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                        Contractor Bill of Materials Takeoff
+                      </h3>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const takeoffSummary = [
+                            `WANJAARO STAIR & HANDRAIL MATERIAL TAKEOFF`,
+                            `Building Code: ${stairRes.codeStandard}`,
+                            `Total Vertical Rise: ${stairRes.totalRiseIn}" (${stairRes.totalRiseFt} ft)`,
+                            `Number of Risers: ${stairRes.numRisers} @ ${stairRes.riserFraction} (${stairRes.exactRiserHeightIn}")`,
+                            `Number of Treads: ${stairRes.numTreads} @ ${stairRes.treadFraction} run (Total Run: ${stairRes.totalRunIn}")`,
+                            `Incline Angle: ${stairRes.inclineAngleDeg}° (Blondel: ${stairRes.blondelValue}")`,
+                            `Clear Width: ${stairRes.stairWidthIn}" | Stringers: ${stairRes.stringerCount} boards (2x12 x ${stairRes.standardBoardFt}ft) = $${stairRes.stringersCost}`,
+                            `Treads Material: ${stairRes.numTreads} treads = $${stairRes.treadsCost}`,
+                            `Riser Boards: ${stairRes.numRisers} risers = $${stairRes.risersCost}`,
+                            `Handrail: ${stairRes.totalHandrailFt} Linear Feet (${stairState.handrailSides} sides) = $${stairRes.handrailCost}`,
+                            `Newel Posts: ${stairRes.totalNewelPosts} posts = $${stairRes.postsCost}`,
+                            `Balusters: ${stairRes.totalBalusters} balusters (<4" gap) = $${stairRes.balustersCost}`,
+                            `Hardware & Fasteners = $${stairRes.totalHardwareCost}`,
+                            `Materials Subtotal: $${stairRes.materialsSubtotal.toLocaleString()}`,
+                            `Carpentry Labor (${stairState.estimatedLaborHours} hrs @ $${stairState.laborRatePerHour}/hr): $${stairRes.laborCost.toLocaleString()}`,
+                            `TOTAL PROJECT ESTIMATE: $${stairRes.totalProjectCost.toLocaleString()}`,
+                          ].join('\n');
+                          copyTakeoff(takeoffSummary);
+                        }}
+                        className="px-2.5 py-1 text-xs font-semibold rounded bg-sky-700 text-white hover:bg-sky-800 transition-colors cursor-pointer"
+                      >
+                        {copiedText || '📋 Copy Material Takeoff'}
+                      </button>
+                    </div>
+
+                    <table className="w-full text-xs font-mono text-left border-collapse">
+                      <thead>
+                        <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-500">
+                          <th className="py-2">Item Description</th>
+                          <th className="py-2">Specification</th>
+                          <th className="py-2 text-center">Quantity</th>
+                          <th className="py-2 text-right">Unit Price</th>
+                          <th className="py-2 text-right">Ext. Price</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                        <tr>
+                          <td className="py-2 font-sans font-medium">2×12 Cut Stringers</td>
+                          <td className="py-2 text-slate-500">2×12 × {stairRes.standardBoardFt} ft Select Structural</td>
+                          <td className="py-2 text-center">{stairRes.stringerCount} boards</td>
+                          <td className="py-2 text-right">${stairState.stringerBoardPrice.toFixed(2)}</td>
+                          <td className="py-2 text-right font-bold">${stairRes.stringersCost.toLocaleString()}</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 font-sans font-medium">Stair Treads</td>
+                          <td className="py-2 text-slate-500">Bullnose {stairState.stairWidthIn}″ × {stairRes.totalTreadDepthIn}″</td>
+                          <td className="py-2 text-center">{stairRes.numTreads} (+10% cut)</td>
+                          <td className="py-2 text-right">${stairState.treadPrice.toFixed(2)}</td>
+                          <td className="py-2 text-right font-bold">${stairRes.treadsCost.toLocaleString()}</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 font-sans font-medium">Riser Boards</td>
+                          <td className="py-2 text-slate-500">1×8 × {stairState.stairWidthIn}″ Finish Riser</td>
+                          <td className="py-2 text-center">{stairRes.numRisers} (+10% cut)</td>
+                          <td className="py-2 text-right">${stairState.riserBoardPrice.toFixed(2)}</td>
+                          <td className="py-2 text-right font-bold">${stairRes.risersCost.toLocaleString()}</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 font-sans font-medium">Handrail Stock</td>
+                          <td className="py-2 text-slate-500">Grip Profile ({stairState.handrailSides} side)</td>
+                          <td className="py-2 text-center">{stairRes.totalHandrailFt} Lin Ft</td>
+                          <td className="py-2 text-right">${stairState.handrailPricePerFt.toFixed(2)}</td>
+                          <td className="py-2 text-right font-bold">${stairRes.handrailCost.toLocaleString()}</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 font-sans font-medium">Newel Posts</td>
+                          <td className="py-2 text-slate-500">4×4 × 48″ Support Posts</td>
+                          <td className="py-2 text-center">{stairRes.totalNewelPosts} posts</td>
+                          <td className="py-2 text-right">${stairState.newelPostPrice.toFixed(2)}</td>
+                          <td className="py-2 text-right font-bold">${stairRes.postsCost.toLocaleString()}</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 font-sans font-medium">Balusters / Spindles</td>
+                          <td className="py-2 text-slate-500">Square / Turned &lt; 4″ Sphere Rule</td>
+                          <td className="py-2 text-center">{stairRes.totalBalusters} pcs</td>
+                          <td className="py-2 text-right">${stairState.balusterPrice.toFixed(2)}</td>
+                          <td className="py-2 text-right font-bold">${stairRes.balustersCost.toLocaleString()}</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 font-sans font-medium">Hardware &amp; Fasteners</td>
+                          <td className="py-2 text-slate-500">Brackets ({stairRes.totalBrackets}), Stringer Hangers, Screws</td>
+                          <td className="py-2 text-center">1 Lot</td>
+                          <td className="py-2 text-right">${stairRes.totalHardwareCost.toFixed(2)}</td>
+                          <td className="py-2 text-right font-bold">${stairRes.totalHardwareCost.toLocaleString()}</td>
+                        </tr>
+                        <tr className="bg-slate-50 dark:bg-slate-950/40">
+                          <td className="py-2 font-sans font-bold text-slate-800 dark:text-slate-200">
+                            Materials Subtotal
+                          </td>
+                          <td className="py-2 text-slate-500">Including 10% cutting waste</td>
+                          <td className="py-2 text-center font-bold">—</td>
+                          <td className="py-2 text-right font-bold">—</td>
+                          <td className="py-2 text-right font-bold text-sky-700 dark:text-sky-400">
+                            ${stairRes.materialsSubtotal.toLocaleString()}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 font-sans font-medium">Carpentry Labor</td>
+                          <td className="py-2 text-slate-500">{stairState.estimatedLaborHours} hrs @ ${stairState.laborRatePerHour}/hr</td>
+                          <td className="py-2 text-center">{stairState.estimatedLaborHours} hrs</td>
+                          <td className="py-2 text-right">${stairState.laborRatePerHour.toFixed(2)}</td>
+                          <td className="py-2 text-right font-bold">${stairRes.laborCost.toLocaleString()}</td>
+                        </tr>
+                        <tr className="bg-sky-50/70 dark:bg-sky-950/40 text-slate-900 dark:text-white font-bold">
+                          <td className="py-2.5 font-sans text-sm">TOTAL ESTIMATED PROJECT COST</td>
+                          <td className="py-2.5 text-slate-500 font-normal">Turnkey Takeoff</td>
+                          <td className="py-2.5 text-center">—</td>
+                          <td className="py-2.5 text-right">—</td>
+                          <td className="py-2.5 text-right text-base text-sky-800 dark:text-sky-300">
+                            ${stairRes.totalProjectCost.toLocaleString()}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Educational Code Reference Guide */}
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-4 sm:p-5 bg-white dark:bg-slate-900 space-y-3">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                      📚 Building Code Reference: Residential (IRC) vs Commercial (IBC / ADA)
+                    </h3>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-xs font-sans text-left border-collapse">
+                        <thead>
+                          <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-500 font-mono">
+                            <th className="py-1.5">Code Requirement</th>
+                            <th className="py-1.5">IRC 2024 (Residential)</th>
+                            <th className="py-1.5">IBC 2024 (Commercial)</th>
+                            <th className="py-1.5">ADA Standards 505</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                          <tr>
+                            <td className="py-1.5 font-semibold">Maximum Riser Height</td>
+                            <td className="py-1.5">7-3/4 inches (7.75″)</td>
+                            <td className="py-1.5">7.0 inches (7.0″)</td>
+                            <td className="py-1.5">7.0 inches (7.0″) max / 4.0″ min</td>
+                          </tr>
+                          <tr>
+                            <td className="py-1.5 font-semibold">Minimum Tread Depth</td>
+                            <td className="py-1.5">10.0 inches (10.0″)</td>
+                            <td className="py-1.5">11.0 inches (11.0″)</td>
+                            <td className="py-1.5">11.0 inches (11.0″) min</td>
+                          </tr>
+                          <tr>
+                            <td className="py-1.5 font-semibold">Handrail Height</td>
+                            <td className="py-1.5">34 to 38 inches above nosing</td>
+                            <td className="py-1.5">34 to 38 inches above nosing</td>
+                            <td className="py-1.5">34 to 38 inches continuous</td>
+                          </tr>
+                          <tr>
+                            <td className="py-1.5 font-semibold">Handrail Extensions</td>
+                            <td className="py-1.5">Not required (returns to wall)</td>
+                            <td className="py-1.5">12″ at top / 1 tread + 12″ bottom</td>
+                            <td className="py-1.5">Mandatory 12″ horizontal extensions</td>
+                          </tr>
+                          <tr>
+                            <td className="py-1.5 font-semibold">Baluster / Guard Opening</td>
+                            <td className="py-1.5">&lt; 4-inch sphere cannot pass</td>
+                            <td className="py-1.5">&lt; 4-inch sphere cannot pass</td>
+                            <td className="py-1.5">&lt; 4-inch sphere cannot pass</td>
+                          </tr>
+                          <tr>
+                            <td className="py-1.5 font-semibold">Minimum Stair Width</td>
+                            <td className="py-1.5">36 inches (31.5″ with handrail)</td>
+                            <td className="py-1.5">44 inches (36″ if occupant load &lt; 50)</td>
+                            <td className="py-1.5">44 inches clear between handrails</td>
+                          </tr>
+                          <tr>
+                            <td className="py-1.5 font-semibold">Minimum Headroom</td>
+                            <td className="py-1.5">6 ft 8 in (80 inches)</td>
+                            <td className="py-1.5">6 ft 8 in (80 inches)</td>
+                            <td className="py-1.5">80 inches minimum vertical clearance</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </div>

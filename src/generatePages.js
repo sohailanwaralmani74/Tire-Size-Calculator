@@ -131,6 +131,24 @@ const FAQ_DATA = {
       q: 'Why should every construction budget include a contingency reserve?',
       a: 'A 10% to 15% contingency reserve covers unexpected site conditions, price fluctuations, structural rot discovered during demolition, and minor owner change orders without halting work.'
     }
+  ],
+  'stair-handrail': [
+    {
+      q: 'What is the maximum riser height and minimum tread run for residential stairs?',
+      a: 'According to the International Residential Code (IRC 2024 Section R311.7.5), the maximum riser height is 7-3/4 inches (7.75″) and the minimum tread depth/run is 10 inches (10.0″) with a 3/4″ to 1-1/4″ nosing projection. The greatest riser height within any flight cannot exceed the smallest by more than 3/8 inch.'
+    },
+    {
+      q: 'What is the required handrail height according to building code?',
+      a: 'Both residential (IRC R311.7.8.1) and commercial (IBC 1014.2 / ADA 505.4) codes mandate handrail height between 34 inches and 38 inches measured vertically from the sloped plane of the tread nosings to the top of the handrail gripping surface.'
+    },
+    {
+      q: 'What are the ADA requirements for handrail extensions?',
+      a: 'Under ADA Standards for Accessible Design Section 505.10, handrails on commercial and public stairs must extend horizontally at least 12 inches beyond the top riser, and must continue to slope for the depth of one tread plus extend 12 inches horizontally beyond the bottom riser.'
+    },
+    {
+      q: 'What is the 4-inch sphere rule for stair balusters and guards?',
+      a: 'IRC Section R312.1.3 requires guard openings (such as between vertical balusters or spindles) to prevent the passage of a 4-inch diameter sphere up to the required 36-inch (residential) or 42-inch (commercial) guard height.'
+    }
   ]
 };
 

@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Roofing Shingle & Pitch Calculator – Wanjaaro Material & Cost Calculator</title>
     <meta name="description" content="Calculate roofing squares, architectural bundles, pitch multipliers, felt, and ridge caps. Free, instant deterministic calculations with waste margin, material takeoffs, and contractor cost breakdown." />
-    <link rel="canonical" href="https://wanjaaro.com/roofing-calculator.html" />
+    <link rel="canonical" href="https://wanjaaro.com/roofing-calculator" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Wanjaaro" />
     <meta property="og:title" content="Roofing Shingle & Pitch Calculator – Wanjaaro Material & Cost Calculator" />
     <meta property="og:description" content="Calculate roofing squares, architectural bundles, pitch multipliers, felt, and ridge caps. Free, instant deterministic calculations with waste margin, material takeoffs, and contractor cost breakdown." />
-    <meta property="og:url" content="https://wanjaaro.com/roofing-calculator.html" />
+    <meta property="og:url" content="https://wanjaaro.com/roofing-calculator" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -60,20 +60,20 @@
           "@type": "ListItem",
           "position": 2,
           "name": "Roofing & Flooring",
-          "item": "https://wanjaaro.com/roofing-calculator.html"
+          "item": "https://wanjaaro.com/roofing-calculator"
         },
         {
           "@type": "ListItem",
           "position": 3,
           "name": "Roofing Shingle & Pitch Calculator",
-          "item": "https://wanjaaro.com/roofing-calculator.html"
+          "item": "https://wanjaaro.com/roofing-calculator"
         }
       ]
     },
     {
       "@type": "WebApplication",
       "name": "Roofing Shingle & Pitch Calculator",
-      "url": "https://wanjaaro.com/roofing-calculator.html",
+      "url": "https://wanjaaro.com/roofing-calculator",
       "applicationCategory": "UtilitiesApplication",
       "operatingSystem": "All",
       "browserRequirements": "Requires JavaScript for live interactive sliders and takeoff exports.",
@@ -95,18 +95,18 @@
       "mainEntity": [
         {
           "@type": "Question",
-          "name": "What is a roofing square and how many shingle bundles make up a square?",
+          "name": "What is a \"square\" in roofing terms?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "In roofing, 1 \"square\" is equal to 100 square feet of roof surface. Standard asphalt architectural or 3-tab shingles are packaged 3 bundles per square. For a 24-square roof, you need 72 bundles, plus ridge cap shingles."
+            "text": "A roofing square is a unit of area equal to exactly 100 square feet (10 ft × 10 ft). Standard architectural laminate asphalt shingles are packaged in 3 bundles per square."
           }
         },
         {
           "@type": "Question",
-          "name": "How does roof pitch affect the total shingles needed?",
+          "name": "How does roof pitch affect actual surface area?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Roof pitch increases surface area relative to the ground footprint. For example, a 6/12 pitch has a multiplier of 1.118 (+11.8% area), an 8/12 pitch has a multiplier of 1.202 (+20.2%), and a 12/12 pitch has a multiplier of 1.414 (+41.4%)."
+            "text": "Pitch increases roof area relative to horizontal building footprint. A 4/12 pitch has a multiplier of 1.054 (+5.4%), a 6/12 pitch has a multiplier of 1.118 (+11.8%), an 8/12 pitch has 1.202 (+20.2%), and a 12/12 pitch (45°) has 1.414 (+41.4%)."
           }
         }
       ]
@@ -114,7 +114,7 @@
   ]
 }
     </script>
-    <link rel="stylesheet" href="./styles/app-styles.css" data-vite-ignore />
+    <link rel="stylesheet" href="/styles/app-styles.css" data-vite-ignore />
   </head>
   <body class="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 antialiased selection:bg-sky-600 selection:text-white">
     <!-- Interactive React Mount Point -->
@@ -123,21 +123,35 @@
     <!-- Noscript & SEO Fallback for Bots -->
     <noscript>
       <div style="max-width: 1200px; margin: 2rem auto; padding: 1.5rem; font-family: system-ui, sans-serif;">
-        <h1 style="font-size: 1.75rem; font-weight: bold; margin-bottom: 0.5rem;">Roofing Shingle & Pitch Calculator</h1>
-        <p style="color: #475569; margin-bottom: 1.5rem;">Calculate roofing squares, architectural bundles, pitch multipliers, felt, and ridge caps.</p>
-        <p><strong>Category:</strong> Roofing & Flooring</p>
-        <p><strong>Last Modified:</strong> 2026-10-06</p>
+        <h1 style="font-size: 1.75rem; font-weight: bold; margin-bottom: 0.5rem;">Roofing Shingle & Pitch Calculator – Wanjaaro Material & Cost Calculator</h1>
+        <p style="color: #475569; margin-bottom: 1.5rem;">Calculate roofing squares, architectural bundles, pitch multipliers, felt, and ridge caps. Free, instant deterministic calculations with waste margin, material takeoffs, and contractor cost breakdown.</p>
+        <p><strong>Category:</strong> Roofing & Flooring</p><p><strong>Last Modified:</strong> 2026-10-06</p>
+
+        <h2 style="font-size: 1.25rem; font-weight: bold; margin-top: 1.5rem;">Available Building Material Calculators</h2>
+        <ul style="margin-top: 0.5rem; line-height: 1.8;">
+          <li><a href="/concrete-calculator">Concrete Slab & Footing Calculator</a> – Calculate volume in cubic yards, pre-mixed bags (40, 60, 80 lb), and rebar grid requirements.</li>
+          <li><a href="/brick-mortar-calculator">Brick & Mortar Calculator</a> – Calculate total modular, king, or queen bricks, mortar bags (Type N/S), and tons of sand.</li>
+          <li><a href="/block-cmu-calculator">Concrete Block (CMU) Calculator</a> – Estimate standard CMU blocks, core-fill grout volume, mortar bags, and vertical rebar.</li>
+          <li><a href="/framing-calculator">Wall Framing & Stud Calculator</a> – Calculate common studs, double top plates, bottom sill, headers, corners, and board feet.</li>
+          <li><a href="/stair-handrail-calculator">Stair & Handrail Calculator</a> – Calculate stair risers, tread run, stringer boards, handrail length, baluster spacing, and ADA/IRC code compliance.</li>
+          <li><a href="/sheathing-calculator">Plywood & OSB Sheathing Calculator</a> – Determine 4x8 / 4x10 sheets for walls, subfloors, and roof decks plus framing nail counts.</li>
+          <li><a href="/drywall-calculator">Drywall & Sheetrock Calculator</a> – Calculate 4x8, 4x10, 4x12 drywall sheets, joint compound buckets, screws, and tape rolls.</li>
+          <li><a href="/paint-calculator">Paint & Primer Coverage Calculator</a> – Estimate gallons of wall/ceiling paint and primer with window and door deduction.</li>
+          <li><a href="/roofing-calculator">Roofing Shingle & Pitch Calculator</a> – Calculate roofing squares, architectural bundles, pitch multipliers, felt, and ridge caps.</li>
+          <li><a href="/flooring-tile-calculator">Tile, Grout & Flooring Calculator</a> – Calculate square footage, tile boxes with waste, grout weight (lbs), and thin-set bags.</li>
+          <li><a href="/construction-cost-calculator">Construction Cost & Budget Estimator</a> – Estimate total project budget with material subtotal, labor rates, GC markup, and contingency.</li>
+        </ul>
 
         <h2 style="font-size: 1.25rem; font-weight: bold; margin-top: 1.5rem;">Frequently Asked Questions</h2>
         
           <div style="margin-top: 1rem;">
-            <h3 style="font-size: 1rem; font-weight: 600;">What is a roofing square and how many shingle bundles make up a square?</h3>
-            <p style="color: #334155; margin-top: 0.25rem;">In roofing, 1 "square" is equal to 100 square feet of roof surface. Standard asphalt architectural or 3-tab shingles are packaged 3 bundles per square. For a 24-square roof, you need 72 bundles, plus ridge cap shingles.</p>
+            <h3 style="font-size: 1rem; font-weight: 600;">What is a "square" in roofing terms?</h3>
+            <p style="color: #334155; margin-top: 0.25rem;">A roofing square is a unit of area equal to exactly 100 square feet (10 ft × 10 ft). Standard architectural laminate asphalt shingles are packaged in 3 bundles per square.</p>
           </div>
         
           <div style="margin-top: 1rem;">
-            <h3 style="font-size: 1rem; font-weight: 600;">How does roof pitch affect the total shingles needed?</h3>
-            <p style="color: #334155; margin-top: 0.25rem;">Roof pitch increases surface area relative to the ground footprint. For example, a 6/12 pitch has a multiplier of 1.118 (+11.8% area), an 8/12 pitch has a multiplier of 1.202 (+20.2%), and a 12/12 pitch has a multiplier of 1.414 (+41.4%).</p>
+            <h3 style="font-size: 1rem; font-weight: 600;">How does roof pitch affect actual surface area?</h3>
+            <p style="color: #334155; margin-top: 0.25rem;">Pitch increases roof area relative to horizontal building footprint. A 4/12 pitch has a multiplier of 1.054 (+5.4%), a 6/12 pitch has a multiplier of 1.118 (+11.8%), an 8/12 pitch has 1.202 (+20.2%), and a 12/12 pitch (45°) has 1.414 (+41.4%).</p>
           </div>
         
       </div>
@@ -284,6 +298,6 @@
     </script>
 
     <!-- Application Bundle -->
-    <script type="module" src="./src/app-bundle.js"></script>
+    <script type="module" src="/src/app-bundle.js"></script>
   </body>
 </html>

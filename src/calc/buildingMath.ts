@@ -56,6 +56,15 @@ export const CALCULATOR_CATEGORIES = [
         lastmod: '2026-10-10',
       },
       {
+        id: 'stair-handrail',
+        slug: 'stair-handrail-calculator',
+        name: 'Stair & Handrail Calculator',
+        shortTitle: 'Stairs & Railing',
+        badge: 'Rise, Run & Codes',
+        summary: 'Calculate stair risers, tread run, stringer boards, handrail length, baluster spacing, and ADA/IRC code compliance.',
+        lastmod: '2026-10-15',
+      },
+      {
         id: 'sheathing',
         slug: 'sheathing-calculator',
         name: 'Plywood & OSB Sheathing Calculator',
@@ -760,5 +769,214 @@ export function calculateConstructionCost(input: ConstructionCostInput) {
     contingencyAmount,
     totalEstimatedCost,
     costPerSqFt,
+  };
+}
+
+// -------------------------------------------------------------
+// 11. STAIR & HANDRAIL CALCULATOR (IRC / IBC / ADA)
+// -------------------------------------------------------------
+export interface StairHandrailInput {
+  totalRiseIn: number;          // Total vertical rise in inches (e.g. 108 for 9ft)
+  targetRiserHeightIn: number;  // Target riser height (default 7.5, IRC max 7.75)
+  treadRunIn: number;           // Target tread depth / run (default 10.5, IRC min 10)
+  nosingIn: number;             // Nosing projection (default 1.0)
+  stairWidthIn: number;         // Clear stair width (default 36)
+  buildingCode: 'irc' | 'ibc_ada'; // IRC Residential or IBC / ADA Commercial
+  handrailSides: 'one' | 'both' | 'wall_and_guard';
+  handrailHeightIn: number;     // 34 to 38 inches (default 36)
+  adaExtensions: boolean;       // 12" top extension & 12" + 1 tread bottom extension
+  balusterSpacingIn: number;    // Maximum spacing between balusters (default 3.5, IRC max 4.0)
+  stringerSpacingIn: number;    // 16 or 12 on center (default 16)
+  wastePct: number;             // Waste percentage (e.g. 10%)
+  // Unit costs
+  stringerBoardPrice: number;   // 2x12 board price
+  treadPrice: number;           // price per tread
+  riserBoardPrice: number;      // price per riser board
+  handrailPricePerFt: number;   // handrail linear ft price
+  newelPostPrice: number;       // newel post price
+  balusterPrice: number;        // baluster price
+  hardwareAllowance: number;    // brackets & fasteners
+  laborRatePerHour: number;     // carpentry labor rate
+  estimatedLaborHours: number;  // labor hours estimate
+}
+
+export function formatInchFraction(inches: number): string {
+  const whole = Math.floor(inches);
+  const remainder = inches - whole;
+  const sixteenths = Math.round(remainder * 16);
+  if (sixteenths === 0) return `${whole}"`;
+  if (sixteenths === 16) return `${whole + 1}"`;
+
+  let num = sixteenths;
+  let den = 16;
+  while (num % 2 === 0 && den % 2 === 0) {
+    num /= 2;
+    den /= 2;
+  }
+  return whole > 0 ? `${whole} ${num}/${den}"` : `${num}/${den}"`;
+}
+
+export function calculateStairHandrail(input: StairHandrailInput) {
+  const totalRise = Math.max(6, Number(input.totalRiseIn) || 108);
+  const targetRiser = Math.max(4, Number(input.targetRiserHeightIn) || 7.5);
+  const targetTread = Math.max(8, Number(input.treadRunIn) || 10.5);
+  const nosing = Math.max(0, Number(input.nosingIn) || 1.0);
+  const stairWidth = Math.max(24, Number(input.stairWidthIn) || 36);
+  const code = input.buildingCode === 'ibc_ada' ? 'ibc_ada' : 'irc';
+  const handrailHeight = Math.max(30, Math.min(42, Number(input.handrailHeightIn) || 36));
+  const balusterSpacing = Math.max(1, Math.min(6, Number(input.balusterSpacingIn) || 3.5));
+  const stringerSpacing = Number(input.stringerSpacingIn) === 12 ? 12 : 16;
+  const wasteMult = 1 + (Math.max(0, Number(input.wastePct) || 10) / 100);
+
+  // 1. Core Stair Geometry
+  const numRisers = Math.max(1, Math.round(totalRise / targetRiser));
+  const exactRiserHeight = totalRise / numRisers;
+  const numTreads = Math.max(1, numRisers - 1); // standard landing flush
+  const totalRunIn = numTreads * targetTread;
+  const totalRunFt = totalRunIn / 12;
+  const totalTreadDepth = targetTread + nosing;
+
+  // Incline Angle: tan(theta) = rise / run
+  const inclineRad = Math.atan(exactRiserHeight / targetTread);
+  const inclineAngleDeg = Number(((inclineRad * 180) / Math.PI).toFixed(1));
+
+  // Stringer Hypotenuse (diagonal slope):
+  const stringerLengthIn = Math.sqrt(Math.pow(totalRise, 2) + Math.pow(totalRunIn, 2));
+  const stringerLengthFt = Number((stringerLengthIn / 12).toFixed(2));
+
+  // Minimum standard lumber board length for 2x12 stringer (10', 12', 14', 16', 18', 20'):
+  const neededFt = stringerLengthFt + 1.2; // cut allowance
+  let standardBoardFt = 10;
+  if (neededFt > 10 && neededFt <= 12) standardBoardFt = 12;
+  else if (neededFt > 12 && neededFt <= 14) standardBoardFt = 14;
+  else if (neededFt > 14 && neededFt <= 16) standardBoardFt = 16;
+  else if (neededFt > 16 && neededFt <= 18) standardBoardFt = 18;
+  else if (neededFt > 18) standardBoardFt = 20;
+
+  // Stringers count based on width and code spacing (16" or 12" o.c.):
+  const stringerCount = Math.max(2, Math.ceil(stairWidth / stringerSpacing) + 1);
+
+  // Blondel's Comfort Formula: 2 * Riser + Tread (Optimal is 24" to 25.5")
+  const blondelValue = Number(((2 * exactRiserHeight) + targetTread).toFixed(2));
+  let blondelStatus = 'Optimal';
+  if (blondelValue < 24) blondelStatus = 'Slightly Shallow';
+  else if (blondelValue > 25.5) blondelStatus = 'Slightly Steep';
+
+  // 2. Handrail & Railing Geometry
+  const hasAdaExt = Boolean(input.adaExtensions || code === 'ibc_ada');
+  // ADA 505: top extension = 12" horizontal, bottom extension = 1 tread depth + 12"
+  const extensionInches = hasAdaExt ? (24 + targetTread) : 8; // 8" standard safety return
+  const singleRailSlopeIn = stringerLengthIn + extensionInches;
+  const singleRailSlopeFt = Number((singleRailSlopeIn / 12).toFixed(2));
+  const railSidesMult = input.handrailSides === 'both' ? 2 : 1;
+  const totalHandrailFt = Math.ceil(singleRailSlopeFt * railSidesMult);
+
+  // Wall brackets: 1 bracket per 48"-60" of rail, min 3 per run
+  const bracketCountPerSide = Math.max(3, Math.ceil(singleRailSlopeIn / 48) + 1);
+  const totalBrackets = bracketCountPerSide * railSidesMult;
+
+  // Newel posts: minimum top + bottom post (+ intermediate post if total run exceeds 144" / 12ft)
+  const postsPerSide = (totalRunIn > 144 || totalRise > 100) ? 3 : 2;
+  const totalNewelPosts = postsPerSide * railSidesMult;
+
+  // Balusters / Spindles (4" maximum sphere rule):
+  const balustersPerTread = Math.max(2, Math.round(targetTread / balusterSpacing));
+  const rawBalusters = numTreads * balustersPerTread * railSidesMult;
+  const totalBalusters = Math.ceil(rawBalusters * 1.05); // 5% spare
+
+  // 3. Code Compliance Checks (IRC vs IBC/ADA)
+  const maxRiserLimit = code === 'ibc_ada' ? 7.0 : 7.75;
+  const minTreadLimit = code === 'ibc_ada' ? 11.0 : 10.0;
+  const minStairWidth = code === 'ibc_ada' ? 44.0 : 36.0;
+
+  const riserCompliant = exactRiserHeight <= maxRiserLimit && exactRiserHeight >= 4.0;
+  const treadCompliant = targetTread >= minTreadLimit;
+  const widthCompliant = stairWidth >= minStairWidth;
+  const handrailHeightCompliant = handrailHeight >= 34.0 && handrailHeight <= 38.0;
+  const balusterCompliant = balusterSpacing <= 4.0;
+  const angleOptimal = inclineAngleDeg >= 30 && inclineAngleDeg <= 37;
+
+  const allCodePassed = riserCompliant && treadCompliant && widthCompliant && handrailHeightCompliant && balusterCompliant;
+
+  // 4. Material Quantities & Cost Takeoff
+  const stringerBoardPrice = Number(input.stringerBoardPrice) || 38.50;
+  const treadPrice = Number(input.treadPrice) || 18.00;
+  const riserBoardPrice = Number(input.riserBoardPrice) || 11.50;
+  const handrailPricePerFt = Number(input.handrailPricePerFt) || 4.75;
+  const newelPostPrice = Number(input.newelPostPrice) || 42.00;
+  const balusterPrice = Number(input.balusterPrice) || 3.25;
+  const hardwareAllowance = Number(input.hardwareAllowance) || 65.00;
+  const laborRate = Number(input.laborRatePerHour) || 55.00;
+  const laborHours = Number(input.estimatedLaborHours) || 16.0;
+
+  const stringersCost = Math.round(stringerCount * stringerBoardPrice);
+  const treadsCost = Math.round(Math.ceil(numTreads * wasteMult) * treadPrice);
+  const risersCost = Math.round(Math.ceil(numRisers * wasteMult) * riserBoardPrice);
+  const handrailCost = Math.round(totalHandrailFt * handrailPricePerFt);
+  const postsCost = Math.round(totalNewelPosts * newelPostPrice);
+  const balustersCost = Math.round(totalBalusters * balusterPrice);
+  const bracketsCost = Math.round(totalBrackets * 8.50);
+  const totalHardwareCost = hardwareAllowance + bracketsCost;
+
+  const materialsSubtotal = stringersCost + treadsCost + risersCost + handrailCost + postsCost + balustersCost + totalHardwareCost;
+  const laborCost = Math.round(laborHours * laborRate);
+  const totalProjectCost = materialsSubtotal + laborCost;
+
+  return {
+    valid: true,
+    totalRiseIn: totalRise,
+    totalRiseFt: Number((totalRise / 12).toFixed(2)),
+    numRisers,
+    exactRiserHeightIn: Number(exactRiserHeight.toFixed(3)),
+    riserFraction: formatInchFraction(exactRiserHeight),
+    numTreads,
+    treadRunIn: targetTread,
+    treadFraction: formatInchFraction(targetTread),
+    nosingIn: nosing,
+    totalTreadDepthIn: totalTreadDepth,
+    stairWidthIn: stairWidth,
+    totalRunIn: Number(totalRunIn.toFixed(2)),
+    totalRunFt: Number(totalRunFt.toFixed(2)),
+    inclineAngleDeg,
+    stringerLengthIn: Number(stringerLengthIn.toFixed(2)),
+    stringerLengthFt,
+    standardBoardFt,
+    stringerCount,
+    blondelValue,
+    blondelStatus,
+    headroomMinIn: 80, // IRC R311.7.2: 6 ft 8 in
+    // Railing
+    handrailSides: input.handrailSides,
+    handrailHeightIn: handrailHeight,
+    hasAdaExt,
+    singleRailSlopeFt,
+    totalHandrailFt,
+    totalBrackets,
+    totalNewelPosts,
+    balustersPerTread,
+    totalBalusters,
+    // Compliance Diagnostics
+    codeStandard: code === 'ibc_ada' ? 'IBC 2024 / ADA 505 (Commercial)' : 'IRC 2024 (Residential)',
+    allCodePassed,
+    riserCompliant,
+    maxRiserLimit,
+    treadCompliant,
+    minTreadLimit,
+    widthCompliant,
+    minStairWidth,
+    handrailHeightCompliant,
+    balusterCompliant,
+    angleOptimal,
+    // Costs
+    stringersCost,
+    treadsCost,
+    risersCost,
+    handrailCost,
+    postsCost,
+    balustersCost,
+    totalHardwareCost,
+    materialsSubtotal,
+    laborCost,
+    totalProjectCost,
   };
 }
