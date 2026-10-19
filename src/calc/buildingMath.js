@@ -36,13 +36,22 @@ export const CALCULATOR_CATEGORIES = [
         summary: 'Estimate standard CMU blocks, core-fill grout volume, mortar bags, and vertical rebar.',
         lastmod: '2026-10-11',
       },
+      {
+        id: 'vapor-barrier',
+        slug: 'vapor-barrier-calculator',
+        name: 'Vapor Barrier & Moisture Retarder Calculator',
+        shortTitle: 'Vapor Barrier',
+        badge: 'Crawl Space, Slab & Walls',
+        summary: 'Calculate poly film rolls (6, 10, 15, 20 mil), overlap square footage, seam tape rolls, termination bars, and fasteners.',
+        lastmod: '2026-10-18',
+      },
     ],
   },
   {
     id: 'framing-lumber',
     name: 'Framing & Lumber',
     shortName: 'Framing',
-    description: 'Wall studs, plates, headers, OSB sheathing, and plywood',
+    description: 'Wall studs, plates, headers, stairs, door frames, garage doors, and sheathing',
     calculators: [
       {
         id: 'framing',
@@ -52,6 +61,24 @@ export const CALCULATOR_CATEGORIES = [
         badge: '16" & 24" O.C.',
         summary: 'Calculate common studs, double top plates, bottom sill, headers, corners, and board feet.',
         lastmod: '2026-10-10',
+      },
+      {
+        id: 'door-frame-material',
+        slug: 'door-frame-material-calculator',
+        name: 'Door Frame Material & Rough Opening Calculator',
+        shortTitle: 'Door Framing',
+        badge: 'Rough Opening & Trim',
+        summary: 'Calculate rough opening dimensions, king and jack studs, structural header, jamb boards, casing trim, hinges, and fasteners.',
+        lastmod: '2026-10-17',
+      },
+      {
+        id: 'garage-door-size',
+        slug: 'garage-door-size-calculator',
+        name: 'Garage Door Size & Framing Opening Calculator',
+        shortTitle: 'Garage Doors',
+        badge: 'Rough Opening & Header',
+        summary: 'Calculate finished and rough opening dimensions, goalpost jambs, LVL header sizing, headroom clearance, and track specs.',
+        lastmod: '2026-10-16',
       },
       {
         id: 'stair-handrail',
@@ -763,5 +790,298 @@ export function calculateStairHandrail(input) {
     materialsSubtotal,
     laborCost,
     totalProjectCost,
+  };
+}
+
+// -------------------------------------------------------------
+// 12. VAPOR BARRIER & MOISTURE RETARDER CALCULATOR
+// -------------------------------------------------------------
+export function calculateVaporBarrier(input) {
+  const l = Math.max(1, Number(input.lengthFt) || 40);
+  const w = Math.max(1, Number(input.widthFt) || 30);
+  const baseAreaSqFt = l * w;
+  const perimeterFt = 2 * (l + w);
+  const wallHt = Math.max(0, Number(input.crawlWallHeightFt) || 2.5);
+  const piers = Math.max(0, Number(input.piersCount) || 0);
+  const pierPerim = Math.max(1, Number(input.pierPerimeterFt) || 4);
+  const seamOverlapIn = Math.max(4, Number(input.seamOverlapIn) || 12);
+  const wastePct = Math.max(0, Number(input.wastePct) || 10);
+  const rollWidth = Math.max(6, Number(input.rollWidthFt) || 12);
+  const rollLength = Math.max(20, Number(input.rollLengthFt) || 100);
+  const rollSqFt = rollWidth * rollLength;
+
+  let wallAreaSqFt = 0;
+  let pierAreaSqFt = 0;
+  if (input.application === 'crawlspace' || input.application === 'basement_floor') {
+    wallAreaSqFt = perimeterFt * wallHt;
+    pierAreaSqFt = piers * ((pierPerim * wallHt) + 4);
+  } else if (input.application === 'slab') {
+    wallAreaSqFt = perimeterFt * 0.75; // 9" slab edge perimeter turn-up
+  }
+
+  const grossAreaSqFt = Math.round(baseAreaSqFt + wallAreaSqFt + pierAreaSqFt);
+  const effectiveRollWidthFt = Math.max(4, rollWidth - (seamOverlapIn / 12));
+  const overlapFactor = 1 + (seamOverlapIn / (rollWidth * 12));
+  const wasteFactor = 1 + (wastePct / 100);
+  const totalAreaWithOverlapAndWaste = Math.round(grossAreaSqFt * overlapFactor * wasteFactor);
+  const rollsNeeded = Math.ceil(totalAreaWithOverlapAndWaste / rollSqFt);
+
+  // Seam linear footage
+  const numRollRuns = Math.ceil(w / effectiveRollWidthFt);
+  const longSeamsFt = Math.max(0, numRollRuns - 1) * l;
+  const perimeterSealFt = perimeterFt;
+  const pierSeamsFt = piers * pierPerim;
+  const totalSeamLinearFt = Math.round(longSeamsFt + perimeterSealFt + pierSeamsFt);
+  // Seam tape (180 ft per roll)
+  const tapeRollsNeeded = Math.max(1, Math.ceil(totalSeamLinearFt / 180));
+
+  // Termination bars (10 ft length) along crawlspace/basement wall tops
+  const termBarsNeeded = (input.application === 'crawlspace' || input.application === 'basement_floor')
+    ? Math.ceil(perimeterFt / 10)
+    : 0;
+  const fastenersCount = termBarsNeeded * 8; // masonry pins every 15"
+
+  // Material classification & perm rating
+  let permRating = '< 0.06 Perms (Class I Vapor Retarder)';
+  let astmClass = 'IRC R408.3 Code Minimum Ground Cover';
+  if (input.milThickness === 10) {
+    permRating = '< 0.03 Perms (Class I Impermeable)';
+    astmClass = 'ASTM E1745 Class B Heavy-Duty';
+  } else if (input.milThickness === 15) {
+    permRating = '< 0.018 Perms (Puncture Resistant)';
+    astmClass = 'ASTM E1745 Class A Commercial / Stego-Grade';
+  } else if (input.milThickness === 20) {
+    permRating = '< 0.009 Perms (Maximum Hydrostatic & Radon Barrier)';
+    astmClass = 'ASTM E1745 Class A Heavy Commercial / Radon Barrier';
+  }
+
+  // Cost estimates
+  const rollPrice = Number(input.rollPrice) || (input.milThickness === 6 ? 85 : input.milThickness === 10 ? 165 : input.milThickness === 15 ? 275 : 380);
+  const tapePrice = Number(input.seamTapeRollPrice) || 32.00;
+  const termBarPrice = Number(input.terminationBarPrice) || 14.50;
+  const fastenersPrice = Number(input.fastenersPackPrice) || 18.00;
+  const laborRate = Number(input.laborRatePerSqFt) || 0.75;
+
+  const rollsCost = rollsNeeded * rollPrice;
+  const tapeCost = tapeRollsNeeded * tapePrice;
+  const termBarsCost = termBarsNeeded * termBarPrice;
+  const fastenersCost = Math.ceil(fastenersCount / 100) * fastenersPrice;
+  const materialsSubtotal = Math.round(rollsCost + tapeCost + termBarsCost + fastenersCost);
+  const laborCost = Math.round(grossAreaSqFt * laborRate);
+  const totalEstimatedCost = materialsSubtotal + laborCost;
+
+  return {
+    valid: true,
+    application: input.application,
+    baseAreaSqFt,
+    wallAreaSqFt: Math.round(wallAreaSqFt),
+    pierAreaSqFt: Math.round(pierAreaSqFt),
+    grossAreaSqFt,
+    totalAreaWithOverlapAndWaste,
+    milThickness: input.milThickness,
+    permRating,
+    astmClass,
+    rollDimensions: `${rollWidth} ft × ${rollLength} ft (${rollSqFt.toLocaleString()} sq ft)`,
+    rollsNeeded,
+    totalSeamLinearFt,
+    tapeRollsNeeded,
+    termBarsNeeded,
+    fastenersCount,
+    rollsCost,
+    tapeCost,
+    termBarsCost,
+    fastenersCost,
+    materialsSubtotal,
+    laborCost,
+    totalEstimatedCost,
+  };
+}
+
+// -------------------------------------------------------------
+// 13. GARAGE DOOR SIZE & FRAMING OPENING CALCULATOR
+// -------------------------------------------------------------
+export function calculateGarageDoorSize(input) {
+  const wFt = Math.max(6, Number(input.doorWidthFt) || 16);
+  const hFt = Math.max(6, Number(input.doorHeightFt) || 7);
+  const ceilingFt = Math.max(hFt + 0.5, Number(input.ceilingHeightFt) || 10);
+  const finishedWidthIn = wFt * 12;
+  const finishedHeightIn = hFt * 12;
+
+  // Standard Wood Goalpost Jambs: 2x wood jamb liners (1.5" thickness each)
+  // Rough opening allows two 1.5" side jambs and one 1.5" head jamb
+  const roughWidthIn = finishedWidthIn + 3.0; // e.g. 16' door = 195" = 16 ft 3 in
+  const roughHeightIn = finishedHeightIn + 1.5; // e.g. 7' door = 85.5" = 7 ft 1-1/2 in
+
+  // Structural Header
+  const headerSpanFt = Number((roughWidthIn / 12).toFixed(2));
+  const headerLengthIn = roughWidthIn + 6.0; // bears 3.0" on double trimmers each side
+  let recommendedHeader = 'Double 2×10 Lumber with 1/2″ OSB Spacer';
+  if (wFt >= 10 && wFt <= 16) {
+    recommendedHeader = 'Double 1-3/4″ × 11-7/8″ Engineered LVL Beam';
+  } else if (wFt > 16) {
+    recommendedHeader = 'Triple 1-3/4″ × 11-7/8″ Engineered LVL Beam (or Steel Lintel)';
+  }
+
+  // Clearances & Headroom
+  const availableHeadroomIn = Number(((ceilingFt * 12) - finishedHeightIn).toFixed(1));
+  const trackRadius = input.trackRadiusIn === 12 ? 12 : 15;
+  const requiredHeadroomIn = trackRadius + (input.hasElectricOpener ? 3 : 0);
+
+  let headroomStatus = 'Optimal Standard Track';
+  let requiresLowHeadroom = false;
+  if (availableHeadroomIn < 10) {
+    headroomStatus = 'Critical: Requires Dual-Track Low-Headroom Kit (min 4.5″–9″)';
+    requiresLowHeadroom = true;
+  } else if (availableHeadroomIn < requiredHeadroomIn) {
+    headroomStatus = 'Tight: Low-Headroom Hardware or 12″ Radius Track Recommended';
+    requiresLowHeadroom = true;
+  } else if (availableHeadroomIn > 36) {
+    headroomStatus = 'Spacious: High-Lift or Vertical-Lift Track Compatible';
+  }
+
+  const sideroomRequiredIn = 4.0; // 3.75" min, 5.5" recommended
+  const backroomDepthIn = finishedHeightIn + (input.hasElectricOpener ? 48 : 18);
+  const backroomDepthFt = Number((backroomDepthIn / 12).toFixed(2));
+
+  // Framing Takeoff
+  const sideJambLumber = input.wallFraming === '2x6' ? '2×6 × 8ft (or 10ft) Lumber' : '2×4 × 8ft (or 10ft) Lumber';
+  const weatherstripLinFt = Math.ceil((2 * hFt) + wFt);
+
+  // Costs
+  const doorCost = Number(input.doorUnitCost) || (wFt > 12 ? 1650 : 850);
+  const openerCost = input.hasElectricOpener ? (Number(input.openerCost) || 280) : 0;
+  const headerCost = Number(input.headerLumberCost) || (wFt > 12 ? 190 : 95);
+  const jambsCost = Number(input.framingJambsCost) || 75;
+  const weatherstripCost = Number(input.weatherstripCost) || 45;
+  const laborCost = Number(input.laborInstallCost) || (wFt > 12 ? 550 : 380);
+
+  const materialsSubtotal = doorCost + openerCost + headerCost + jambsCost + weatherstripCost;
+  const totalEstimatedCost = materialsSubtotal + laborCost;
+
+  return {
+    valid: true,
+    doorSizeLabel: `${wFt} ft × ${hFt} ft (${finishedWidthIn}″ × ${finishedHeightIn}″)`,
+    finishedWidthIn,
+    finishedHeightIn,
+    roughWidthIn,
+    roughHeightIn,
+    roughWidthFormatted: `${Math.floor(roughWidthIn / 12)} ft ${roughWidthIn % 12} in`,
+    roughHeightFormatted: `${Math.floor(roughHeightIn / 12)} ft ${(roughHeightIn % 12).toFixed(1)} in`,
+    headerSpanFt,
+    headerLengthIn,
+    recommendedHeader,
+    availableHeadroomIn,
+    requiredHeadroomIn,
+    headroomStatus,
+    requiresLowHeadroom,
+    sideroomRequiredIn,
+    backroomDepthIn,
+    backroomDepthFt,
+    sideJambLumber,
+    weatherstripLinFt,
+    doorCost,
+    openerCost,
+    headerCost,
+    jambsCost,
+    weatherstripCost,
+    materialsSubtotal,
+    laborCost,
+    totalEstimatedCost,
+  };
+}
+
+// -------------------------------------------------------------
+// 14. DOOR FRAME MATERIAL & ROUGH OPENING CALCULATOR
+// -------------------------------------------------------------
+export function calculateDoorFrame(input) {
+  const w = Math.max(18, Number(input.doorWidthIn) || 36);
+  const h = Math.max(60, Number(input.doorHeightIn) || 80);
+  const wallHt = Math.max(8, Number(input.wallHeightFt) || 8);
+  const is2x6 = input.wallStudSize === '2x6';
+  const casingSides = input.casingSides === 1 ? 1 : 2;
+  const casingWidth = Math.max(1.5, Number(input.casingWidthIn) || 2.5);
+
+  // Rough Opening dimensions based on door type
+  let roWidthIn = w + 2.0;
+  let roHeightIn = h + 2.5;
+
+  if (input.doorType === 'interior_double') {
+    roWidthIn = (w * 2) + 2.0;
+    roHeightIn = h + 2.5;
+  } else if (input.doorType === 'pocket_door') {
+    roWidthIn = (w * 2) + 1.0;
+    roHeightIn = h + 4.5;
+  } else if (input.doorType === 'bifold') {
+    roWidthIn = w + 2.0;
+    roHeightIn = h + 2.0;
+  }
+
+  // Framing Lumber Takeoff
+  const kingStudsCount = 2;
+  const jackStudsCount = 2;
+  const headerLengthIn = roWidthIn + 3.0; // 1.5" bearing on each trimmer
+  const crippleStudsCount = Math.max(1, Math.floor(roWidthIn / 16));
+  const bottomSillPlateLengthIn = roWidthIn;
+
+  // Jambs Takeoff
+  const jambWidthIn = is2x6 ? 6.5625 : 4.5625; // 6-9/16" or 4-9/16"
+  const jambWidthFraction = is2x6 ? '6 9/16"' : '4 9/16"';
+  const stopMoldingLinFt = Math.ceil(((2 * h) + w) / 12);
+
+  // Casing & Trim
+  const casingLinFtPerSide = ((2 * h + w) / 12) + ((casingWidth * 4) / 12) + 1.0;
+  const totalCasingLinFt = Math.ceil(casingLinFtPerSide * casingSides);
+
+  // Hardware
+  const hingeCount = h > 80 || input.doorType === 'exterior_single' ? 4 : 3;
+
+  // Costs
+  const studPrice = Number(input.studPrice) || 5.85;
+  const headerBoardPrice = Number(input.headerBoardPrice) || 14.50;
+  const jambKitPrice = Number(input.jambKitPrice) || 38.00;
+  const casingPricePerFt = Number(input.casingPricePerFt) || 1.65;
+  const hingesPrice = Number(input.hardwareHingesPrice) || 18.00;
+  const shimPrice = Number(input.shimPackPrice) || 6.50;
+  const laborRate = Number(input.laborRatePerHour) || 50.00;
+  const laborHours = Number(input.estimatedLaborHours) || 3.0;
+
+  const framingStudsCost = Math.round((kingStudsCount + jackStudsCount + crippleStudsCount) * studPrice);
+  const headerCost = Math.round(2 * headerBoardPrice);
+  const jambCost = Math.round(jambKitPrice);
+  const casingCost = Math.round(totalCasingLinFt * casingPricePerFt);
+  const hardwareCost = Math.round(hingesPrice + shimPrice);
+
+  const materialsSubtotal = framingStudsCost + headerCost + jambCost + casingCost + hardwareCost;
+  const laborCost = Math.round(laborHours * laborRate);
+  const totalEstimatedCost = materialsSubtotal + laborCost;
+
+  return {
+    valid: true,
+    doorType: input.doorType,
+    doorNominalSize: `${w}″ × ${h}″ (${(w / 12).toFixed(1)}′ × ${(h / 12).toFixed(1)}′)`,
+    roWidthIn,
+    roHeightIn,
+    roWidthFormatted: `${Math.floor(roWidthIn / 12)} ft ${roWidthIn % 12} in`,
+    roHeightFormatted: `${Math.floor(roHeightIn / 12)} ft ${(roHeightIn % 12).toFixed(1)} in`,
+    kingStudsCount,
+    jackStudsCount,
+    jackStudLengthIn: roHeightIn + 1.5,
+    headerLengthIn,
+    headerType: input.headerType,
+    crippleStudsCount,
+    jambWidthFraction,
+    jambWidthIn,
+    stopMoldingLinFt,
+    totalCasingLinFt,
+    casingSides,
+    hingeCount,
+    framingStudsCost,
+    headerCost,
+    jambCost,
+    casingCost,
+    hardwareCost,
+    materialsSubtotal,
+    laborCost,
+    totalEstimatedCost,
   };
 }

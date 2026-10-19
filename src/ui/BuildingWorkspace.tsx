@@ -13,6 +13,10 @@ import {
   calculateTile,
   calculateConstructionCost,
   calculateStairHandrail,
+  calculateVaporBarrier,
+  calculateGarageDoorSize,
+  calculateDoorFrame,
+  formatInchFraction,
 } from '../calc/buildingMath.js';
 
 interface BuildingWorkspaceProps {
@@ -287,6 +291,65 @@ export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspacePr
     estimatedLaborHours: 16.0,
   });
 
+  // 12. Vapor Barrier
+  const [vaporState, setVaporState] = useState({
+    application: 'crawlspace' as 'crawlspace' | 'slab' | 'wall' | 'basement_floor',
+    lengthFt: 40,
+    widthFt: 30,
+    crawlWallHeightFt: 2.5,
+    piersCount: 6,
+    pierPerimeterFt: 4,
+    milThickness: 10 as 6 | 10 | 15 | 20,
+    rollWidthFt: 12,
+    rollLengthFt: 100,
+    seamOverlapIn: 12,
+    wastePct: 10,
+    rollPrice: 165.00,
+    seamTapeRollPrice: 32.00,
+    terminationBarPrice: 14.50,
+    fastenersPackPrice: 18.00,
+    laborRatePerSqFt: 0.75,
+  });
+
+  // 13. Garage Door Size & Framing
+  const [garageState, setGarageState] = useState({
+    doorStandardSize: 'double_16x7' as 'single_8x7' | 'single_9x7' | 'single_10x7' | 'double_16x7' | 'double_18x7' | 'single_8x8' | 'single_9x8' | 'double_16x8' | 'commercial_10x10' | 'commercial_12x12' | 'custom',
+    doorWidthFt: 16,
+    doorHeightFt: 7,
+    ceilingHeightFt: 10.0,
+    wallFraming: '2x4' as '2x4' | '2x6',
+    trackRadiusIn: 15 as 12 | 15,
+    hasElectricOpener: true,
+    headerType: 'lvl_double' as 'double_2x10' | 'double_2x12' | 'lvl_double' | 'lvl_triple',
+    doorUnitCost: 1650,
+    openerCost: 280,
+    headerLumberCost: 190,
+    framingJambsCost: 75,
+    weatherstripCost: 45,
+    laborInstallCost: 550,
+  });
+
+  // 14. Door Frame Material & Rough Opening
+  const [doorFrameState, setDoorFrameState] = useState({
+    doorType: 'interior_single' as 'interior_single' | 'interior_double' | 'exterior_single' | 'pocket_door' | 'bifold',
+    doorWidthIn: 36,
+    doorHeightIn: 80,
+    doorThicknessIn: 1.375,
+    wallStudSize: '2x4' as '2x4' | '2x6',
+    wallHeightFt: 8,
+    casingSides: 2 as 1 | 2,
+    casingWidthIn: 2.5,
+    headerType: 'double_2x4' as 'double_2x4' | 'double_2x6' | 'double_2x8' | 'double_2x10',
+    studPrice: 5.85,
+    headerBoardPrice: 14.50,
+    jambKitPrice: 38.00,
+    casingPricePerFt: 1.65,
+    hardwareHingesPrice: 18.00,
+    shimPackPrice: 6.50,
+    laborRatePerHour: 50.00,
+    estimatedLaborHours: 3.0,
+  });
+
   // Calculate results
   const concreteRes = calculateConcrete(concreteState);
   const brickRes = calculateBrick(brickState);
@@ -299,6 +362,9 @@ export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspacePr
   const tileRes = calculateTile(tileState);
   const costRes = calculateConstructionCost(costState);
   const stairRes = calculateStairHandrail(stairState);
+  const vaporRes = calculateVaporBarrier(vaporState);
+  const garageRes = calculateGarageDoorSize(garageState);
+  const doorFrameRes = calculateDoorFrame(doorFrameState);
 
   // Copy results helper
   const copyTakeoff = async (text: string) => {
@@ -713,6 +779,36 @@ export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspacePr
                     className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/60 hover:border-sky-600 hover:bg-sky-50/50 dark:hover:bg-sky-950/30 transition-all cursor-pointer"
                   >
                     🦽 ADA Commercial Stair &amp; Handrail
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setVaporState((prev) => ({ ...prev, application: 'crawlspace', lengthFt: 40, widthFt: 30, crawlWallHeightFt: 2.5, piersCount: 6, milThickness: 10 }));
+                      switchCalculator('vapor-barrier');
+                    }}
+                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/60 hover:border-sky-600 hover:bg-sky-50/50 dark:hover:bg-sky-950/30 transition-all cursor-pointer"
+                  >
+                    🛡 1,200 sq ft Crawlspace Poly (10 mil)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setGarageState((prev) => ({ ...prev, doorStandardSize: 'double_16x7', doorWidthFt: 16, doorHeightFt: 7, ceilingHeightFt: 10.0, headerType: 'lvl_double' }));
+                      switchCalculator('garage-door-size');
+                    }}
+                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/60 hover:border-sky-600 hover:bg-sky-50/50 dark:hover:bg-sky-950/30 transition-all cursor-pointer"
+                  >
+                    🚗 16×7 Double Garage Door
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDoorFrameState((prev) => ({ ...prev, doorType: 'exterior_single', doorWidthIn: 36, doorHeightIn: 80, wallStudSize: '2x6', casingSides: 2 }));
+                      switchCalculator('door-frame-material');
+                    }}
+                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950/60 hover:border-sky-600 hover:bg-sky-50/50 dark:hover:bg-sky-950/30 transition-all cursor-pointer"
+                  >
+                    🚪 36×80 Exterior Door (2×6 Frame)
                   </button>
                   <button
                     type="button"
@@ -3140,6 +3236,2012 @@ export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspacePr
               </div>
             </div>
           )}
+
+          {/* 12. VAPOR BARRIER & MOISTURE RETARDER CALCULATOR */}
+          {activeCalcId === 'vapor-barrier' && (
+            <div className="space-y-6">
+              {/* Presets Bar */}
+              <div className="flex flex-wrap items-center gap-2 p-3 bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-xl no-print">
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                  Quick Presets:
+                </span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setVaporState((prev) => ({
+                      ...prev,
+                      application: 'crawlspace',
+                      lengthFt: 40,
+                      widthFt: 30,
+                      crawlWallHeightFt: 2.5,
+                      piersCount: 6,
+                      milThickness: 10,
+                      seamOverlapIn: 12,
+                    }))
+                  }
+                  className="px-2.5 py-1 text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-sky-600 hover:text-sky-700 dark:hover:text-sky-400 transition-colors cursor-pointer"
+                >
+                  🏡 40×30 Crawl Space (10 mil Heavy Duty)
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setVaporState((prev) => ({
+                      ...prev,
+                      application: 'slab',
+                      lengthFt: 40,
+                      widthFt: 30,
+                      milThickness: 15,
+                      seamOverlapIn: 12,
+                    }))
+                  }
+                  className="px-2.5 py-1 text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-sky-600 hover:text-sky-700 dark:hover:text-sky-400 transition-colors cursor-pointer"
+                >
+                  🧱 40×30 Under-Slab (15 mil Stego-Grade)
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setVaporState((prev) => ({
+                      ...prev,
+                      application: 'wall',
+                      lengthFt: 50,
+                      widthFt: 8,
+                      milThickness: 10,
+                      seamOverlapIn: 6,
+                    }))
+                  }
+                  className="px-2.5 py-1 text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-sky-600 hover:text-sky-700 dark:hover:text-sky-400 transition-colors cursor-pointer"
+                >
+                  🏗 50×8 Foundation Wall Moisture Barrier
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setVaporState((prev) => ({
+                      ...prev,
+                      application: 'basement_floor',
+                      lengthFt: 30,
+                      widthFt: 24,
+                      crawlWallHeightFt: 1.5,
+                      piersCount: 2,
+                      milThickness: 15,
+                    }))
+                  }
+                  className="px-2.5 py-1 text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-sky-600 hover:text-sky-700 dark:hover:text-sky-400 transition-colors cursor-pointer"
+                >
+                  🏚 30×24 Basement Floor Encapsulation
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                {/* Inputs Column */}
+                <div className="lg:col-span-5 space-y-4">
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-4 bg-white dark:bg-slate-900 space-y-4">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                      Application &amp; Dimensions
+                    </h3>
+
+                    {/* Application Toggle */}
+                    <div>
+                      <label className="text-xs font-medium text-slate-700 dark:text-slate-300 block mb-1.5">
+                        Application Location
+                      </label>
+                      <div className="grid grid-cols-2 gap-2">
+                        {[
+                          { id: 'crawlspace', label: 'Crawl Space', desc: 'Ground & Wall Flanges' },
+                          { id: 'slab', label: 'Concrete Slab', desc: 'Under-Slab Base' },
+                          { id: 'wall', label: 'Framing / Wall', desc: 'Interior Moisture Barrier' },
+                          { id: 'basement_floor', label: 'Basement Floor', desc: 'Sub-Slab Encapsulation' },
+                        ].map((app) => (
+                          <button
+                            key={app.id}
+                            type="button"
+                            onClick={() =>
+                              setVaporState((prev) => ({
+                                ...prev,
+                                application: app.id as any,
+                              }))
+                            }
+                            className={`p-2.5 rounded-lg border text-left cursor-pointer transition-colors ${
+                              vaporState.application === app.id
+                                ? 'bg-sky-50 dark:bg-sky-950/40 border-sky-600 text-sky-900 dark:text-white font-semibold'
+                                : 'border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300'
+                            }`}
+                          >
+                            <span className="text-xs block font-bold">{app.label}</span>
+                            <span className="text-[10px] text-slate-500 dark:text-slate-400 block mt-0.5">
+                              {app.desc}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Length & Width */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-xs font-medium text-slate-700 dark:text-slate-300 block mb-1">
+                          Length (ft)
+                        </label>
+                        <input
+                          type="number"
+                          step="1"
+                          min="1"
+                          value={vaporState.lengthFt}
+                          onChange={(e) =>
+                            setVaporState((prev) => ({
+                              ...prev,
+                              lengthFt: parseFloat(e.target.value) || 0,
+                            }))
+                          }
+                          className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-slate-700 dark:text-slate-300 block mb-1">
+                          Width (ft)
+                        </label>
+                        <input
+                          type="number"
+                          step="1"
+                          min="1"
+                          value={vaporState.widthFt}
+                          onChange={(e) =>
+                            setVaporState((prev) => ({
+                              ...prev,
+                              widthFt: parseFloat(e.target.value) || 0,
+                            }))
+                          }
+                          className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-100 dark:border-slate-800 text-xs text-slate-600 dark:text-slate-400 font-mono flex items-center justify-between">
+                      <span>Base Ground Footprint:</span>
+                      <span className="font-bold text-slate-900 dark:text-white">
+                        {(vaporState.lengthFt * vaporState.widthFt).toLocaleString()} sq ft
+                      </span>
+                    </div>
+
+                    {/* Crawl Space Wall Height & Piers (Only for crawlspace / basement) */}
+                    {(vaporState.application === 'crawlspace' ||
+                      vaporState.application === 'basement_floor') && (
+                      <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-sky-700 dark:text-sky-400 block">
+                          Perimeter Run-Up &amp; Support Piers
+                        </span>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="text-xs text-slate-600 dark:text-slate-400 block mb-1">
+                              Wall Run-Up Height (ft)
+                            </label>
+                            <input
+                              type="number"
+                              step="0.5"
+                              min="0"
+                              value={vaporState.crawlWallHeightFt}
+                              onChange={(e) =>
+                                setVaporState((prev) => ({
+                                  ...prev,
+                                  crawlWallHeightFt: parseFloat(e.target.value) || 0,
+                                }))
+                              }
+                              className="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                            />
+                            <span className="text-[10px] text-slate-500 block mt-0.5">
+                              Min 6″ above outside grade
+                            </span>
+                          </div>
+                          <div>
+                            <label className="text-xs text-slate-600 dark:text-slate-400 block mb-1">
+                              Support Piers Count
+                            </label>
+                            <input
+                              type="number"
+                              step="1"
+                              min="0"
+                              value={vaporState.piersCount}
+                              onChange={(e) =>
+                                setVaporState((prev) => ({
+                                  ...prev,
+                                  piersCount: parseInt(e.target.value, 10) || 0,
+                                }))
+                              }
+                              className="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                            />
+                            <span className="text-[10px] text-slate-500 block mt-0.5">
+                              Pillars requiring boot wrap
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Mil Thickness Selection */}
+                    <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                      <label className="text-xs font-medium text-slate-700 dark:text-slate-300 block">
+                        Vapor Retarder Mil Thickness
+                      </label>
+                      <div className="grid grid-cols-2 gap-2">
+                        {[
+                          { mil: 6, label: '6 Mil Poly', note: 'IRC Code Minimum' },
+                          { mil: 10, label: '10 Mil Heavy', note: 'Recommended Encapsulation' },
+                          { mil: 15, label: '15 Mil Stego', note: 'ASTM E1745 Class A' },
+                          { mil: 20, label: '20 Mil Max', note: 'Radon & Hydrostatic' },
+                        ].map((m) => (
+                          <button
+                            key={m.mil}
+                            type="button"
+                            onClick={() =>
+                              setVaporState((prev) => ({
+                                ...prev,
+                                milThickness: m.mil as any,
+                              }))
+                            }
+                            className={`p-2 rounded-lg border text-left cursor-pointer transition-colors ${
+                              vaporState.milThickness === m.mil
+                                ? 'bg-sky-50 dark:bg-sky-950/40 border-sky-600 text-sky-900 dark:text-white font-bold'
+                                : 'border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300'
+                            }`}
+                          >
+                            <span className="text-xs block font-bold">{m.label}</span>
+                            <span className="text-[10px] text-slate-500 dark:text-slate-400 block mt-0.5">
+                              {m.note}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Seam Overlap & Waste */}
+                    <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                      <div>
+                        <label className="text-xs text-slate-700 dark:text-slate-300 block mb-1">
+                          Seam Overlap (inches)
+                        </label>
+                        <select
+                          value={vaporState.seamOverlapIn}
+                          onChange={(e) =>
+                            setVaporState((prev) => ({
+                              ...prev,
+                              seamOverlapIn: parseInt(e.target.value, 10) || 12,
+                            }))
+                          }
+                          className="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                        >
+                          <option value="6">6″ Overlap (Code Minimum)</option>
+                          <option value="12">12″ Overlap (Recommended)</option>
+                          <option value="18">18″ Overlap (High Moisture / Radon)</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-xs text-slate-700 dark:text-slate-300 block mb-1">
+                          Waste &amp; Cutting Margin (%)
+                        </label>
+                        <select
+                          value={vaporState.wastePct}
+                          onChange={(e) =>
+                            setVaporState((prev) => ({
+                              ...prev,
+                              wastePct: parseInt(e.target.value, 10) || 10,
+                            }))
+                          }
+                          className="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                        >
+                          <option value="5">5% (Simple Rectangle)</option>
+                          <option value="10">10% (Standard Jobsite Cut)</option>
+                          <option value="15">15% (Many Corners / Piers)</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Pricing Overrides Card */}
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-4 bg-white dark:bg-slate-900 space-y-3">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                      Material Unit Pricing ($ USD)
+                    </h4>
+                    <div className="grid grid-cols-2 gap-3 text-xs">
+                      <div>
+                        <label className="text-slate-500 block mb-0.5">
+                          Roll Price (12′×100′)
+                        </label>
+                        <input
+                          type="number"
+                          step="5"
+                          min="0"
+                          value={vaporState.rollPrice}
+                          onChange={(e) =>
+                            setVaporState((prev) => ({
+                              ...prev,
+                              rollPrice: parseFloat(e.target.value) || 0,
+                            }))
+                          }
+                          className="w-full px-2.5 py-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-slate-500 block mb-0.5">
+                          Seam Tape (180 ft roll)
+                        </label>
+                        <input
+                          type="number"
+                          step="1"
+                          min="0"
+                          value={vaporState.seamTapeRollPrice}
+                          onChange={(e) =>
+                            setVaporState((prev) => ({
+                              ...prev,
+                              seamTapeRollPrice: parseFloat(e.target.value) || 0,
+                            }))
+                          }
+                          className="w-full px-2.5 py-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-slate-500 block mb-0.5">
+                          Termination Bar (10 ft)
+                        </label>
+                        <input
+                          type="number"
+                          step="0.5"
+                          min="0"
+                          value={vaporState.terminationBarPrice}
+                          onChange={(e) =>
+                            setVaporState((prev) => ({
+                              ...prev,
+                              terminationBarPrice: parseFloat(e.target.value) || 0,
+                            }))
+                          }
+                          className="w-full px-2.5 py-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-slate-500 block mb-0.5">
+                          Installation Labor ($/sq ft)
+                        </label>
+                        <input
+                          type="number"
+                          step="0.05"
+                          min="0"
+                          value={vaporState.laborRatePerSqFt}
+                          onChange={(e) =>
+                            setVaporState((prev) => ({
+                              ...prev,
+                              laborRatePerSqFt: parseFloat(e.target.value) || 0,
+                            }))
+                          }
+                          className="w-full px-2.5 py-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Results & Visualizer Column */}
+                <div className="lg:col-span-7 space-y-4">
+                  {/* ASTM & Perm Rating Spec Banner */}
+                  <div className="p-3.5 rounded-xl border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/40 flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold uppercase tracking-wide text-sky-900 dark:text-sky-300">
+                          {vaporState.milThickness} Mil Polyethylene Retarder
+                        </span>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-200/60 dark:bg-sky-800/60 text-sky-900 dark:text-sky-200 font-bold">
+                          {vaporRes.astmClass}
+                        </span>
+                      </div>
+                      <p className="text-xs text-sky-800 dark:text-sky-300 mt-1">
+                        Water Vapor Permeance: <strong>{vaporRes.permRating}</strong>
+                      </p>
+                    </div>
+                    <span className="text-[11px] font-mono font-semibold px-2.5 py-1 rounded-md bg-white dark:bg-slate-900 text-sky-700 dark:text-sky-400 border border-sky-300 dark:border-sky-700">
+                      IRC R408.3 &amp; ASTM E1745 Verified
+                    </span>
+                  </div>
+
+                  {/* SVG Diagram: Encapsulation Plan & Flange Elevation */}
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-4 bg-white dark:bg-slate-900 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+                        🛡 Moisture Barrier Coverage &amp; Seam Layout (Plan View)
+                      </span>
+                      <span className="text-[10px] font-mono text-slate-400">
+                        Roll Width: {vaporState.rollWidthFt} ft · {vaporState.seamOverlapIn}″ Overlap
+                      </span>
+                    </div>
+
+                    <div className="w-full overflow-x-auto bg-slate-50 dark:bg-slate-950/60 p-2 rounded-lg border border-slate-100 dark:border-slate-800">
+                      <svg
+                        viewBox="0 0 600 280"
+                        className="w-full h-auto min-w-[500px] max-h-[260px]"
+                        role="img"
+                        aria-label="Vapor barrier layout diagram showing ground cover, wall run up, and overlap seams"
+                      >
+                        <defs>
+                          <pattern
+                            id="soilHatch"
+                            width="10"
+                            height="10"
+                            patternTransform="rotate(45 0 0)"
+                            patternUnits="userSpaceOnUse"
+                          >
+                            <line x1="0" y1="0" x2="0" y2="10" stroke="#cbd5e1" strokeWidth="1" />
+                          </pattern>
+                        </defs>
+
+                        {/* Perimeter Foundation Wall */}
+                        <rect
+                          x="30"
+                          y="20"
+                          width="540"
+                          height="230"
+                          fill="url(#soilHatch)"
+                          stroke="#94a3b8"
+                          strokeWidth="2"
+                          rx="4"
+                        />
+
+                        {/* Polyethylene Sheet Ground Layer */}
+                        <rect
+                          x="50"
+                          y="40"
+                          width="500"
+                          height="190"
+                          fill="#0284c7"
+                          fillOpacity="0.15"
+                          stroke="#0284c7"
+                          strokeWidth="2"
+                        />
+
+                        {/* Wall Turn-Up Flange Margin */}
+                        <rect
+                          x="40"
+                          y="30"
+                          width="520"
+                          height="210"
+                          fill="none"
+                          stroke="#0284c7"
+                          strokeWidth="1.5"
+                          strokeDasharray="4 4"
+                        />
+
+                        {/* Seam Lines & Overlap Bands */}
+                        <line x1="180" y1="40" x2="180" y2="230" stroke="#0284c7" strokeWidth="3" />
+                        <line x1="190" y1="40" x2="190" y2="230" stroke="#38bdf8" strokeWidth="1" strokeDasharray="2 2" />
+                        <line x1="320" y1="40" x2="320" y2="230" stroke="#0284c7" strokeWidth="3" />
+                        <line x1="330" y1="40" x2="330" y2="230" stroke="#38bdf8" strokeWidth="1" strokeDasharray="2 2" />
+                        <line x1="460" y1="40" x2="460" y2="230" stroke="#0284c7" strokeWidth="3" />
+                        <line x1="470" y1="40" x2="470" y2="230" stroke="#38bdf8" strokeWidth="1" strokeDasharray="2 2" />
+
+                        {/* Pier Posts if Crawlspace */}
+                        {vaporState.application === 'crawlspace' && (
+                          <>
+                            <rect x="130" y="90" width="20" height="20" fill="#475569" stroke="#0284c7" strokeWidth="2" />
+                            <rect x="250" y="90" width="20" height="20" fill="#475569" stroke="#0284c7" strokeWidth="2" />
+                            <rect x="390" y="90" width="20" height="20" fill="#475569" stroke="#0284c7" strokeWidth="2" />
+                            <rect x="130" y="160" width="20" height="20" fill="#475569" stroke="#0284c7" strokeWidth="2" />
+                            <rect x="250" y="160" width="20" height="20" fill="#475569" stroke="#0284c7" strokeWidth="2" />
+                            <rect x="390" y="160" width="20" height="20" fill="#475569" stroke="#0284c7" strokeWidth="2" />
+                          </>
+                        )}
+
+                        {/* Labels & Annotations */}
+                        <text x="240" y="15" fill="#64748b" fontSize="11" fontFamily="monospace" fontWeight="bold">
+                          Perimeter Foundation Wall ({vaporState.lengthFt} ft)
+                        </text>
+                        <text x="560" y="140" fill="#64748b" fontSize="11" fontFamily="monospace" fontWeight="bold" transform="rotate(90 560 140)">
+                          {vaporState.widthFt} ft Width
+                        </text>
+
+                        <text x="60" y="65" fill="#0284c7" fontSize="11" fontFamily="monospace" fontWeight="bold">
+                          {vaporState.milThickness} Mil Vapor Film
+                        </text>
+                        <text x="195" y="135" fill="#0284c7" fontSize="10" fontFamily="monospace">
+                          {vaporState.seamOverlapIn}″ Taped Seam
+                        </text>
+
+                        {/* Rising moisture vapor blocked badge */}
+                        <rect x="210" y="245" width="180" height="22" rx="4" fill="#0284c7" />
+                        <text x="220" y="260" fill="#ffffff" fontSize="10" fontFamily="sans-serif" fontWeight="bold">
+                          ✓ Moisture Permeance Blocked
+                        </text>
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* Summary Metric Cards Grid */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div className="border border-slate-200 dark:border-slate-800 p-3 rounded-xl bg-white dark:bg-slate-900">
+                      <span className="text-[10px] text-slate-500 uppercase font-mono block">
+                        Total Poly Film
+                      </span>
+                      <span className="text-xl font-bold font-mono text-slate-900 dark:text-white">
+                        {vaporRes.totalAreaWithOverlapAndWaste.toLocaleString()}
+                      </span>
+                      <span className="text-[11px] text-sky-700 dark:text-sky-400 font-mono block">
+                        Sq Ft (with overlap)
+                      </span>
+                    </div>
+
+                    <div className="border border-slate-200 dark:border-slate-800 p-3 rounded-xl bg-white dark:bg-slate-900">
+                      <span className="text-[10px] text-slate-500 uppercase font-mono block">
+                        Full Rolls Needed
+                      </span>
+                      <span className="text-xl font-bold font-mono text-slate-900 dark:text-white">
+                        {vaporRes.rollsNeeded}
+                      </span>
+                      <span className="text-[11px] text-slate-500 font-mono block">
+                        {vaporState.rollWidthFt}′×{vaporState.rollLengthFt}′ Rolls
+                      </span>
+                    </div>
+
+                    <div className="border border-slate-200 dark:border-slate-800 p-3 rounded-xl bg-white dark:bg-slate-900">
+                      <span className="text-[10px] text-slate-500 uppercase font-mono block">
+                        Seam Tape Rolls
+                      </span>
+                      <span className="text-xl font-bold font-mono text-slate-900 dark:text-white">
+                        {vaporRes.tapeRollsNeeded}
+                      </span>
+                      <span className="text-[11px] text-slate-500 font-mono block">
+                        {vaporRes.totalSeamLinearFt} LF Seams
+                      </span>
+                    </div>
+
+                    <div className="border border-slate-200 dark:border-slate-800 p-3 rounded-xl bg-white dark:bg-slate-900">
+                      <span className="text-[10px] text-slate-500 uppercase font-mono block">
+                        Termination Bars
+                      </span>
+                      <span className="text-xl font-bold font-mono text-slate-900 dark:text-white">
+                        {vaporRes.termBarsNeeded}
+                      </span>
+                      <span className="text-[11px] text-slate-500 font-mono block">
+                        {vaporRes.fastenersCount} Masonry Pins
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Complete Bill of Materials Takeoff */}
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-4 bg-white dark:bg-slate-900 overflow-x-auto">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                        Contractor Bill of Materials Takeoff
+                      </h3>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const takeoffSummary = [
+                            `WANJAARO VAPOR BARRIER & MOISTURE RETARDER TAKEOFF`,
+                            `Application: ${vaporState.application.toUpperCase()}`,
+                            `Ground Footprint: ${vaporState.lengthFt}' × ${vaporState.widthFt}' = ${vaporState.lengthFt * vaporState.widthFt} sq ft`,
+                            `Gross Poly Coverage: ${vaporRes.grossAreaSqFt} sq ft`,
+                            `Total Poly Required (with ${vaporState.seamOverlapIn}" overlap & ${vaporState.wastePct}% waste): ${vaporRes.totalAreaWithOverlapAndWaste.toLocaleString()} sq ft`,
+                            `Polyethylene Rolls (${vaporState.milThickness} Mil, ${vaporState.rollWidthFt}'x${vaporState.rollLengthFt}'): ${vaporRes.rollsNeeded} rolls = $${vaporRes.rollsCost}`,
+                            `Vapor Seam Tape (180 ft rolls): ${vaporRes.tapeRollsNeeded} rolls (${vaporRes.totalSeamLinearFt} LF seams) = $${vaporRes.tapeCost}`,
+                            `Termination Bars (10 ft): ${vaporRes.termBarsNeeded} bars = $${vaporRes.termBarsCost}`,
+                            `Masonry Drive Fasteners: ${vaporRes.fastenersCount} pins = $${vaporRes.fastenersCost}`,
+                            `Materials Subtotal: $${vaporRes.materialsSubtotal.toLocaleString()}`,
+                            `Installation Labor: $${vaporRes.laborCost.toLocaleString()}`,
+                            `TOTAL ESTIMATED PROJECT COST: $${vaporRes.totalEstimatedCost.toLocaleString()}`,
+                          ].join('\n');
+                          copyTakeoff(takeoffSummary);
+                        }}
+                        className="px-2.5 py-1 text-xs font-semibold rounded bg-sky-700 text-white hover:bg-sky-800 transition-colors cursor-pointer"
+                      >
+                        {copiedText || '📋 Copy Material Takeoff'}
+                      </button>
+                    </div>
+
+                    <table className="w-full text-xs font-mono text-left border-collapse">
+                      <thead>
+                        <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-500">
+                          <th className="py-2 font-semibold">Material Description</th>
+                          <th className="py-2">Coverage / Spec</th>
+                          <th className="py-2 text-center">Qty</th>
+                          <th className="py-2 text-right">Unit Price</th>
+                          <th className="py-2 text-right">Total</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
+                        <tr>
+                          <td className="py-2 font-sans font-medium">
+                            {vaporState.milThickness} Mil Poly Film ({vaporState.rollWidthFt}′×{vaporState.rollLengthFt}′)
+                          </td>
+                          <td className="py-2 text-slate-500">
+                            {vaporRes.astmClass}
+                          </td>
+                          <td className="py-2 text-center font-bold">{vaporRes.rollsNeeded} Rolls</td>
+                          <td className="py-2 text-right">${vaporState.rollPrice.toFixed(2)}</td>
+                          <td className="py-2 text-right font-bold">${vaporRes.rollsCost.toLocaleString()}</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 font-sans font-medium">Waterproof Vapor Seam Tape</td>
+                          <td className="py-2 text-slate-500">
+                            {vaporRes.totalSeamLinearFt} LF Seams (180′ per roll)
+                          </td>
+                          <td className="py-2 text-center font-bold">{vaporRes.tapeRollsNeeded} Rolls</td>
+                          <td className="py-2 text-right">${vaporState.seamTapeRollPrice.toFixed(2)}</td>
+                          <td className="py-2 text-right font-bold">${vaporRes.tapeCost.toLocaleString()}</td>
+                        </tr>
+                        {vaporRes.termBarsNeeded > 0 && (
+                          <>
+                            <tr>
+                              <td className="py-2 font-sans font-medium">Aluminum Termination Bars</td>
+                              <td className="py-2 text-slate-500">10 ft rigid bar for wall tops</td>
+                              <td className="py-2 text-center font-bold">{vaporRes.termBarsNeeded} Pcs</td>
+                              <td className="py-2 text-right">${vaporState.terminationBarPrice.toFixed(2)}</td>
+                              <td className="py-2 text-right font-bold">${vaporRes.termBarsCost.toLocaleString()}</td>
+                            </tr>
+                            <tr>
+                              <td className="py-2 font-sans font-medium">Masonry Drive Pins &amp; Anchors</td>
+                              <td className="py-2 text-slate-500">15″ spacing on perimeter</td>
+                              <td className="py-2 text-center font-bold">{vaporRes.fastenersCount} Pins</td>
+                              <td className="py-2 text-right">${vaporState.fastenersPackPrice.toFixed(2)}</td>
+                              <td className="py-2 text-right font-bold">${vaporRes.fastenersCost.toLocaleString()}</td>
+                            </tr>
+                          </>
+                        )}
+                        <tr className="bg-slate-50 dark:bg-slate-950/40">
+                          <td className="py-2 font-sans font-bold text-slate-800 dark:text-slate-200">
+                            Materials Subtotal
+                          </td>
+                          <td className="py-2 text-slate-500">Includes overlap &amp; cutting waste</td>
+                          <td className="py-2 text-center font-bold">—</td>
+                          <td className="py-2 text-right font-bold">—</td>
+                          <td className="py-2 text-right font-bold text-sky-700 dark:text-sky-400">
+                            ${vaporRes.materialsSubtotal.toLocaleString()}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 font-sans font-medium">Installation &amp; Sealing Labor</td>
+                          <td className="py-2 text-slate-500">${vaporState.laborRatePerSqFt.toFixed(2)} / sq ft</td>
+                          <td className="py-2 text-center">{vaporRes.grossAreaSqFt} sq ft</td>
+                          <td className="py-2 text-right">${vaporState.laborRatePerSqFt.toFixed(2)}</td>
+                          <td className="py-2 text-right font-bold">${vaporRes.laborCost.toLocaleString()}</td>
+                        </tr>
+                        <tr className="bg-sky-50/70 dark:bg-sky-950/40 text-slate-900 dark:text-white font-bold">
+                          <td className="py-2.5 font-sans text-sm">TOTAL ESTIMATED PROJECT COST</td>
+                          <td className="py-2.5 text-slate-500 font-normal">Turnkey Moisture Seal</td>
+                          <td className="py-2.5 text-center">—</td>
+                          <td className="py-2.5 text-right">—</td>
+                          <td className="py-2.5 text-right text-base text-sky-800 dark:text-sky-300">
+                            ${vaporRes.totalEstimatedCost.toLocaleString()}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 13. GARAGE DOOR SIZE & FRAMING OPENING CALCULATOR */}
+          {activeCalcId === 'garage-door-size' && (
+            <div className="space-y-6">
+              {/* Presets Bar */}
+              <div className="flex flex-wrap items-center gap-2 p-3 bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-xl no-print">
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                  Standard Sizes:
+                </span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setGarageState((prev) => ({
+                      ...prev,
+                      doorStandardSize: 'double_16x7',
+                      doorWidthFt: 16,
+                      doorHeightFt: 7,
+                      ceilingHeightFt: 10,
+                      headerType: 'lvl_double',
+                    }))
+                  }
+                  className="px-2.5 py-1 text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-sky-600 hover:text-sky-700 dark:hover:text-sky-400 transition-colors cursor-pointer"
+                >
+                  🚗 16×7 Double Car Door (10ft Clg)
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setGarageState((prev) => ({
+                      ...prev,
+                      doorStandardSize: 'single_9x7',
+                      doorWidthFt: 9,
+                      doorHeightFt: 7,
+                      ceilingHeightFt: 9,
+                      headerType: 'double_2x10',
+                    }))
+                  }
+                  className="px-2.5 py-1 text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-sky-600 hover:text-sky-700 dark:hover:text-sky-400 transition-colors cursor-pointer"
+                >
+                  🚙 9×7 Single Car Door (9ft Clg)
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setGarageState((prev) => ({
+                      ...prev,
+                      doorStandardSize: 'single_8x7',
+                      doorWidthFt: 8,
+                      doorHeightFt: 7,
+                      ceilingHeightFt: 8.5,
+                      headerType: 'double_2x10',
+                    }))
+                  }
+                  className="px-2.5 py-1 text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-sky-600 hover:text-sky-700 dark:hover:text-sky-400 transition-colors cursor-pointer"
+                >
+                  🚐 8×7 Compact Single Door
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setGarageState((prev) => ({
+                      ...prev,
+                      doorStandardSize: 'double_18x7',
+                      doorWidthFt: 18,
+                      doorHeightFt: 7,
+                      ceilingHeightFt: 10,
+                      headerType: 'lvl_triple',
+                    }))
+                  }
+                  className="px-2.5 py-1 text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-sky-600 hover:text-sky-700 dark:hover:text-sky-400 transition-colors cursor-pointer"
+                >
+                  🚚 18×7 Wide Double Door
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setGarageState((prev) => ({
+                      ...prev,
+                      doorStandardSize: 'double_16x8',
+                      doorWidthFt: 16,
+                      doorHeightFt: 8,
+                      ceilingHeightFt: 11,
+                      headerType: 'lvl_double',
+                    }))
+                  }
+                  className="px-2.5 py-1 text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-sky-600 hover:text-sky-700 dark:hover:text-sky-400 transition-colors cursor-pointer"
+                >
+                  🛻 16×8 Tall SUV/Truck Door
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                {/* Inputs Column */}
+                <div className="lg:col-span-5 space-y-4">
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-4 bg-white dark:bg-slate-900 space-y-4">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                      Door Dimensions &amp; Framing Parameters
+                    </h3>
+
+                    {/* Width & Height */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-xs font-medium text-slate-700 dark:text-slate-300 block mb-1">
+                          Finished Width (ft)
+                        </label>
+                        <input
+                          type="number"
+                          step="1"
+                          min="6"
+                          max="24"
+                          value={garageState.doorWidthFt}
+                          onChange={(e) =>
+                            setGarageState((prev) => ({
+                              ...prev,
+                              doorWidthFt: parseFloat(e.target.value) || 0,
+                              doorStandardSize: 'custom',
+                            }))
+                          }
+                          className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-medium text-slate-700 dark:text-slate-300 block mb-1">
+                          Finished Height (ft)
+                        </label>
+                        <input
+                          type="number"
+                          step="0.5"
+                          min="6"
+                          max="16"
+                          value={garageState.doorHeightFt}
+                          onChange={(e) =>
+                            setGarageState((prev) => ({
+                              ...prev,
+                              doorHeightFt: parseFloat(e.target.value) || 0,
+                              doorStandardSize: 'custom',
+                            }))
+                          }
+                          className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Finished Ceiling Height */}
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                          Finished Ceiling Height (ft)
+                        </label>
+                        <span className="text-[10px] text-slate-500 font-mono">
+                          Min: {(garageState.doorHeightFt + 0.5).toFixed(1)} ft
+                        </span>
+                      </div>
+                      <input
+                        type="number"
+                        step="0.25"
+                        min={garageState.doorHeightFt + 0.5}
+                        value={garageState.ceilingHeightFt}
+                        onChange={(e) =>
+                          setGarageState((prev) => ({
+                            ...prev,
+                            ceilingHeightFt: parseFloat(e.target.value) || 0,
+                          }))
+                        }
+                        className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                      />
+                    </div>
+
+                    {/* Framing Wall & Track Radius */}
+                    <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                      <div>
+                        <label className="text-xs text-slate-700 dark:text-slate-300 block mb-1">
+                          Wall Framing Size
+                        </label>
+                        <div className="grid grid-cols-2 gap-1.5">
+                          {['2x4', '2x6'].map((sz) => (
+                            <button
+                              key={sz}
+                              type="button"
+                              onClick={() =>
+                                setGarageState((prev) => ({
+                                  ...prev,
+                                  wallFraming: sz as any,
+                                }))
+                              }
+                              className={`py-1.5 text-xs font-mono rounded border cursor-pointer ${
+                                garageState.wallFraming === sz
+                                  ? 'bg-sky-50 dark:bg-sky-950/40 border-sky-600 text-sky-800 dark:text-sky-300 font-bold'
+                                  : 'border-slate-300 dark:border-slate-700'
+                              }`}
+                            >
+                              {sz}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="text-xs text-slate-700 dark:text-slate-300 block mb-1">
+                          Track Curve Radius
+                        </label>
+                        <div className="grid grid-cols-2 gap-1.5">
+                          {[12, 15].map((r) => (
+                            <button
+                              key={r}
+                              type="button"
+                              onClick={() =>
+                                setGarageState((prev) => ({
+                                  ...prev,
+                                  trackRadiusIn: r as any,
+                                }))
+                              }
+                              className={`py-1.5 text-xs font-mono rounded border cursor-pointer ${
+                                garageState.trackRadiusIn === r
+                                  ? 'bg-sky-50 dark:bg-sky-950/40 border-sky-600 text-sky-800 dark:text-sky-300 font-bold'
+                                  : 'border-slate-300 dark:border-slate-700'
+                              }`}
+                            >
+                              {r}″ Radius
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Electric Opener Toggle */}
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-100 dark:border-slate-800">
+                      <div>
+                        <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 block">
+                          Electric Automatic Opener
+                        </span>
+                        <span className="text-[10px] text-slate-500 block">
+                          Adds +3″ required headroom &amp; +48″ backroom depth
+                        </span>
+                      </div>
+                      <input
+                        type="checkbox"
+                        checked={garageState.hasElectricOpener}
+                        onChange={(e) =>
+                          setGarageState((prev) => ({
+                            ...prev,
+                            hasElectricOpener: e.target.checked,
+                          }))
+                        }
+                        className="w-4 h-4 text-sky-600 rounded cursor-pointer"
+                      />
+                    </div>
+
+                    {/* Structural Header Selection */}
+                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
+                      <label className="text-xs font-medium text-slate-700 dark:text-slate-300 block mb-1.5">
+                        Structural Header Beam Type
+                      </label>
+                      <select
+                        value={garageState.headerType}
+                        onChange={(e) =>
+                          setGarageState((prev) => ({
+                            ...prev,
+                            headerType: e.target.value as any,
+                          }))
+                        }
+                        className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                      >
+                        <option value="double_2x10">Double 2×10 Lumber (Spans up to 10′)</option>
+                        <option value="double_2x12">Double 2×12 Lumber (Spans up to 12′)</option>
+                        <option value="lvl_double">Double 1-3/4″ × 11-7/8″ LVL Beam (Recommended 16′)</option>
+                        <option value="lvl_triple">Triple 1-3/4″ × 11-7/8″ LVL Beam (Wide / 18′+)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Pricing Overrides */}
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-4 bg-white dark:bg-slate-900 space-y-3">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                      Equipment &amp; Material Costs ($ USD)
+                    </h4>
+                    <div className="grid grid-cols-2 gap-3 text-xs">
+                      <div>
+                        <label className="text-slate-500 block mb-0.5">Door Unit ($)</label>
+                        <input
+                          type="number"
+                          step="50"
+                          min="0"
+                          value={garageState.doorUnitCost}
+                          onChange={(e) =>
+                            setGarageState((prev) => ({
+                              ...prev,
+                              doorUnitCost: parseFloat(e.target.value) || 0,
+                            }))
+                          }
+                          className="w-full px-2.5 py-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-slate-500 block mb-0.5">Opener ($)</label>
+                        <input
+                          type="number"
+                          step="20"
+                          min="0"
+                          value={garageState.openerCost}
+                          onChange={(e) =>
+                            setGarageState((prev) => ({
+                              ...prev,
+                              openerCost: parseFloat(e.target.value) || 0,
+                            }))
+                          }
+                          className="w-full px-2.5 py-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-slate-500 block mb-0.5">Header Lumber ($)</label>
+                        <input
+                          type="number"
+                          step="10"
+                          min="0"
+                          value={garageState.headerLumberCost}
+                          onChange={(e) =>
+                            setGarageState((prev) => ({
+                              ...prev,
+                              headerLumberCost: parseFloat(e.target.value) || 0,
+                            }))
+                          }
+                          className="w-full px-2.5 py-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-slate-500 block mb-0.5">Installation Labor ($)</label>
+                        <input
+                          type="number"
+                          step="25"
+                          min="0"
+                          value={garageState.laborInstallCost}
+                          onChange={(e) =>
+                            setGarageState((prev) => ({
+                              ...prev,
+                              laborInstallCost: parseFloat(e.target.value) || 0,
+                            }))
+                          }
+                          className="w-full px-2.5 py-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Results Column */}
+                <div className="lg:col-span-7 space-y-4">
+                  {/* Headroom Clearance Status Banner */}
+                  <div
+                    className={`p-3.5 rounded-xl border flex flex-wrap items-center justify-between gap-3 ${
+                      garageRes.requiresLowHeadroom
+                        ? 'bg-amber-50 dark:bg-amber-950/30 border-amber-300 dark:border-amber-800 text-amber-900 dark:text-amber-200'
+                        : 'bg-emerald-50 dark:bg-emerald-950/30 border-emerald-300 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200'
+                    }`}
+                  >
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold uppercase tracking-wide">
+                          Headroom Clearance: {garageRes.availableHeadroomIn}″ Available
+                        </span>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded font-bold bg-white/70 dark:bg-slate-900/70">
+                          Min Req: {garageRes.requiredHeadroomIn}″
+                        </span>
+                      </div>
+                      <p className="text-xs mt-1">
+                        Status: <strong>{garageRes.headroomStatus}</strong>
+                      </p>
+                    </div>
+                    <span className="text-[11px] font-mono font-semibold px-2.5 py-1 rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                      Backroom Depth: {garageRes.backroomDepthFt} ft
+                    </span>
+                  </div>
+
+                  {/* SVG Diagram: Garage Opening Cross Section */}
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-4 bg-white dark:bg-slate-900 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+                        🚗 Rough Framing Opening &amp; Header Elevation (To Scale)
+                      </span>
+                      <span className="text-[10px] font-mono text-slate-400">
+                        Span: {garageRes.headerSpanFt} ft · Goalposts: 2×{garageState.wallFraming === '2x6' ? '6' : '4'}
+                      </span>
+                    </div>
+
+                    <div className="w-full overflow-x-auto bg-slate-50 dark:bg-slate-950/60 p-2 rounded-lg border border-slate-100 dark:border-slate-800">
+                      <svg
+                        viewBox="0 0 620 290"
+                        className="w-full h-auto min-w-[520px] max-h-[270px]"
+                        role="img"
+                        aria-label="Garage door rough opening framing diagram showing header beam, side jambs, and clearances"
+                      >
+                        <defs>
+                          <marker
+                            id="garArrow"
+                            viewBox="0 0 10 10"
+                            refX="5"
+                            refY="5"
+                            markerWidth="6"
+                            markerHeight="6"
+                            orient="auto-start-reverse"
+                          >
+                            <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#0284c7" />
+                          </marker>
+                        </defs>
+
+                        {/* Concrete Slab Floor Level */}
+                        <line x1="20" y1="240" x2="600" y2="240" stroke="#94a3b8" strokeWidth="2" />
+                        <text x="30" y="260" fill="#64748b" fontSize="10" fontFamily="monospace">
+                          Finished Concrete Floor (0.0″)
+                        </text>
+
+                        {/* Finished Ceiling Line */}
+                        <line x1="20" y1="30" x2="600" y2="30" stroke="#94a3b8" strokeWidth="1" strokeDasharray="4 4" />
+                        <text x="430" y="24" fill="#64748b" fontSize="10" fontFamily="monospace">
+                          Finished Ceiling ({(garageState.ceilingHeightFt * 12).toFixed(0)}″ / {garageState.ceilingHeightFt} ft)
+                        </text>
+
+                        {/* Structural Header Beam */}
+                        <rect x="70" y="55" width="480" height="25" fill="#b45309" stroke="#78350f" strokeWidth="1.5" rx="2" />
+                        <text x="180" y="72" fill="#ffffff" fontSize="11" fontFamily="sans-serif" fontWeight="bold">
+                          HEADER: {garageRes.recommendedHeader}
+                        </text>
+
+                        {/* Left & Right Jack/King Studs */}
+                        <rect x="70" y="80" width="16" height="160" fill="#cbd5e1" stroke="#475569" strokeWidth="1" />
+                        <rect x="86" y="80" width="16" height="160" fill="#94a3b8" stroke="#475569" strokeWidth="1" />
+                        <rect x="518" y="80" width="16" height="160" fill="#94a3b8" stroke="#475569" strokeWidth="1" />
+                        <rect x="534" y="80" width="16" height="160" fill="#cbd5e1" stroke="#475569" strokeWidth="1" />
+
+                        {/* Wood Goalpost Jambs (1.5" thickness) */}
+                        <rect x="102" y="80" width="12" height="160" fill="#fde68a" stroke="#d97706" strokeWidth="1" />
+                        <rect x="506" y="80" width="12" height="160" fill="#fde68a" stroke="#d97706" strokeWidth="1" />
+                        <rect x="102" y="80" width="416" height="12" fill="#fde68a" stroke="#d97706" strokeWidth="1" />
+
+                        {/* Finished Door Opening Box */}
+                        <rect x="114" y="92" width="392" height="148" fill="#0284c7" fillOpacity="0.1" stroke="#0284c7" strokeWidth="2" strokeDasharray="3 3" />
+                        <text x="220" y="170" fill="#0284c7" fontSize="14" fontFamily="sans-serif" fontWeight="bold">
+                          {garageRes.doorSizeLabel}
+                        </text>
+
+                        {/* Headroom Dimension Line */}
+                        <line x1="570" y1="30" x2="570" y2="92" stroke="#0284c7" strokeWidth="1.5" markerStart="url(#garArrow)" markerEnd="url(#garArrow)" />
+                        <text x="580" y="65" fill="#0284c7" fontSize="10" fontFamily="monospace" fontWeight="bold">
+                          {garageRes.availableHeadroomIn}″ Headroom
+                        </text>
+
+                        {/* Rough Opening Dimension Arrows */}
+                        <line x1="102" y1="210" x2="518" y2="210" stroke="#b45309" strokeWidth="1.5" markerStart="url(#garArrow)" markerEnd="url(#garArrow)" />
+                        <text x="210" y="205" fill="#b45309" fontSize="11" fontFamily="monospace" fontWeight="bold">
+                          Rough Width: {garageRes.roughWidthIn}″ ({garageRes.roughWidthFormatted})
+                        </text>
+
+                        <line x1="45" y1="80" x2="45" y2="240" stroke="#b45309" strokeWidth="1.5" markerStart="url(#garArrow)" markerEnd="url(#garArrow)" />
+                        <text x="15" y="165" fill="#b45309" fontSize="10" fontFamily="monospace" fontWeight="bold" transform="rotate(-90 15 165)">
+                          Rough Height: {garageRes.roughHeightIn}″
+                        </text>
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* Summary Stat Cards */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div className="border border-slate-200 dark:border-slate-800 p-3 rounded-xl bg-white dark:bg-slate-900">
+                      <span className="text-[10px] text-slate-500 uppercase font-mono block">
+                        Rough Width
+                      </span>
+                      <span className="text-xl font-bold font-mono text-slate-900 dark:text-white">
+                        {garageRes.roughWidthIn}″
+                      </span>
+                      <span className="text-[11px] text-sky-700 dark:text-sky-400 font-mono block">
+                        {garageRes.roughWidthFormatted}
+                      </span>
+                    </div>
+
+                    <div className="border border-slate-200 dark:border-slate-800 p-3 rounded-xl bg-white dark:bg-slate-900">
+                      <span className="text-[10px] text-slate-500 uppercase font-mono block">
+                        Rough Height
+                      </span>
+                      <span className="text-xl font-bold font-mono text-slate-900 dark:text-white">
+                        {garageRes.roughHeightIn}″
+                      </span>
+                      <span className="text-[11px] text-sky-700 dark:text-sky-400 font-mono block">
+                        {garageRes.roughHeightFormatted}
+                      </span>
+                    </div>
+
+                    <div className="border border-slate-200 dark:border-slate-800 p-3 rounded-xl bg-white dark:bg-slate-900">
+                      <span className="text-[10px] text-slate-500 uppercase font-mono block">
+                        Header Span
+                      </span>
+                      <span className="text-xl font-bold font-mono text-slate-900 dark:text-white">
+                        {garageRes.headerSpanFt} ft
+                      </span>
+                      <span className="text-[11px] text-slate-500 font-mono block">
+                        Bearing: 3″ each side
+                      </span>
+                    </div>
+
+                    <div className="border border-slate-200 dark:border-slate-800 p-3 rounded-xl bg-white dark:bg-slate-900">
+                      <span className="text-[10px] text-slate-500 uppercase font-mono block">
+                        Backroom Depth
+                      </span>
+                      <span className="text-xl font-bold font-mono text-slate-900 dark:text-white">
+                        {garageRes.backroomDepthFt} ft
+                      </span>
+                      <span className="text-[11px] text-slate-500 font-mono block">
+                        Track + Opener
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Bill of Materials Takeoff Table */}
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-4 bg-white dark:bg-slate-900 overflow-x-auto">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                        Contractor Bill of Materials Takeoff
+                      </h3>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const takeoffSummary = [
+                            `WANJAARO GARAGE DOOR SIZE & FRAMING TAKEOFF`,
+                            `Door Finished Dimensions: ${garageRes.doorSizeLabel}`,
+                            `Rough Framing Opening: ${garageRes.roughWidthIn}" wide × ${garageRes.roughHeightIn}" high (${garageRes.roughWidthFormatted} × ${garageRes.roughHeightFormatted})`,
+                            `Structural Header: ${garageRes.recommendedHeader} (Span: ${garageRes.headerSpanFt} ft, Length: ${garageRes.headerLengthIn}")`,
+                            `Available Headroom: ${garageRes.availableHeadroomIn}" (Required: ${garageRes.requiredHeadroomIn}") -> ${garageRes.headroomStatus}`,
+                            `Required Sideroom Clearance: ${garageRes.sideroomRequiredIn}" on each side`,
+                            `Required Backroom Track Depth: ${garageRes.backroomDepthFt} ft (${garageRes.backroomDepthIn}")`,
+                            `Goalpost Framing: 2x wood side & head jamb liners (${garageRes.sideJambLumber})`,
+                            `Perimeter Weatherstrip: ${garageRes.weatherstripLinFt} linear feet`,
+                            `Garage Door Unit: $${garageRes.doorCost}`,
+                            `Opener Unit: $${garageRes.openerCost}`,
+                            `Header Lumber: $${garageRes.headerCost}`,
+                            `Framing Jambs: $${garageRes.jambsCost}`,
+                            `Weatherstrip Kit: $${garageRes.weatherstripCost}`,
+                            `Materials Subtotal: $${garageRes.materialsSubtotal.toLocaleString()}`,
+                            `Installation Labor: $${garageRes.laborCost.toLocaleString()}`,
+                            `TOTAL ESTIMATED COST: $${garageRes.totalEstimatedCost.toLocaleString()}`,
+                          ].join('\n');
+                          copyTakeoff(takeoffSummary);
+                        }}
+                        className="px-2.5 py-1 text-xs font-semibold rounded bg-sky-700 text-white hover:bg-sky-800 transition-colors cursor-pointer"
+                      >
+                        {copiedText || '📋 Copy Material Takeoff'}
+                      </button>
+                    </div>
+
+                    <table className="w-full text-xs font-mono text-left border-collapse">
+                      <thead>
+                        <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-500">
+                          <th className="py-2 font-semibold">Component</th>
+                          <th className="py-2">Specification</th>
+                          <th className="py-2 text-center">Qty</th>
+                          <th className="py-2 text-right">Estimated Cost</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
+                        <tr>
+                          <td className="py-2 font-sans font-medium">Overhead Sectional Door</td>
+                          <td className="py-2 text-slate-500">{garageRes.doorSizeLabel} Steel Insulated</td>
+                          <td className="py-2 text-center font-bold">1 Unit</td>
+                          <td className="py-2 text-right font-bold">${garageRes.doorCost.toLocaleString()}</td>
+                        </tr>
+                        {garageState.hasElectricOpener && (
+                          <tr>
+                            <td className="py-2 font-sans font-medium">Automatic Trolley Opener</td>
+                            <td className="py-2 text-slate-500">1/2 HP Belt/Chain Drive + Remotes</td>
+                            <td className="py-2 text-center font-bold">1 Kit</td>
+                            <td className="py-2 text-right font-bold">${garageRes.openerCost.toLocaleString()}</td>
+                          </tr>
+                        )}
+                        <tr>
+                          <td className="py-2 font-sans font-medium">Structural Header Beam</td>
+                          <td className="py-2 text-slate-500">{garageRes.recommendedHeader}</td>
+                          <td className="py-2 text-center font-bold">{garageRes.headerLengthIn}″</td>
+                          <td className="py-2 text-right font-bold">${garageRes.headerCost.toLocaleString()}</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 font-sans font-medium">Goalpost Jamb Liners</td>
+                          <td className="py-2 text-slate-500">{garageRes.sideJambLumber}</td>
+                          <td className="py-2 text-center font-bold">3 Boards</td>
+                          <td className="py-2 text-right font-bold">${garageRes.jambsCost.toLocaleString()}</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 font-sans font-medium">Vinyl Perimeter Weatherstrip</td>
+                          <td className="py-2 text-slate-500">Flexible dual-fin rubber seal</td>
+                          <td className="py-2 text-center font-bold">{garageRes.weatherstripLinFt} LF</td>
+                          <td className="py-2 text-right font-bold">${garageRes.weatherstripCost.toLocaleString()}</td>
+                        </tr>
+                        <tr className="bg-slate-50 dark:bg-slate-950/40">
+                          <td className="py-2 font-sans font-bold text-slate-800 dark:text-slate-200">
+                            Materials Subtotal
+                          </td>
+                          <td className="py-2 text-slate-500">Door, opener, lumber &amp; hardware</td>
+                          <td className="py-2 text-center font-bold">—</td>
+                          <td className="py-2 text-right font-bold text-sky-700 dark:text-sky-400">
+                            ${garageRes.materialsSubtotal.toLocaleString()}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 font-sans font-medium">Professional Installation Labor</td>
+                          <td className="py-2 text-slate-500">Framing goalposts, tracks, springs &amp; door hanging</td>
+                          <td className="py-2 text-center font-bold">1 Job</td>
+                          <td className="py-2 text-right font-bold">${garageRes.laborCost.toLocaleString()}</td>
+                        </tr>
+                        <tr className="bg-sky-50/70 dark:bg-sky-950/40 text-slate-900 dark:text-white font-bold">
+                          <td className="py-2.5 font-sans text-sm">TOTAL ESTIMATED PROJECT COST</td>
+                          <td className="py-2.5 text-slate-500 font-normal">Turnkey Installation</td>
+                          <td className="py-2.5 text-center">—</td>
+                          <td className="py-2.5 text-right text-base text-sky-800 dark:text-sky-300">
+                            ${garageRes.totalEstimatedCost.toLocaleString()}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 14. DOOR FRAME MATERIAL & ROUGH OPENING CALCULATOR */}
+          {activeCalcId === 'door-frame-material' && (
+            <div className="space-y-6">
+              {/* Presets Bar */}
+              <div className="flex flex-wrap items-center gap-2 p-3 bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-xl no-print">
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                  Quick Presets:
+                </span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setDoorFrameState((prev) => ({
+                      ...prev,
+                      doorType: 'exterior_single',
+                      doorWidthIn: 36,
+                      doorHeightIn: 80,
+                      wallStudSize: '2x6',
+                      casingSides: 2,
+                      casingWidthIn: 2.5,
+                      headerType: 'double_2x6',
+                    }))
+                  }
+                  className="px-2.5 py-1 text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-sky-600 hover:text-sky-700 dark:hover:text-sky-400 transition-colors cursor-pointer"
+                >
+                  🚪 36×80 Exterior Entry (2×6 Wall)
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setDoorFrameState((prev) => ({
+                      ...prev,
+                      doorType: 'interior_single',
+                      doorWidthIn: 30,
+                      doorHeightIn: 80,
+                      wallStudSize: '2x4',
+                      casingSides: 2,
+                      casingWidthIn: 2.25,
+                      headerType: 'double_2x4',
+                    }))
+                  }
+                  className="px-2.5 py-1 text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-sky-600 hover:text-sky-700 dark:hover:text-sky-400 transition-colors cursor-pointer"
+                >
+                  🛏 30×80 Interior Bedroom (2×4 Wall)
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setDoorFrameState((prev) => ({
+                      ...prev,
+                      doorType: 'interior_single',
+                      doorWidthIn: 32,
+                      doorHeightIn: 80,
+                      wallStudSize: '2x4',
+                      casingSides: 2,
+                      casingWidthIn: 2.5,
+                      headerType: 'double_2x4',
+                    }))
+                  }
+                  className="px-2.5 py-1 text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-sky-600 hover:text-sky-700 dark:hover:text-sky-400 transition-colors cursor-pointer"
+                >
+                  🚿 32×80 Bathroom Door
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setDoorFrameState((prev) => ({
+                      ...prev,
+                      doorType: 'interior_double',
+                      doorWidthIn: 30, // 60" total pair
+                      doorHeightIn: 80,
+                      wallStudSize: '2x4',
+                      casingSides: 2,
+                      casingWidthIn: 3.5,
+                      headerType: 'double_2x8',
+                    }))
+                  }
+                  className="px-2.5 py-1 text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-sky-600 hover:text-sky-700 dark:hover:text-sky-400 transition-colors cursor-pointer"
+                >
+                  🏛 60×80 Double French Interior
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setDoorFrameState((prev) => ({
+                      ...prev,
+                      doorType: 'pocket_door',
+                      doorWidthIn: 32,
+                      doorHeightIn: 80,
+                      wallStudSize: '2x4',
+                      casingSides: 2,
+                      casingWidthIn: 2.5,
+                      headerType: 'double_2x6',
+                    }))
+                  }
+                  className="px-2.5 py-1 text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-sky-600 hover:text-sky-700 dark:hover:text-sky-400 transition-colors cursor-pointer"
+                >
+                  📦 32×80 Pocket Door Frame
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                {/* Inputs Column */}
+                <div className="lg:col-span-5 space-y-4">
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-4 bg-white dark:bg-slate-900 space-y-4">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                      Door &amp; Rough Opening Specifications
+                    </h3>
+
+                    {/* Door Type */}
+                    <div>
+                      <label className="text-xs font-medium text-slate-700 dark:text-slate-300 block mb-1.5">
+                        Door Type
+                      </label>
+                      <select
+                        value={doorFrameState.doorType}
+                        onChange={(e) =>
+                          setDoorFrameState((prev) => ({
+                            ...prev,
+                            doorType: e.target.value as any,
+                          }))
+                        }
+                        className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                      >
+                        <option value="interior_single">Interior Single Swing Door (30/32/36×80)</option>
+                        <option value="exterior_single">Exterior Entry Door (36×80)</option>
+                        <option value="interior_double">Interior Double French Door (Pair)</option>
+                        <option value="pocket_door">Pocket Door (Sliding inside wall)</option>
+                        <option value="bifold">Bifold Closet Door</option>
+                      </select>
+                    </div>
+
+                    {/* Door Width & Height */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-xs font-medium text-slate-700 dark:text-slate-300 block mb-1">
+                          Door Width (inches)
+                        </label>
+                        <select
+                          value={doorFrameState.doorWidthIn}
+                          onChange={(e) =>
+                            setDoorFrameState((prev) => ({
+                              ...prev,
+                              doorWidthIn: parseInt(e.target.value, 10) || 36,
+                            }))
+                          }
+                          className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                        >
+                          <option value="24">24″ (2′ 0″ - Closet)</option>
+                          <option value="28">28″ (2′ 4″ - Small Room)</option>
+                          <option value="30">30″ (2′ 6″ - Standard Bed)</option>
+                          <option value="32">32″ (2′ 8″ - Standard Bath)</option>
+                          <option value="36">36″ (3′ 0″ - Entry / ADA Accessible)</option>
+                          <option value="42">42″ (3′ 6″ - Wide Commercial)</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-medium text-slate-700 dark:text-slate-300 block mb-1">
+                          Door Height (inches)
+                        </label>
+                        <select
+                          value={doorFrameState.doorHeightIn}
+                          onChange={(e) =>
+                            setDoorFrameState((prev) => ({
+                              ...prev,
+                              doorHeightIn: parseInt(e.target.value, 10) || 80,
+                            }))
+                          }
+                          className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                        >
+                          <option value="80">80″ (6′ 8″ - Standard)</option>
+                          <option value="84">84″ (7′ 0″ - Tall)</option>
+                          <option value="96">96″ (8′ 0″ - High Ceiling Custom)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Wall Stud Size (2x4 vs 2x6) & Wall Height */}
+                    <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                      <div>
+                        <label className="text-xs text-slate-700 dark:text-slate-300 block mb-1">
+                          Wall Stud Size
+                        </label>
+                        <div className="grid grid-cols-2 gap-1.5">
+                          {['2x4', '2x6'].map((sz) => (
+                            <button
+                              key={sz}
+                              type="button"
+                              onClick={() =>
+                                setDoorFrameState((prev) => ({
+                                  ...prev,
+                                  wallStudSize: sz as any,
+                                }))
+                              }
+                              className={`py-1.5 text-xs font-mono rounded border cursor-pointer ${
+                                doorFrameState.wallStudSize === sz
+                                  ? 'bg-sky-50 dark:bg-sky-950/40 border-sky-600 text-sky-800 dark:text-sky-300 font-bold'
+                                  : 'border-slate-300 dark:border-slate-700'
+                              }`}
+                            >
+                              {sz} Wall
+                            </button>
+                          ))}
+                        </div>
+                        <span className="text-[10px] text-slate-500 block mt-1">
+                          Jamb: {doorFrameState.wallStudSize === '2x6' ? '6-9/16″' : '4-9/16″'}
+                        </span>
+                      </div>
+
+                      <div>
+                        <label className="text-xs text-slate-700 dark:text-slate-300 block mb-1">
+                          Ceiling / Wall Height
+                        </label>
+                        <select
+                          value={doorFrameState.wallHeightFt}
+                          onChange={(e) =>
+                            setDoorFrameState((prev) => ({
+                              ...prev,
+                              wallHeightFt: parseInt(e.target.value, 10) || 8,
+                            }))
+                          }
+                          className="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                        >
+                          <option value="8">8 ft Walls</option>
+                          <option value="9">9 ft Walls</option>
+                          <option value="10">10 ft Walls</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Casing Sides & Width */}
+                    <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                      <div>
+                        <label className="text-xs text-slate-700 dark:text-slate-300 block mb-1">
+                          Casing / Trim Sides
+                        </label>
+                        <div className="grid grid-cols-2 gap-1.5">
+                          {[1, 2].map((sides) => (
+                            <button
+                              key={sides}
+                              type="button"
+                              onClick={() =>
+                                setDoorFrameState((prev) => ({
+                                  ...prev,
+                                  casingSides: sides as any,
+                                }))
+                              }
+                              className={`py-1.5 text-xs font-mono rounded border cursor-pointer ${
+                                doorFrameState.casingSides === sides
+                                  ? 'bg-sky-50 dark:bg-sky-950/40 border-sky-600 text-sky-800 dark:text-sky-300 font-bold'
+                                  : 'border-slate-300 dark:border-slate-700'
+                              }`}
+                            >
+                              {sides} {sides === 1 ? 'Side' : 'Sides'}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="text-xs text-slate-700 dark:text-slate-300 block mb-1">
+                          Casing Profile Width
+                        </label>
+                        <select
+                          value={doorFrameState.casingWidthIn}
+                          onChange={(e) =>
+                            setDoorFrameState((prev) => ({
+                              ...prev,
+                              casingWidthIn: parseFloat(e.target.value) || 2.5,
+                            }))
+                          }
+                          className="w-full px-3 py-1.5 text-sm rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                        >
+                          <option value="2.25">2-1/4″ (Colonial / Standard)</option>
+                          <option value="2.5">2-1/2″ (Modern Streamline)</option>
+                          <option value="3.5">3-1/2″ (Craftsman Flat)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Structural Header Type */}
+                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
+                      <label className="text-xs font-medium text-slate-700 dark:text-slate-300 block mb-1.5">
+                        Door Header Lumber
+                      </label>
+                      <select
+                        value={doorFrameState.headerType}
+                        onChange={(e) =>
+                          setDoorFrameState((prev) => ({
+                            ...prev,
+                            headerType: e.target.value as any,
+                          }))
+                        }
+                        className="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                      >
+                        <option value="double_2x4">Double 2×4 with 1/2″ spacer (Non-bearing partition)</option>
+                        <option value="double_2x6">Double 2×6 with 1/2″ spacer (Standard bearing up to 4′)</option>
+                        <option value="double_2x8">Double 2×8 with 1/2″ spacer (Bearing up to 6′ / Double door)</option>
+                        <option value="double_2x10">Double 2×10 with 1/2″ spacer (Heavy load)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Pricing Inputs */}
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-4 bg-white dark:bg-slate-900 space-y-3">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                      Framing &amp; Trim Pricing ($ USD)
+                    </h4>
+                    <div className="grid grid-cols-2 gap-3 text-xs">
+                      <div>
+                        <label className="text-slate-500 block mb-0.5">Stud Price ($/ea)</label>
+                        <input
+                          type="number"
+                          step="0.25"
+                          min="0"
+                          value={doorFrameState.studPrice}
+                          onChange={(e) =>
+                            setDoorFrameState((prev) => ({
+                              ...prev,
+                              studPrice: parseFloat(e.target.value) || 0,
+                            }))
+                          }
+                          className="w-full px-2.5 py-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-slate-500 block mb-0.5">Header Lumber ($/ea)</label>
+                        <input
+                          type="number"
+                          step="1"
+                          min="0"
+                          value={doorFrameState.headerBoardPrice}
+                          onChange={(e) =>
+                            setDoorFrameState((prev) => ({
+                              ...prev,
+                              headerBoardPrice: parseFloat(e.target.value) || 0,
+                            }))
+                          }
+                          className="w-full px-2.5 py-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-slate-500 block mb-0.5">Jamb Kit ($)</label>
+                        <input
+                          type="number"
+                          step="2"
+                          min="0"
+                          value={doorFrameState.jambKitPrice}
+                          onChange={(e) =>
+                            setDoorFrameState((prev) => ({
+                              ...prev,
+                              jambKitPrice: parseFloat(e.target.value) || 0,
+                            }))
+                          }
+                          className="w-full px-2.5 py-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-slate-500 block mb-0.5">Casing ($/lin ft)</label>
+                        <input
+                          type="number"
+                          step="0.1"
+                          min="0"
+                          value={doorFrameState.casingPricePerFt}
+                          onChange={(e) =>
+                            setDoorFrameState((prev) => ({
+                              ...prev,
+                              casingPricePerFt: parseFloat(e.target.value) || 0,
+                            }))
+                          }
+                          className="w-full px-2.5 py-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-slate-500 block mb-0.5">Carpentry Labor ($/hr)</label>
+                        <input
+                          type="number"
+                          step="5"
+                          min="0"
+                          value={doorFrameState.laborRatePerHour}
+                          onChange={(e) =>
+                            setDoorFrameState((prev) => ({
+                              ...prev,
+                              laborRatePerHour: parseFloat(e.target.value) || 0,
+                            }))
+                          }
+                          className="w-full px-2.5 py-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-slate-500 block mb-0.5">Est. Labor Hours</label>
+                        <input
+                          type="number"
+                          step="0.5"
+                          min="0"
+                          value={doorFrameState.estimatedLaborHours}
+                          onChange={(e) =>
+                            setDoorFrameState((prev) => ({
+                              ...prev,
+                              estimatedLaborHours: parseFloat(e.target.value) || 0,
+                            }))
+                          }
+                          className="w-full px-2.5 py-1.5 rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-mono"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Results Column */}
+                <div className="lg:col-span-7 space-y-4">
+                  {/* Rough Opening Spec Banner */}
+                  <div className="p-3.5 rounded-xl border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/40 flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold uppercase tracking-wide text-sky-900 dark:text-sky-300">
+                          Rough Opening: {doorFrameRes.roWidthIn}″ W × {doorFrameRes.roHeightIn}″ H
+                        </span>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-200/60 dark:bg-sky-800/60 text-sky-900 dark:text-sky-200 font-bold">
+                          {doorFrameRes.roWidthFormatted} × {doorFrameRes.roHeightFormatted}
+                        </span>
+                      </div>
+                      <p className="text-xs text-sky-800 dark:text-sky-300 mt-1">
+                        Finished Door: <strong>{doorFrameRes.doorNominalSize}</strong> · Jamb Width:{' '}
+                        <strong>{doorFrameRes.jambWidthFraction}</strong>
+                      </p>
+                    </div>
+                    <span className="text-[11px] font-mono font-semibold px-2.5 py-1 rounded-md bg-white dark:bg-slate-900 text-sky-700 dark:text-sky-400 border border-sky-300 dark:border-sky-700">
+                      Trim: {doorFrameRes.totalCasingLinFt} LF Casing
+                    </span>
+                  </div>
+
+                  {/* SVG Architectural Framing Elevation */}
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-4 bg-white dark:bg-slate-900 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+                        🚪 Rough Door Wall Framing &amp; Header Elevation (To Scale)
+                      </span>
+                      <span className="text-[10px] font-mono text-slate-400">
+                        Jack Stud: {doorFrameRes.jackStudLengthIn}″ · Wall: {doorFrameState.wallStudSize}
+                      </span>
+                    </div>
+
+                    <div className="w-full overflow-x-auto bg-slate-50 dark:bg-slate-950/60 p-2 rounded-lg border border-slate-100 dark:border-slate-800">
+                      <svg
+                        viewBox="0 0 600 300"
+                        className="w-full h-auto min-w-[500px] max-h-[280px]"
+                        role="img"
+                        aria-label="Door rough opening framing elevation showing king studs, jack studs, header, cripples, and casing trim"
+                      >
+                        <defs>
+                          <marker
+                            id="doorArrow"
+                            viewBox="0 0 10 10"
+                            refX="5"
+                            refY="5"
+                            markerWidth="6"
+                            markerHeight="6"
+                            orient="auto-start-reverse"
+                          >
+                            <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#0284c7" />
+                          </marker>
+                        </defs>
+
+                        {/* Double Top Plate */}
+                        <rect x="40" y="20" width="520" height="12" fill="#cbd5e1" stroke="#64748b" strokeWidth="1" />
+                        <rect x="40" y="32" width="520" height="12" fill="#94a3b8" stroke="#64748b" strokeWidth="1" />
+                        <text x="240" y="29" fill="#1e293b" fontSize="9" fontFamily="monospace" fontWeight="bold">
+                          Double Top Plates
+                        </text>
+
+                        {/* Bottom Sill Plate with Doorway Cutout */}
+                        <rect x="40" y="260" width="140" height="12" fill="#94a3b8" stroke="#64748b" strokeWidth="1" />
+                        <rect x="420" y="260" width="140" height="12" fill="#94a3b8" stroke="#64748b" strokeWidth="1" />
+                        <line x1="180" y1="272" x2="420" y2="272" stroke="#94a3b8" strokeWidth="1" strokeDasharray="3 3" />
+                        <text x="250" y="285" fill="#64748b" fontSize="9" fontFamily="monospace">
+                          Bottom Plate Cut Out
+                        </text>
+
+                        {/* Left King Stud (Continuous 44 to 260) */}
+                        <rect x="150" y="44" width="14" height="216" fill="#cbd5e1" stroke="#475569" strokeWidth="1" />
+                        <text x="145" y="160" fill="#475569" fontSize="9" fontFamily="monospace" transform="rotate(-90 145 160)">
+                          King Stud
+                        </text>
+
+                        {/* Left Jack / Trimmer Stud (86 to 260) */}
+                        <rect x="164" y="86" width="14" height="174" fill="#fde68a" stroke="#d97706" strokeWidth="1" />
+                        <text x="175" y="180" fill="#b45309" fontSize="9" fontFamily="monospace" fontWeight="bold" transform="rotate(-90 175 180)">
+                          Jack Stud ({doorFrameRes.jackStudLengthIn}″)
+                        </text>
+
+                        {/* Right Jack / Trimmer Stud */}
+                        <rect x="422" y="86" width="14" height="174" fill="#fde68a" stroke="#d97706" strokeWidth="1" />
+
+                        {/* Right King Stud */}
+                        <rect x="436" y="44" width="14" height="216" fill="#cbd5e1" stroke="#475569" strokeWidth="1" />
+
+                        {/* Structural Header Beam (resting on jack studs) */}
+                        <rect x="164" y="66" width="272" height="20" fill="#b45309" stroke="#78350f" strokeWidth="1.5" rx="1" />
+                        <text x="240" y="80" fill="#ffffff" fontSize="10" fontFamily="sans-serif" fontWeight="bold">
+                          HEADER: {doorFrameState.headerType.toUpperCase().replace('_', ' ')}
+                        </text>
+
+                        {/* Cripple Studs above Header */}
+                        <rect x="230" y="44" width="12" height="22" fill="#cbd5e1" stroke="#64748b" strokeWidth="1" />
+                        <rect x="294" y="44" width="12" height="22" fill="#cbd5e1" stroke="#64748b" strokeWidth="1" />
+                        <rect x="358" y="44" width="12" height="22" fill="#cbd5e1" stroke="#64748b" strokeWidth="1" />
+
+                        {/* Door Rough Opening Dashed Line */}
+                        <rect x="178" y="86" width="244" height="174" fill="#0284c7" fillOpacity="0.08" stroke="#0284c7" strokeWidth="1.5" strokeDasharray="3 3" />
+
+                        {/* Finished Door Box */}
+                        <rect x="188" y="96" width="224" height="164" fill="#ffffff" fillOpacity="0.3" stroke="#0284c7" strokeWidth="2" />
+                        <text x="250" y="170" fill="#0284c7" fontSize="13" fontFamily="sans-serif" fontWeight="bold">
+                          {doorFrameRes.doorNominalSize}
+                        </text>
+
+                        {/* Rough Opening Dimension Lines */}
+                        <line x1="178" y1="240" x2="422" y2="240" stroke="#0284c7" strokeWidth="1.5" markerStart="url(#doorArrow)" markerEnd="url(#doorArrow)" />
+                        <text x="250" y="235" fill="#0284c7" fontSize="11" fontFamily="monospace" fontWeight="bold">
+                          R.O. Width: {doorFrameRes.roWidthIn}″
+                        </text>
+
+                        <line x1="120" y1="86" x2="120" y2="260" stroke="#0284c7" strokeWidth="1.5" markerStart="url(#doorArrow)" markerEnd="url(#doorArrow)" />
+                        <text x="110" y="185" fill="#0284c7" fontSize="10" fontFamily="monospace" fontWeight="bold" transform="rotate(-90 110 185)">
+                          R.O. Height: {doorFrameRes.roHeightIn}″
+                        </text>
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* Summary Metric Cards */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div className="border border-slate-200 dark:border-slate-800 p-3 rounded-xl bg-white dark:bg-slate-900">
+                      <span className="text-[10px] text-slate-500 uppercase font-mono block">
+                        Rough Width
+                      </span>
+                      <span className="text-xl font-bold font-mono text-slate-900 dark:text-white">
+                        {doorFrameRes.roWidthIn}″
+                      </span>
+                      <span className="text-[11px] text-sky-700 dark:text-sky-400 font-mono block">
+                        {doorFrameRes.roWidthFormatted}
+                      </span>
+                    </div>
+
+                    <div className="border border-slate-200 dark:border-slate-800 p-3 rounded-xl bg-white dark:bg-slate-900">
+                      <span className="text-[10px] text-slate-500 uppercase font-mono block">
+                        Rough Height
+                      </span>
+                      <span className="text-xl font-bold font-mono text-slate-900 dark:text-white">
+                        {doorFrameRes.roHeightIn}″
+                      </span>
+                      <span className="text-[11px] text-sky-700 dark:text-sky-400 font-mono block">
+                        {doorFrameRes.roHeightFormatted}
+                      </span>
+                    </div>
+
+                    <div className="border border-slate-200 dark:border-slate-800 p-3 rounded-xl bg-white dark:bg-slate-900">
+                      <span className="text-[10px] text-slate-500 uppercase font-mono block">
+                        Jamb Width
+                      </span>
+                      <span className="text-xl font-bold font-mono text-slate-900 dark:text-white">
+                        {doorFrameRes.jambWidthFraction}
+                      </span>
+                      <span className="text-[11px] text-slate-500 font-mono block">
+                        {doorFrameState.wallStudSize} Stud Wall
+                      </span>
+                    </div>
+
+                    <div className="border border-slate-200 dark:border-slate-800 p-3 rounded-xl bg-white dark:bg-slate-900">
+                      <span className="text-[10px] text-slate-500 uppercase font-mono block">
+                        Casing Trim
+                      </span>
+                      <span className="text-xl font-bold font-mono text-slate-900 dark:text-white">
+                        {doorFrameRes.totalCasingLinFt} LF
+                      </span>
+                      <span className="text-[11px] text-slate-500 font-mono block">
+                        {doorFrameRes.casingSides} {doorFrameRes.casingSides === 1 ? 'Side' : 'Sides'} (with miters)
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Complete Bill of Materials Takeoff */}
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-4 bg-white dark:bg-slate-900 overflow-x-auto">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                        Contractor Bill of Materials Takeoff
+                      </h3>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const takeoffSummary = [
+                            `WANJAARO DOOR FRAME & ROUGH OPENING MATERIAL TAKEOFF`,
+                            `Door Type: ${doorFrameRes.doorType.toUpperCase()}`,
+                            `Nominal Size: ${doorFrameRes.doorNominalSize}`,
+                            `Rough Opening: ${doorFrameRes.roWidthIn}" wide × ${doorFrameRes.roHeightIn}" high (${doorFrameRes.roWidthFormatted} × ${doorFrameRes.roHeightFormatted})`,
+                            `King Studs (Full Height): ${doorFrameRes.kingStudsCount} pieces`,
+                            `Jack Studs / Trimmers: ${doorFrameRes.jackStudsCount} pieces (cut length: ${doorFrameRes.jackStudLengthIn}")`,
+                            `Cripple Studs: ${doorFrameRes.crippleStudsCount} pieces above header`,
+                            `Header Beam: ${doorFrameRes.headerType.toUpperCase()} (cut length: ${doorFrameRes.headerLengthIn}") = $${doorFrameRes.headerCost}`,
+                            `Jamb Width Required: ${doorFrameRes.jambWidthFraction} for ${doorFrameState.wallStudSize} wall`,
+                            `Pre-hung Jamb Kit: $${doorFrameRes.jambCost}`,
+                            `Casing Molding (${doorFrameState.casingWidthIn}" width, ${doorFrameRes.casingSides} sides): ${doorFrameRes.totalCasingLinFt} linear feet = $${doorFrameRes.casingCost}`,
+                            `Hardware (Hinges & Shims): $${doorFrameRes.hardwareCost}`,
+                            `Materials Subtotal: $${doorFrameRes.materialsSubtotal.toLocaleString()}`,
+                            `Carpentry Labor (${doorFrameState.estimatedLaborHours} hrs @ $${doorFrameState.laborRatePerHour}/hr): $${doorFrameRes.laborCost.toLocaleString()}`,
+                            `TOTAL ESTIMATED PROJECT COST: $${doorFrameRes.totalEstimatedCost.toLocaleString()}`,
+                          ].join('\n');
+                          copyTakeoff(takeoffSummary);
+                        }}
+                        className="px-2.5 py-1 text-xs font-semibold rounded bg-sky-700 text-white hover:bg-sky-800 transition-colors cursor-pointer"
+                      >
+                        {copiedText || '📋 Copy Material Takeoff'}
+                      </button>
+                    </div>
+
+                    <table className="w-full text-xs font-mono text-left border-collapse">
+                      <thead>
+                        <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-500">
+                          <th className="py-2 font-semibold">Framing Material</th>
+                          <th className="py-2">Dimension / Spec</th>
+                          <th className="py-2 text-center">Qty</th>
+                          <th className="py-2 text-right">Unit Price</th>
+                          <th className="py-2 text-right">Total</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
+                        <tr>
+                          <td className="py-2 font-sans font-medium">Wall Studs ({doorFrameState.wallStudSize})</td>
+                          <td className="py-2 text-slate-500">
+                            2 King ({doorFrameState.wallHeightFt}′), 2 Jack ({doorFrameRes.jackStudLengthIn}″), {doorFrameRes.crippleStudsCount} Cripples
+                          </td>
+                          <td className="py-2 text-center font-bold">
+                            {doorFrameRes.kingStudsCount + doorFrameRes.jackStudsCount + doorFrameRes.crippleStudsCount} Studs
+                          </td>
+                          <td className="py-2 text-right">${doorFrameState.studPrice.toFixed(2)}</td>
+                          <td className="py-2 text-right font-bold">${doorFrameRes.framingStudsCost.toLocaleString()}</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 font-sans font-medium">Structural Header Lumber</td>
+                          <td className="py-2 text-slate-500">{doorFrameRes.headerType} ({doorFrameRes.headerLengthIn}″)</td>
+                          <td className="py-2 text-center font-bold">2 Boards</td>
+                          <td className="py-2 text-right">${doorFrameState.headerBoardPrice.toFixed(2)}</td>
+                          <td className="py-2 text-right font-bold">${doorFrameRes.headerCost.toLocaleString()}</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 font-sans font-medium">Door Jamb Stock / Kit</td>
+                          <td className="py-2 text-slate-500">{doorFrameRes.jambWidthFraction} width (2 legs + head)</td>
+                          <td className="py-2 text-center font-bold">1 Kit</td>
+                          <td className="py-2 text-right">${doorFrameState.jambKitPrice.toFixed(2)}</td>
+                          <td className="py-2 text-right font-bold">${doorFrameRes.jambCost.toLocaleString()}</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 font-sans font-medium">Casing Trim Molding</td>
+                          <td className="py-2 text-slate-500">
+                            {doorFrameState.casingWidthIn}″ profile ({doorFrameRes.casingSides} {doorFrameRes.casingSides === 1 ? 'side' : 'sides'})
+                          </td>
+                          <td className="py-2 text-center font-bold">{doorFrameRes.totalCasingLinFt} LF</td>
+                          <td className="py-2 text-right">${doorFrameState.casingPricePerFt.toFixed(2)}</td>
+                          <td className="py-2 text-right font-bold">${doorFrameRes.casingCost.toLocaleString()}</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 font-sans font-medium">Hinges &amp; Cedar Shims</td>
+                          <td className="py-2 text-slate-500">{doorFrameRes.hingeCount} Heavy-duty hinges + 1 pack shims</td>
+                          <td className="py-2 text-center font-bold">1 Lot</td>
+                          <td className="py-2 text-right">${(doorFrameState.hardwareHingesPrice + doorFrameState.shimPackPrice).toFixed(2)}</td>
+                          <td className="py-2 text-right font-bold">${doorFrameRes.hardwareCost.toLocaleString()}</td>
+                        </tr>
+                        <tr className="bg-slate-50 dark:bg-slate-950/40">
+                          <td className="py-2 font-sans font-bold text-slate-800 dark:text-slate-200">
+                            Materials Subtotal
+                          </td>
+                          <td className="py-2 text-slate-500">Framing, jambs, casing &amp; hardware</td>
+                          <td className="py-2 text-center font-bold">—</td>
+                          <td className="py-2 text-right font-bold">—</td>
+                          <td className="py-2 text-right font-bold text-sky-700 dark:text-sky-400">
+                            ${doorFrameRes.materialsSubtotal.toLocaleString()}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 font-sans font-medium">Carpentry Framing &amp; Trim Labor</td>
+                          <td className="py-2 text-slate-500">
+                            {doorFrameState.estimatedLaborHours} hrs @ ${doorFrameState.laborRatePerHour}/hr
+                          </td>
+                          <td className="py-2 text-center font-bold">{doorFrameState.estimatedLaborHours} hrs</td>
+                          <td className="py-2 text-right">${doorFrameState.laborRatePerHour.toFixed(2)}</td>
+                          <td className="py-2 text-right font-bold">${doorFrameRes.laborCost.toLocaleString()}</td>
+                        </tr>
+                        <tr className="bg-sky-50/70 dark:bg-sky-950/40 text-slate-900 dark:text-white font-bold">
+                          <td className="py-2.5 font-sans text-sm">TOTAL ESTIMATED PROJECT COST</td>
+                          <td className="py-2.5 text-slate-500 font-normal">Turnkey Framing &amp; Trim</td>
+                          <td className="py-2.5 text-center">—</td>
+                          <td className="py-2.5 text-right">—</td>
+                          <td className="py-2.5 text-right text-base text-sky-800 dark:text-sky-300">
+                            ${doorFrameRes.totalEstimatedCost.toLocaleString()}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
             </>
           )}
 
@@ -3238,11 +5340,12 @@ export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspacePr
       {/* ============================================================== */}
       {/* 6. COMPREHENSIVE FOOTER */}
       {/* ============================================================== */}
-      <footer className="border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 mt-12 py-8 px-4 sm:px-6 text-xs text-slate-600 dark:text-slate-400 no-print">
-        <div className="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-12 gap-6">
-          <div className="md:col-span-6 space-y-2">
+      <footer className="border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 mt-12 py-10 px-4 sm:px-6 text-xs text-slate-600 dark:text-slate-400 no-print">
+        <div className="max-w-[1440px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* Column 1: Intact left brand & author info */}
+          <div className="space-y-3">
             <h3 className="font-bold text-slate-900 dark:text-white text-sm">Wanjaaro Construction Calculators</h3>
-            <p>
+            <p className="leading-relaxed">
               Free deterministic civil and structural material calculators for contractors, carpenters, masons, and home builders. Developed and maintained by{' '}
               <a
                 href="https://heylink.me/sohailanwaralmani74"
@@ -3254,21 +5357,171 @@ export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspacePr
               </a>
               .
             </p>
-            <p className="font-mono text-slate-500">
+            <p className="font-mono text-slate-500 dark:text-slate-400 text-[11px] leading-relaxed">
               © 2026 Wanjaaro · Built by Sohail Anwar · All calculations run locally in your browser.
             </p>
           </div>
-          <div className="md:col-span-6 flex flex-wrap gap-x-4 gap-y-2 md:justify-end">
-            {ALL_CALCULATORS.map((calc) => (
-              <button
-                key={calc.id}
-                type="button"
-                onClick={() => switchCalculator(calc.id)}
-                className="hover:underline text-left cursor-pointer"
-              >
-                {calc.name}
-              </button>
-            ))}
+
+          {/* Column 2: Masonry & Foundation (Part 1 - 5 links) */}
+          <div className="space-y-2.5">
+            <h4 className="font-bold uppercase tracking-wider text-[11px] text-slate-900 dark:text-slate-200">
+              Masonry &amp; Foundation
+            </h4>
+            <ul className="space-y-2">
+              <li>
+                <a
+                  href="/concrete-calculator"
+                  onClick={(e) => { e.preventDefault(); switchCalculator('concrete'); }}
+                  className="hover:text-sky-700 dark:hover:text-sky-400 hover:underline transition-colors block text-left"
+                >
+                  Concrete Slab &amp; Footing
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/brick-mortar-calculator"
+                  onClick={(e) => { e.preventDefault(); switchCalculator('brick-mortar'); }}
+                  className="hover:text-sky-700 dark:hover:text-sky-400 hover:underline transition-colors block text-left"
+                >
+                  Brick &amp; Mortar Calculator
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/block-cmu-calculator"
+                  onClick={(e) => { e.preventDefault(); switchCalculator('block-cmu'); }}
+                  className="hover:text-sky-700 dark:hover:text-sky-400 hover:underline transition-colors block text-left"
+                >
+                  Concrete Block (CMU)
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/vapor-barrier-calculator"
+                  onClick={(e) => { e.preventDefault(); switchCalculator('vapor-barrier'); }}
+                  className="hover:text-sky-700 dark:hover:text-sky-400 hover:underline transition-colors block text-left"
+                >
+                  Vapor Barrier &amp; Retarder
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/sheathing-calculator"
+                  onClick={(e) => { e.preventDefault(); switchCalculator('sheathing'); }}
+                  className="hover:text-sky-700 dark:hover:text-sky-400 hover:underline transition-colors block text-left"
+                >
+                  Plywood &amp; OSB Sheathing
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 3: Framing & Openings (Part 2 - 5 links) */}
+          <div className="space-y-2.5">
+            <h4 className="font-bold uppercase tracking-wider text-[11px] text-slate-900 dark:text-slate-200">
+              Framing &amp; Openings
+            </h4>
+            <ul className="space-y-2">
+              <li>
+                <a
+                  href="/framing-calculator"
+                  onClick={(e) => { e.preventDefault(); switchCalculator('framing'); }}
+                  className="hover:text-sky-700 dark:hover:text-sky-400 hover:underline transition-colors block text-left"
+                >
+                  Wall Framing &amp; Studs
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/door-frame-material-calculator"
+                  onClick={(e) => { e.preventDefault(); switchCalculator('door-frame-material'); }}
+                  className="hover:text-sky-700 dark:hover:text-sky-400 hover:underline transition-colors block text-left"
+                >
+                  Door Frame Material &amp; Opening
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/garage-door-size-calculator"
+                  onClick={(e) => { e.preventDefault(); switchCalculator('garage-door-size'); }}
+                  className="hover:text-sky-700 dark:hover:text-sky-400 hover:underline transition-colors block text-left"
+                >
+                  Garage Door Size &amp; Framing
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/stair-handrail-calculator"
+                  onClick={(e) => { e.preventDefault(); switchCalculator('stair-handrail'); }}
+                  className="hover:text-sky-700 dark:hover:text-sky-400 hover:underline transition-colors block text-left"
+                >
+                  Stair &amp; Handrail Calculator
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/drywall-calculator"
+                  onClick={(e) => { e.preventDefault(); switchCalculator('drywall'); }}
+                  className="hover:text-sky-700 dark:hover:text-sky-400 hover:underline transition-colors block text-left"
+                >
+                  Drywall &amp; Sheetrock
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 4: Finishes & Turnkey Cost (Part 3 - 5 links) */}
+          <div className="space-y-2.5">
+            <h4 className="font-bold uppercase tracking-wider text-[11px] text-slate-900 dark:text-slate-200">
+              Finishes &amp; Turnkey Cost
+            </h4>
+            <ul className="space-y-2">
+              <li>
+                <a
+                  href="/paint-calculator"
+                  onClick={(e) => { e.preventDefault(); switchCalculator('paint'); }}
+                  className="hover:text-sky-700 dark:hover:text-sky-400 hover:underline transition-colors block text-left"
+                >
+                  Paint &amp; Primer Coverage
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/roofing-calculator"
+                  onClick={(e) => { e.preventDefault(); switchCalculator('roofing'); }}
+                  className="hover:text-sky-700 dark:hover:text-sky-400 hover:underline transition-colors block text-left"
+                >
+                  Roofing Shingles &amp; Pitch
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/flooring-tile-calculator"
+                  onClick={(e) => { e.preventDefault(); switchCalculator('flooring-tile'); }}
+                  className="hover:text-sky-700 dark:hover:text-sky-400 hover:underline transition-colors block text-left"
+                >
+                  Tile &amp; Grout Calculator
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/construction-cost-calculator"
+                  onClick={(e) => { e.preventDefault(); switchCalculator('construction-cost'); }}
+                  className="hover:text-sky-700 dark:hover:text-sky-400 hover:underline transition-colors block text-left"
+                >
+                  Construction Cost &amp; Budget
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/"
+                  onClick={(e) => { e.preventDefault(); switchCalculator('home'); }}
+                  className="hover:text-sky-700 dark:hover:text-sky-400 hover:underline transition-colors font-medium block text-left"
+                >
+                  ← All Calculators (Home)
+                </a>
+              </li>
+            </ul>
           </div>
         </div>
       </footer>

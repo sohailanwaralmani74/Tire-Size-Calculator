@@ -4,33 +4,205 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>404 Page Not Found – Wanjaaro Building Material &amp; Cost Calculators</title>
-    <meta name="description" content="The requested calculator page could not be found. Explore our complete directory of building material and construction cost calculators." />
+    <meta
+      name="description"
+      content="The requested calculator page could not be located. Browse all 14 deterministic building material takeoffs and construction cost estimators."
+    />
     <link rel="canonical" href="https://wanjaaro.com/404.html" />
+
     <!-- Ahrefs Analytics -->
     <script src="https://analytics.ahrefs.com/analytics.js" data-key="V4gUcl5Cbnx6QFjz2rjL2Q" async></script>
-    <link rel="stylesheet" href="/styles/app-styles.css" data-vite-ignore />
+
     <style>
-      body {
+      *, *::before, *::after {
+        box-sizing: border-box;
         margin: 0;
+        padding: 0;
+      }
+      body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         background-color: #f8fafc;
         color: #0f172a;
+        line-height: 1.5;
+        min-height: 100vh;
         display: flex;
         flex-direction: column;
-        min-height: 100vh;
       }
-      .container {
-        max-width: 900px;
+
+      /* Header */
+      header {
+        background: #ffffff;
+        border-bottom: 1px solid #e2e8f0;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+      }
+      .header-inner {
+        max-width: 1440px;
         margin: 0 auto;
-        padding: 3rem 1.5rem;
+        padding: 0.875rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .brand-link {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        text-decoration: none;
+        color: #0f172a;
+        font-weight: 800;
+        font-size: 1.15rem;
+        letter-spacing: -0.02em;
+      }
+      .brand-icon {
+        width: 32px;
+        height: 32px;
+        background: #0369a1;
+        color: #ffffff;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: ui-monospace, monospace;
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+      .brand-tagline {
+        font-size: 0.8rem;
+        color: #64748b;
+        font-weight: 500;
+        border-left: 1px solid #e2e8f0;
+        padding-left: 0.75rem;
+        margin-left: 0.5rem;
+      }
+      .nav-home-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #0369a1;
+        text-decoration: none;
+        padding: 0.4rem 0.85rem;
+        border: 1px solid #bae6fd;
+        background: #f0f9ff;
+        border-radius: 0.5rem;
+        transition: all 0.15s ease;
+      }
+      .nav-home-btn:hover {
+        background: #e0f2fe;
+        border-color: #0284c7;
+      }
+
+      /* 3-Column Page Wrapper */
+      .page-layout {
+        max-width: 1440px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 1.5rem 1rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 1.5rem;
         flex: 1;
       }
+
+      /* Banner Ad Sidebars (Left & Right) */
+      .ad-sidebar {
+        display: none;
+        width: 184px;
+        flex-shrink: 0;
+        position: sticky;
+        top: 4.5rem;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      @media (min-width: 860px) {
+        .ad-sidebar {
+          display: flex;
+        }
+      }
+
+      .ad-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+        padding: 0.625rem 0.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+        width: 100%;
+        box-sizing: border-box;
+      }
+      .ad-label {
+        font-size: 0.65rem;
+        font-family: ui-monospace, monospace;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #94a3b8;
+        margin-bottom: 0.4rem;
+      }
+      .ad-slot-frame {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        max-width: 100%;
+        background: #f8fafc;
+        border-radius: 0.375rem;
+      }
+      .ad-slot-frame.skyscraper {
+        min-height: 600px;
+        width: 160px;
+      }
+      .ad-slot-frame.rectangle {
+        min-height: 300px;
+        width: 160px;
+      }
+      .ad-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 1rem 0.75rem;
+        color: #64748b;
+        font-size: 0.75rem;
+        border: 1px dashed #cbd5e1;
+        border-radius: 0.375rem;
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+      }
+      .ad-placeholder-badge {
+        display: inline-block;
+        padding: 0.2rem 0.5rem;
+        background: #e0f2fe;
+        color: #0369a1;
+        font-weight: 700;
+        font-size: 0.65rem;
+        border-radius: 9999px;
+        margin-bottom: 0.5rem;
+      }
+
+      /* Center Content */
+      .center-content {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
       .card {
         background: #ffffff;
         border: 1px solid #e2e8f0;
         border-radius: 1rem;
-        padding: 2.5rem;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        padding: 2.25rem 2rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
       }
       .badge {
         display: inline-block;
@@ -44,52 +216,32 @@
         margin-bottom: 1rem;
       }
       h1 {
-        font-size: 2rem;
+        font-size: 1.85rem;
         font-weight: 800;
-        margin: 0 0 0.5rem 0;
+        letter-spacing: -0.025em;
         color: #0f172a;
+        margin-bottom: 0.5rem;
       }
       p.subtitle {
         color: #475569;
-        font-size: 1rem;
-        margin: 0 0 2rem 0;
-        line-height: 1.5;
-      }
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-        gap: 1rem;
-        margin-top: 1.5rem;
-      }
-      .calc-link {
-        display: block;
-        padding: 1rem;
-        border: 1px solid #e2e8f0;
-        border-radius: 0.75rem;
-        text-decoration: none;
-        color: inherit;
-        background: #f8fafc;
-        transition: all 0.15s ease;
-      }
-      .calc-link:hover {
-        border-color: #0284c7;
-        background: #f0f9ff;
-        transform: translateY(-2px);
-      }
-      .calc-title {
-        font-weight: 700;
         font-size: 0.95rem;
-        color: #0369a1;
-        margin-bottom: 0.25rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
       }
-      .calc-desc {
-        font-size: 0.8rem;
-        color: #64748b;
-        line-height: 1.4;
+
+      .action-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid #f1f5f9;
       }
-      .btn-home {
-        display: inline-block;
-        margin-top: 2rem;
+      .btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
         padding: 0.75rem 1.5rem;
         background: #0284c7;
         color: #ffffff;
@@ -99,11 +251,170 @@
         border-radius: 0.5rem;
         transition: background 0.15s ease;
       }
-      .btn-home:hover {
+      .btn-primary:hover {
         background: #0369a1;
       }
+
+      .section-heading {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .section-count {
+        font-size: 0.75rem;
+        font-family: ui-monospace, monospace;
+        color: #64748b;
+        font-weight: 500;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 0.875rem;
+      }
+      .calc-link {
+        display: block;
+        padding: 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+        text-decoration: none;
+        color: inherit;
+        background: #ffffff;
+        transition: all 0.15s ease;
+      }
+      .calc-link:hover {
+        border-color: #0284c7;
+        background: #f0f9ff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(2, 132, 199, 0.08);
+      }
+      .calc-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        margin-bottom: 0.25rem;
+      }
+      .calc-title {
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #0369a1;
+      }
+      .calc-badge {
+        font-size: 0.65rem;
+        font-family: ui-monospace, monospace;
+        padding: 0.15rem 0.4rem;
+        border-radius: 0.25rem;
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid #e2e8f0;
+        white-space: nowrap;
+      }
+      .calc-desc {
+        font-size: 0.775rem;
+        color: #64748b;
+        line-height: 1.45;
+      }
+
+      /* Responsive Mid Banner for Tablet & Mobile */
+      .mobile-banner-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+        padding: 0.75rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+      @media (min-width: 1024px) {
+        .mobile-banner-card {
+          display: none;
+        }
+      }
+
+      /* Footer - 4 Column Layout */
+      footer {
+        background: #ffffff;
+        border-top: 1px solid #e2e8f0;
+        padding: 2.5rem 1.5rem;
+        margin-top: 3rem;
+      }
+      .footer-grid {
+        max-width: 1440px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        font-size: 0.775rem;
+        color: #64748b;
+      }
+      @media (min-width: 640px) {
+        .footer-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (min-width: 1024px) {
+        .footer-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+      .footer-brand-col {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      .footer-brand-title {
+        font-weight: 700;
+        color: #0f172a;
+        font-size: 0.875rem;
+      }
+      .footer-brand-desc {
+        line-height: 1.6;
+      }
+      .footer-brand-desc a {
+        color: #0369a1;
+        font-weight: 600;
+        text-decoration: underline;
+      }
+      .footer-brand-copy {
+        font-family: ui-monospace, monospace;
+        font-size: 0.7rem;
+        color: #94a3b8;
+        line-height: 1.5;
+      }
+      .footer-col-title {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #0f172a;
+        margin-bottom: 0.75rem;
+      }
+      .footer-links-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .footer-links-list a {
+        color: #475569;
+        text-decoration: none;
+        transition: color 0.15s ease;
+      }
+      .footer-links-list a:hover {
+        color: #0284c7;
+        text-decoration: underline;
+      }
     </style>
+
     <script>
+      // Smart router: If URL has .html extension, cleanly rewrite to clean path
       (function() {
         var p = window.location.pathname;
         if (p && p.endsWith('.html') && p !== '/404.html') {
@@ -114,63 +425,343 @@
     </script>
   </head>
   <body>
-    <div class="container">
-      <div class="card">
-        <span class="badge">HTTP 404</span>
-        <h1>Calculator Page Not Found</h1>
-        <p class="subtitle">
-          The requested page could not be located. You can return directly to the
-          <strong>Wanjaaro Homepage</strong> or select from our building material and cost calculators below:
-        </p>
+    <!-- Top Brand Header -->
+    <header>
+      <div class="header-inner">
+        <a href="/" class="brand-link">
+          <span class="brand-icon">W</span>
+          <span>Wanjaaro</span>
+          <span class="brand-tagline">Building Material &amp; Cost Calculators</span>
+        </a>
+        <a href="/" class="nav-home-btn">← All Calculators (Home)</a>
+      </div>
+    </header>
 
-        <a href="/" class="btn-home">← Back to Wanjaaro Homepage</a>
+    <!-- 3-Column Page Layout with Left & Right Banners -->
+    <div class="page-layout">
+      <!-- ============================================================ -->
+      <!-- LEFT BANNER ADS SIDEBAR (Desktop / Tablet) -->
+      <!-- ============================================================ -->
+      <aside class="ad-sidebar left-sidebar" aria-label="Sponsored Content Left">
+        <div class="ad-card">
+          <span class="ad-label">Sponsored Skyscraper</span>
+          <div id="wanjaaro-404-ad-left-1" class="ad-slot-frame skyscraper">
+            <div class="ad-placeholder">
+              <span class="ad-placeholder-badge">Sponsored 160×600</span>
+              <p>Commercial &amp; Residential Building Supplies</p>
+            </div>
+          </div>
+        </div>
+        <div class="ad-card">
+          <span class="ad-label">Partner Links</span>
+          <div id="wanjaaro-404-ad-left-2" class="ad-slot-frame rectangle">
+            <div class="ad-placeholder">
+              <span class="ad-placeholder-badge">Ad 160×300</span>
+              <p>Contractor Takeoffs &amp; Wholesale Materials</p>
+            </div>
+          </div>
+        </div>
+      </aside>
 
-        <h2 style="font-size: 1.15rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 0.5rem;">
-          Popular Construction Calculators
-        </h2>
-        <div class="grid">
-          <a href="/concrete-calculator" class="calc-link">
-            <div class="calc-title">Concrete Slab &amp; Footing</div>
-            <div class="calc-desc">Cubic yards, 40/60/80 lb bags, and rebar grid requirements.</div>
-          </a>
-          <a href="/brick-mortar-calculator" class="calc-link">
-            <div class="calc-title">Brick &amp; Mortar Calculator</div>
-            <div class="calc-desc">Modular, king, queen bricks, mortar bags, and tons of sand.</div>
-          </a>
-          <a href="/block-cmu-calculator" class="calc-link">
-            <div class="calc-title">Concrete Block (CMU)</div>
-            <div class="calc-desc">Standard 8x8x16 CMU blocks, core-fill grout, and vertical rebar.</div>
-          </a>
-          <a href="/framing-calculator" class="calc-link">
-            <div class="calc-title">Wall Framing &amp; Studs</div>
-            <div class="calc-desc">Common studs (16" &amp; 24" O.C.), top/bottom plates, headers, and board feet.</div>
-          </a>
-          <a href="/sheathing-calculator" class="calc-link">
-            <div class="calc-title">Plywood &amp; OSB Sheathing</div>
-            <div class="calc-desc">4x8 &amp; 4x10 panels for walls, subfloors, and roof decks.</div>
-          </a>
-          <a href="/drywall-calculator" class="calc-link">
-            <div class="calc-title">Drywall &amp; Sheetrock</div>
-            <div class="calc-desc">Drywall sheets, joint compound buckets, screws, and tape rolls.</div>
-          </a>
-          <a href="/paint-calculator" class="calc-link">
-            <div class="calc-title">Paint &amp; Primer Coverage</div>
-            <div class="calc-desc">Gallons of paint and primer with window and door deductions.</div>
-          </a>
-          <a href="/roofing-calculator" class="calc-link">
-            <div class="calc-title">Roofing Shingles &amp; Pitch</div>
-            <div class="calc-desc">Roofing squares, architectural bundles, pitch multipliers, and felt.</div>
-          </a>
-          <a href="/flooring-tile-calculator" class="calc-link">
-            <div class="calc-title">Tile &amp; Grout Calculator</div>
-            <div class="calc-desc">Tile square footage, box count with waste, and grout lbs.</div>
-          </a>
-          <a href="/construction-cost-calculator" class="calc-link">
-            <div class="calc-title">Construction Cost &amp; Budget</div>
-            <div class="calc-desc">Material takeoff totals, labor rates, contractor markup, and contingency.</div>
-          </a>
+      <!-- ============================================================ -->
+      <!-- CENTER MAIN CONTENT -->
+      <!-- ============================================================ -->
+      <main class="center-content">
+        <div class="card">
+          <span class="badge">HTTP 404</span>
+          <h1>Calculator Page Not Found</h1>
+          <p class="subtitle">
+            The page or calculation route you requested could not be located. You can return directly to the
+            <strong>Wanjaaro Homepage</strong> or explore any of our 14 deterministic construction material takeoffs and cost estimators below:
+          </p>
+
+          <div class="action-row">
+            <a href="/" class="btn-primary">← Return to Wanjaaro Homepage</a>
+          </div>
+
+          <div class="section-heading">
+            <span>Construction &amp; Material Takeoff Calculators</span>
+            <span class="section-count">14 Available Calculators</span>
+          </div>
+
+          <div class="grid">
+            <!-- 1. Concrete -->
+            <a href="/concrete-calculator" class="calc-link">
+              <div class="calc-header">
+                <div class="calc-title">Concrete Slab &amp; Footing</div>
+                <span class="calc-badge">Cubic Yards</span>
+              </div>
+              <div class="calc-desc">Volume in cubic yards, 40/60/80 lb premix bags, and rebar grid requirements.</div>
+            </a>
+
+            <!-- 2. Brick & Mortar -->
+            <a href="/brick-mortar-calculator" class="calc-link">
+              <div class="calc-header">
+                <div class="calc-title">Brick &amp; Mortar Calculator</div>
+                <span class="calc-badge">Masonry</span>
+              </div>
+              <div class="calc-desc">Modular, king, queen bricks, mortar bags (Type N/S), and tons of sand.</div>
+            </a>
+
+            <!-- 3. Concrete Block CMU -->
+            <a href="/block-cmu-calculator" class="calc-link">
+              <div class="calc-header">
+                <div class="calc-title">Concrete Block (CMU)</div>
+                <span class="calc-badge">8×8×16</span>
+              </div>
+              <div class="calc-desc">Standard 8x8x16 CMU blocks, core-fill grout volume, and vertical rebar reinforcement.</div>
+            </a>
+
+            <!-- 4. Vapor Barrier -->
+            <a href="/vapor-barrier-calculator" class="calc-link">
+              <div class="calc-header">
+                <div class="calc-title">Vapor Barrier &amp; Moisture Retarder</div>
+                <span class="calc-badge">6/10/15/20 Mil</span>
+              </div>
+              <div class="calc-desc">Crawl space, slab on grade, 6/10/15/20 mil poly rolls, seam tape, and perm ratings.</div>
+            </a>
+
+            <!-- 5. Wall Framing -->
+            <a href="/framing-calculator" class="calc-link">
+              <div class="calc-header">
+                <div class="calc-title">Wall Framing &amp; Studs</div>
+                <span class="calc-badge">16″ &amp; 24″ O.C.</span>
+              </div>
+              <div class="calc-desc">Common studs, double top plates, bottom sill, structural headers, and board feet.</div>
+            </a>
+
+            <!-- 6. Door Framing -->
+            <a href="/door-frame-material-calculator" class="calc-link">
+              <div class="calc-header">
+                <div class="calc-title">Door Frame Material &amp; Opening</div>
+                <span class="calc-badge">Rough Opening</span>
+              </div>
+              <div class="calc-desc">King and jack studs, header lumber, 2x4 vs 2x6 jambs, and casing molding trim.</div>
+            </a>
+
+            <!-- 7. Garage Door Size -->
+            <a href="/garage-door-size-calculator" class="calc-link">
+              <div class="calc-header">
+                <div class="calc-title">Garage Door Size &amp; Framing</div>
+                <span class="calc-badge">Header &amp; Track</span>
+              </div>
+              <div class="calc-desc">Rough opening, wood goalpost jambs, engineered LVL header sizing, and headroom checks.</div>
+            </a>
+
+            <!-- 8. Stair & Handrail -->
+            <a href="/stair-handrail-calculator" class="calc-link">
+              <div class="calc-header">
+                <div class="calc-title">Stair &amp; Handrail Calculator</div>
+                <span class="calc-badge">IRC / ADA</span>
+              </div>
+              <div class="calc-desc">Risers, tread run, stringer 2x12 boards, handrail length, and ADA/IRC compliance.</div>
+            </a>
+
+            <!-- 9. Sheathing -->
+            <a href="/sheathing-calculator" class="calc-link">
+              <div class="calc-header">
+                <div class="calc-title">Plywood &amp; OSB Sheathing</div>
+                <span class="calc-badge">4×8 &amp; 4×10</span>
+              </div>
+              <div class="calc-desc">Plywood and OSB sheets for walls, subfloors, and roof decks plus nail count.</div>
+            </a>
+
+            <!-- 10. Drywall -->
+            <a href="/drywall-calculator" class="calc-link">
+              <div class="calc-header">
+                <div class="calc-title">Drywall &amp; Sheetrock</div>
+                <span class="calc-badge">Sheets &amp; Mud</span>
+              </div>
+              <div class="calc-desc">Drywall sheets (4x8, 4x10, 4x12), joint compound buckets, screws, and tape rolls.</div>
+            </a>
+
+            <!-- 11. Paint Coverage -->
+            <a href="/paint-calculator" class="calc-link">
+              <div class="calc-header">
+                <div class="calc-title">Paint &amp; Primer Coverage</div>
+                <span class="calc-badge">Gallons</span>
+              </div>
+              <div class="calc-desc">Gallons of paint and primer with window and door deductions across coats.</div>
+            </a>
+
+            <!-- 12. Roofing Shingles -->
+            <a href="/roofing-calculator" class="calc-link">
+              <div class="calc-header">
+                <div class="calc-title">Roofing Shingles &amp; Pitch</div>
+                <span class="calc-badge">Squares &amp; Pitch</span>
+              </div>
+              <div class="calc-desc">Roofing squares, architectural shingle bundles, pitch multipliers, and underlayment.</div>
+            </a>
+
+            <!-- 13. Tile & Grout -->
+            <a href="/flooring-tile-calculator" class="calc-link">
+              <div class="calc-header">
+                <div class="calc-title">Tile &amp; Grout Calculator</div>
+                <span class="calc-badge">Tile &amp; Lbs Grout</span>
+              </div>
+              <div class="calc-desc">Tile square footage, carton counts with cutting waste, and grout bag weight.</div>
+            </a>
+
+            <!-- 14. Construction Cost -->
+            <a href="/construction-cost-calculator" class="calc-link">
+              <div class="calc-header">
+                <div class="calc-title">Construction Cost &amp; Budget</div>
+                <span class="calc-badge">Turnkey Takeoff</span>
+              </div>
+              <div class="calc-desc">Materials subtotal, labor rates, contractor markup, and contingency reserves.</div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Mobile / Tablet Banner (visible on screens < 1024px) -->
+        <div class="mobile-banner-card">
+          <span class="ad-label">Sponsored Advertisement</span>
+          <div id="wanjaaro-404-ad-mobile" class="ad-slot-frame"></div>
+        </div>
+      </main>
+
+      <!-- ============================================================ -->
+      <!-- RIGHT BANNER ADS SIDEBAR (Desktop / Tablet) -->
+      <!-- ============================================================ -->
+      <aside class="ad-sidebar right-sidebar" aria-label="Sponsored Content Right">
+        <!-- Native Bridge Slot -->
+        <div class="ad-card">
+          <span class="ad-label">Sponsored Partner</span>
+          <div id="container-5ec3c4b0a267d356073051679993785a" style="width: 100%; min-height: 120px;"></div>
+        </div>
+        <!-- 160x600 Skyscraper Banner -->
+        <div class="ad-card">
+          <span class="ad-label">Advertisement</span>
+          <div id="wanjaaro-404-ad-right-1" class="ad-slot-frame skyscraper">
+            <div class="ad-placeholder">
+              <span class="ad-placeholder-badge">Sponsored 160×600</span>
+              <p>Structural Framing &amp; Fasteners</p>
+            </div>
+          </div>
+        </div>
+        <!-- 160x300 Banner -->
+        <div class="ad-card">
+          <span class="ad-label">Partner Links</span>
+          <div id="wanjaaro-404-ad-right-2" class="ad-slot-frame rectangle">
+            <div class="ad-placeholder">
+              <span class="ad-placeholder-badge">Ad 160×300</span>
+              <p>Lumber &amp; Moisture Protection Solutions</p>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Footer: Divided into 4 equal columns -->
+    <footer>
+      <div class="footer-grid">
+        <!-- Column 1: Intact Left Brand & Author Section -->
+        <div class="footer-brand-col">
+          <div class="footer-brand-title">Wanjaaro Construction Calculators</div>
+          <p class="footer-brand-desc">
+            Free deterministic civil and structural material calculators for contractors, carpenters, masons, and home builders. Developed and maintained by
+            <a href="https://heylink.me/sohailanwaralmani74" target="_blank" rel="noopener noreferrer author me">Sohail Anwar</a>.
+          </p>
+          <p class="footer-brand-copy">
+            © 2026 Wanjaaro · Built by Sohail Anwar · All calculations run locally in your browser.
+          </p>
+        </div>
+
+        <!-- Column 2: Masonry & Foundation (Part 1 - 5 links) -->
+        <div>
+          <div class="footer-col-title">Masonry &amp; Foundation</div>
+          <ul class="footer-links-list">
+            <li><a href="/concrete-calculator">Concrete Slab &amp; Footing</a></li>
+            <li><a href="/brick-mortar-calculator">Brick &amp; Mortar Calculator</a></li>
+            <li><a href="/block-cmu-calculator">Concrete Block (CMU)</a></li>
+            <li><a href="/vapor-barrier-calculator">Vapor Barrier &amp; Retarder</a></li>
+            <li><a href="/sheathing-calculator">Plywood &amp; OSB Sheathing</a></li>
+          </ul>
+        </div>
+
+        <!-- Column 3: Framing & Openings (Part 2 - 5 links) -->
+        <div>
+          <div class="footer-col-title">Framing &amp; Openings</div>
+          <ul class="footer-links-list">
+            <li><a href="/framing-calculator">Wall Framing &amp; Studs</a></li>
+            <li><a href="/door-frame-material-calculator">Door Frame Material &amp; Opening</a></li>
+            <li><a href="/garage-door-size-calculator">Garage Door Size &amp; Framing</a></li>
+            <li><a href="/stair-handrail-calculator">Stair &amp; Handrail Calculator</a></li>
+            <li><a href="/drywall-calculator">Drywall &amp; Sheetrock</a></li>
+          </ul>
+        </div>
+
+        <!-- Column 4: Finishes & Turnkey Cost (Part 3 - 5 links) -->
+        <div>
+          <div class="footer-col-title">Finishes &amp; Turnkey Cost</div>
+          <ul class="footer-links-list">
+            <li><a href="/paint-calculator">Paint &amp; Primer Coverage</a></li>
+            <li><a href="/roofing-calculator">Roofing Shingles &amp; Pitch</a></li>
+            <li><a href="/flooring-tile-calculator">Tile &amp; Grout Calculator</a></li>
+            <li><a href="/construction-cost-calculator">Construction Cost &amp; Budget</a></li>
+            <li><a href="/" style="font-weight: 600; color: #0284c7;">← All Calculators (Home)</a></li>
+          </ul>
         </div>
       </div>
-    </div>
+    </footer>
+
+    <!-- Native Network Script -->
+    <script async="async" data-cfasync="false" src="https://pl31111202.profitableratecpmnetwork.com/5ec3c4b0a267d356073051679993785a/invoke.js"></script>
+
+    <!-- Banner Ad Mounting Engine -->
+    <script>
+      (function () {
+        function mountAd(containerId, key, width, height) {
+          var host = document.getElementById(containerId);
+          if (!host) return;
+          host.innerHTML = '';
+          var iframe = document.createElement('iframe');
+          iframe.width = String(width);
+          iframe.height = String(height);
+          iframe.style.width = width + 'px';
+          iframe.style.height = height + 'px';
+          iframe.style.maxWidth = '100%';
+          iframe.style.border = '0';
+          iframe.setAttribute('scrolling', 'no');
+          iframe.setAttribute('frameborder', '0');
+          iframe.setAttribute('title', 'Sponsored Advertisement');
+          var adHtml = '<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;padding:0;overflow:hidden;background:transparent;display:flex;align-items:center;justify-content:center;}</style></head><body>' +
+            '<scr' + 'ipt>atOptions = { "key": "' + key + '", "format": "iframe", "height": ' + height + ', "width": ' + width + ', "params": {} };</scr' + 'ipt>' +
+            '<scr' + 'ipt src="https://www.highrevenueformat.com/' + key + '/invoke.js"></scr' + 'ipt>' +
+            '</body></html>';
+          iframe.srcdoc = adHtml;
+          host.appendChild(iframe);
+        }
+
+        function render404Ads() {
+          var w = window.innerWidth || document.documentElement.clientWidth || 1024;
+          if (w >= 860) {
+            // Left sidebar banners
+            mountAd('wanjaaro-404-ad-left-1', '830d5085b52c47187da5de38d29787cd', 160, 600);
+            mountAd('wanjaaro-404-ad-left-2', '3fa238068881377f24b1b67fa0787b9d', 160, 300);
+
+            // Right sidebar banners
+            mountAd('wanjaaro-404-ad-right-1', '830d5085b52c47187da5de38d29787cd', 160, 600);
+            mountAd('wanjaaro-404-ad-right-2', '3fa238068881377f24b1b67fa0787b9d', 160, 300);
+          } else if (w >= 760) {
+            mountAd('wanjaaro-404-ad-mobile', '49fb7f861b88900800f4aa0964cec1bf', 728, 90);
+          } else if (w >= 500) {
+            mountAd('wanjaaro-404-ad-mobile', 'f33033a8aee8cc9d080f2520e1a345cf', 468, 60);
+          } else {
+            mountAd('wanjaaro-404-ad-mobile', '2fd749543930cf9f83e09854bc96de8a', 320, 50);
+          }
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', render404Ads);
+        } else {
+          render404Ads();
+        }
+
+        window.addEventListener('resize', function () {
+          render404Ads();
+        });
+      })();
+    </script>
   </body>
 </html>

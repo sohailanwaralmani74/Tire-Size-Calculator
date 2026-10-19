@@ -17,16 +17,24 @@ import {
   calculateTile,
   calculateConstructionCost,
   calculateStairHandrail,
+  calculateVaporBarrier,
+  calculateGarageDoorSize,
+  calculateDoorFrame,
   ALL_CALCULATORS,
   CALCULATOR_CATEGORIES,
 } from '../src/calc/buildingMath.js';
 
 test('Directory & Categories verification', () => {
   assert.equal(CALCULATOR_CATEGORIES.length, 5);
-  assert.equal(ALL_CALCULATORS.length, 11);
+  assert.equal(ALL_CALCULATORS.length, 14);
   const stairCalc = ALL_CALCULATORS.find((c) => c.slug === 'stair-handrail-calculator');
   assert.ok(stairCalc, 'stair-handrail-calculator exists');
-  assert.equal(stairCalc.id, 'stair-handrail');
+  const vaporCalc = ALL_CALCULATORS.find((c) => c.slug === 'vapor-barrier-calculator');
+  assert.ok(vaporCalc, 'vapor-barrier-calculator exists');
+  const garageCalc = ALL_CALCULATORS.find((c) => c.slug === 'garage-door-size-calculator');
+  assert.ok(garageCalc, 'garage-door-size-calculator exists');
+  const doorFrameCalc = ALL_CALCULATORS.find((c) => c.slug === 'door-frame-material-calculator');
+  assert.ok(doorFrameCalc, 'door-frame-material-calculator exists');
 });
 
 test('Calculator 1: Concrete Slab 12x12 at 4" with 10% waste', () => {
@@ -272,4 +280,106 @@ test('Calculator 11: Stair & Handrail Calculator (108" Total Rise, 9ft ceiling)'
   assert.ok(res.materialsSubtotal > 500);
   assert.ok(res.totalProjectCost > 1000);
 });
+
+test('Calculator 12: Vapor Barrier Calculator (40x30 Crawl Space, 10 mil)', () => {
+  const res = calculateVaporBarrier({
+    application: 'crawlspace',
+    lengthFt: 40,
+    widthFt: 30,
+    crawlWallHeightFt: 2.5,
+    piersCount: 6,
+    pierPerimeterFt: 4,
+    milThickness: 10,
+    rollWidthFt: 12,
+    rollLengthFt: 100,
+    seamOverlapIn: 12,
+    wastePct: 10,
+    rollPrice: 165,
+    seamTapeRollPrice: 32,
+    terminationBarPrice: 14.50,
+    fastenersPackPrice: 18,
+    laborRatePerSqFt: 0.75,
+  });
+
+  assert.equal(res.valid, true);
+  assert.equal(res.baseAreaSqFt, 1200);
+  // Perimeter = 2 * (40 + 30) = 140 ft. Wall area = 140 * 2.5 = 350 sq ft
+  assert.equal(res.wallAreaSqFt, 350);
+  // Gross area includes base, walls, and piers
+  assert.ok(res.grossAreaSqFt > 1550);
+  // Rolls needed should be positive (12x100 = 1200 sq ft roll, total area > 1800 sq ft -> 2 rolls)
+  assert.ok(res.rollsNeeded >= 2);
+  assert.ok(res.tapeRollsNeeded >= 1);
+  assert.ok(res.termBarsNeeded >= 14);
+  assert.ok(res.totalEstimatedCost > 500);
+});
+
+test('Calculator 13: Garage Door Size Calculator (16x7 Double Car Door)', () => {
+  const res = calculateGarageDoorSize({
+    doorStandardSize: 'double_16x7',
+    doorWidthFt: 16,
+    doorHeightFt: 7,
+    ceilingHeightFt: 10,
+    wallFraming: '2x4',
+    trackRadiusIn: 15,
+    hasElectricOpener: true,
+    headerType: 'lvl_double',
+    doorUnitCost: 1650,
+    openerCost: 280,
+    headerLumberCost: 190,
+    framingJambsCost: 75,
+    weatherstripCost: 45,
+    laborInstallCost: 500,
+  });
+
+  assert.equal(res.valid, true);
+  assert.equal(res.finishedWidthIn, 192); // 16 * 12
+  assert.equal(res.finishedHeightIn, 84);  // 7 * 12
+  // Rough opening: +3" width, +1.5" height
+  assert.equal(res.roughWidthIn, 195);
+  assert.equal(res.roughHeightIn, 85.5);
+  // Headroom: 10 ft ceiling = 120", 120 - 84 = 36" available headroom
+  assert.equal(res.availableHeadroomIn, 36);
+  assert.equal(res.requiresLowHeadroom, false);
+  // Backroom: 84 + 48 = 132 inches (11.0 ft)
+  assert.equal(res.backroomDepthIn, 132);
+  assert.equal(res.backroomDepthFt, 11);
+  assert.ok(res.totalEstimatedCost > 2000);
+});
+
+test('Calculator 14: Door Frame Material Calculator (36x80 Entry Door in 2x4 Wall)', () => {
+  const res = calculateDoorFrame({
+    doorType: 'exterior_single',
+    doorWidthIn: 36,
+    doorHeightIn: 80,
+    doorThicknessIn: 1.75,
+    wallStudSize: '2x4',
+    wallHeightFt: 8,
+    casingSides: 2,
+    casingWidthIn: 2.5,
+    headerType: 'double_2x8',
+    studPrice: 5.85,
+    headerBoardPrice: 14.50,
+    jambKitPrice: 38.00,
+    casingPricePerFt: 1.65,
+    hardwareHingesPrice: 18.00,
+    shimPackPrice: 6.50,
+    laborRatePerHour: 50.00,
+    estimatedLaborHours: 3.0,
+  });
+
+  assert.equal(res.valid, true);
+  // Rough opening: 36 + 2 = 38" width, 80 + 2.5 = 82.5" height
+  assert.equal(res.roWidthIn, 38);
+  assert.equal(res.roHeightIn, 82.5);
+  assert.equal(res.kingStudsCount, 2);
+  assert.equal(res.jackStudsCount, 2);
+  assert.equal(res.headerLengthIn, 41); // 38 + 3
+  assert.equal(res.jambWidthFraction, '4 9/16"');
+  // Exterior door has 4 hinges
+  assert.equal(res.hingeCount, 4);
+  assert.ok(res.totalCasingLinFt > 30);
+  assert.ok(res.totalEstimatedCost > 200);
+});
+
 

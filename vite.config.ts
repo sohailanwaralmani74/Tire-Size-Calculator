@@ -135,16 +135,21 @@ export default defineConfig(() => {
               fs.mkdirSync(distDir, { recursive: true });
               const distDirHtmlPath = path.resolve(distDir, 'index.html');
 
-              const legacyHtmlPath = path.resolve(rootDir, `${calc.slug}.html`);
-              const distLegacyHtmlPath = path.resolve(rootDir, 'dist', `${calc.slug}.html`);
-
               if (fs.existsSync(dirHtmlPath)) {
                 const rawHtml = fs.readFileSync(dirHtmlPath, 'utf-8');
                 const selfContainedHtml = inlineIntoHtml(rawHtml, cssContent, jsContent);
                 fs.writeFileSync(dirHtmlPath, selfContainedHtml, 'utf-8');
                 fs.writeFileSync(distDirHtmlPath, selfContainedHtml, 'utf-8');
-                fs.writeFileSync(legacyHtmlPath, selfContainedHtml, 'utf-8');
-                fs.writeFileSync(distLegacyHtmlPath, selfContainedHtml, 'utf-8');
+              }
+
+              // Remove any legacy root or dist .html files to enforce clean URLs
+              const legacyRootHtml = path.resolve(rootDir, `${calc.slug}.html`);
+              if (fs.existsSync(legacyRootHtml)) {
+                try { fs.unlinkSync(legacyRootHtml); } catch {}
+              }
+              const distLegacyHtml = path.resolve(rootDir, 'dist', `${calc.slug}.html`);
+              if (fs.existsSync(distLegacyHtml)) {
+                try { fs.unlinkSync(distLegacyHtml); } catch {}
               }
             }
           }

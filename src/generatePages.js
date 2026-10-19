@@ -149,6 +149,60 @@ const FAQ_DATA = {
       q: 'What is the 4-inch sphere rule for stair balusters and guards?',
       a: 'IRC Section R312.1.3 requires guard openings (such as between vertical balusters or spindles) to prevent the passage of a 4-inch diameter sphere up to the required 36-inch (residential) or 42-inch (commercial) guard height.'
     }
+  ],
+  'vapor-barrier': [
+    {
+      q: 'What mil thickness vapor barrier is required for crawl spaces and concrete slabs?',
+      a: 'IRC Section R408.3 mandates a minimum 6 mil (0.006 inch) polyethylene vapor retarder for unvented crawl spaces with sealed seams. For heavy-duty crawl space encapsulation and under concrete slabs, building science and ASTM E1745 recommend 10 mil, 15 mil (Stego-grade), or 20 mil reinforced puncture-resistant poly.'
+    },
+    {
+      q: 'How much should vapor barrier seams overlap?',
+      a: 'Code requires a minimum 6-inch overlap between adjacent sheets, but contractors and building scientists recommend a 12-inch overlap. All seams must be taped continuously with specialized acrylic or butyl seam tape (minimum 3.75 to 4 inches wide).'
+    },
+    {
+      q: 'How is a crawl space vapor barrier fastened to foundation walls?',
+      a: 'The poly film should run up foundation perimeter walls and support piers at least 6 inches above outside ground grade (or up to within 2 inches of the sill plate), secured using rigid termination bars and masonry drive pins spaced 12 to 18 inches apart, and sealed behind with polyurethane or acoustic mastic sealant.'
+    },
+    {
+      q: 'What is a perm rating in vapor retarder classification?',
+      a: 'Permeance measures water vapor transmission. Class I vapor retarders have a perm rating of 0.1 perms or less (completely impermeable, like 10+ mil poly). Class II retarders measure between 0.1 and 1.0 perms (kraft paper facing). Class III retarders measure 1.0 to 10 perms (latex paint).'
+    }
+  ],
+  'garage-door-size': [
+    {
+      q: 'How do you calculate the rough framing opening for a garage door?',
+      a: 'The rough framing opening width should equal the finished door width plus 3.0 inches (allowing two 1.5-inch 2x wood goalpost side jamb liners). The rough opening height should equal the finished door height plus 1.5 inches (allowing one 1.5-inch 2x head jamb liner). For example, a 16x7 ft door requires a 16 ft 3 in wide by 7 ft 1-1/2 in high rough opening.'
+    },
+    {
+      q: 'What size structural header is required for a 16-foot double garage door?',
+      a: 'A 16-foot span carrying standard roof or floor loads requires an engineered header, typically double 1-3/4″ × 11-7/8″ LVL (Laminated Veneer Lumber) or triple 1-3/4″ × 11-7/8″ LVL beams bearing on at least double trimmers (jack studs) on each side. Dimensional lumber (like 2x10s) is insufficient for spans over 10 to 12 feet.'
+    },
+    {
+      q: 'How much headroom is required for garage door tracks and openers?',
+      a: 'Standard 12-inch or 15-inch radius curved tracks require 12 to 15 inches of vertical clearance between the top of the door opening and the lowest ceiling point. If adding an electric trolley opener, add 3 inches (totaling 15 to 18 inches headroom). If you have less than 10 inches of headroom, you must order a low-headroom dual-track conversion kit.'
+    },
+    {
+      q: 'How much backroom depth is needed inside the garage?',
+      a: 'The backroom depth required from the door opening into the garage is the door height plus 18 inches for manual operation (8 ft 6 in for a 7 ft door), or door height plus 48 inches (4 feet) for an automatic electric trolley opener (11 ft total depth).'
+    }
+  ],
+  'door-frame-material': [
+    {
+      q: 'What is the standard rough opening size for an interior door?',
+      a: 'The standard rough opening is door width plus 2.0 inches, and door height plus 2.5 inches. For example, a standard 36″ × 80″ interior door requires a 38″ wide by 82-1/2″ high rough opening. This provides 3/4-inch side clearance for 3/4″ jamb stock plus 1/4″ shimming space on each side.'
+    },
+    {
+      q: 'What jamb width is required for 2x4 vs 2x6 framed walls?',
+      a: 'Standard 2x4 framing (actual 3-1/2″ width) with 1/2″ drywall on both sides requires a 4-9/16″ jamb width (3.5 + 0.5 + 0.5 = 4.5 plus 1/16″ clearance). Standard 2x6 framing (actual 5-1/2″ width) with 1/2″ drywall on both sides requires a 6-9/16″ jamb width.'
+    },
+    {
+      q: 'What is the structural difference between a king stud and a jack stud (trimmer)?',
+      a: 'A king stud runs full height from the bottom wall plate to the top wall plates. A jack stud (or trimmer) is fastened to the inside face of the king stud and is cut to exact header height, directly supporting the full weight of the structural door header beam.'
+    },
+    {
+      q: 'How many linear feet of casing molding are needed to trim a door?',
+      a: 'Trimming one side of a standard 36″ × 80″ door requires two 84-inch side legs and one 42-inch head casing, totaling 17.5 linear feet (allowing for 45-degree miter cuts). Trimming both sides of the door (interior passage) requires approximately 35 to 36 linear feet of casing.'
+    }
   ]
 };
 
@@ -483,14 +537,20 @@ export function generateAllStaticPages() {
     fs.mkdirSync(calcDir, { recursive: true });
     fs.writeFileSync(path.resolve(calcDir, 'index.html'), htmlContent, 'utf-8');
 
-    // 2. Legacy fallback file: /${calc.slug}.html
-    fs.writeFileSync(path.resolve(rootDir, `${calc.slug}.html`), htmlContent, 'utf-8');
-
-    // 3. Mirror into public directory for dev server and static builds
+    // 2. Mirror clean directory into public/ directory for dev server and static builds
     const publicCalcDir = path.resolve(rootDir, 'public', calc.slug);
     fs.mkdirSync(publicCalcDir, { recursive: true });
     fs.writeFileSync(path.resolve(publicCalcDir, 'index.html'), htmlContent, 'utf-8');
-    fs.writeFileSync(path.resolve(rootDir, 'public', `${calc.slug}.html`), htmlContent, 'utf-8');
+
+    // Clean up any legacy root .html files to ensure clean URLs
+    const legacyRootFile = path.resolve(rootDir, `${calc.slug}.html`);
+    if (fs.existsSync(legacyRootFile)) {
+      try { fs.unlinkSync(legacyRootFile); } catch {}
+    }
+    const legacyPublicFile = path.resolve(rootDir, 'public', `${calc.slug}.html`);
+    if (fs.existsSync(legacyPublicFile)) {
+      try { fs.unlinkSync(legacyPublicFile); } catch {}
+    }
   }
 
   // Master homepage /
@@ -498,8 +558,8 @@ export function generateAllStaticPages() {
     id: 'home',
     slug: '',
     name: 'Wanjaaro Building Material & Construction Cost Calculators',
-    summary: 'Concrete, brick, CMU, wall framing, sheathing, drywall, paint, roofing, tile, and comprehensive construction cost estimation.',
-    lastmod: '2026-10-13',
+    summary: 'Concrete, brick, CMU, wall framing, sheathing, drywall, paint, roofing, tile, stairs, vapor barriers, garage doors, door frames, and comprehensive construction cost estimation.',
+    lastmod: '2026-10-18',
   });
   fs.writeFileSync(path.resolve(rootDir, 'index.html'), homeHtml, 'utf-8');
   fs.writeFileSync(path.resolve(rootDir, 'public/index.html'), homeHtml, 'utf-8');
