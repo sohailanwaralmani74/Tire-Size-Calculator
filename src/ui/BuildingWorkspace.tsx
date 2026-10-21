@@ -16,6 +16,8 @@ import {
   calculateVaporBarrier,
   calculateGarageDoorSize,
   calculateDoorFrame,
+  calculateSidingMaterial,
+  SidingInput,
   formatInchFraction,
 } from '../calc/buildingMath.js';
 
@@ -350,6 +352,28 @@ export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspacePr
     estimatedLaborHours: 3.0,
   });
 
+  // 15. Siding Material & House Wrap
+  const [sidingState, setSidingState] = useState<SidingInput>({
+    grossWallAreaSqFt: 1800,
+    windowCount: 8,
+    windowAvgSqFt: 15,
+    doorCount: 2,
+    doorAvgSqFt: 21,
+    sidingType: 'vinyl_double_4',
+    outsideCornerFt: 40,
+    insideCornerFt: 20,
+    perimeterTrimFt: 140,
+    wastePct: 10,
+    sidingSquarePrice: 135.0,
+    houseWrapRollPrice: 110.0,
+    starterPricePer10ft: 7.5,
+    jChannelPricePer12ft: 9.2,
+    cornerPostPrice: 19.5,
+    sidingNailBoxPrice: 26.0,
+    laborRatePerHour: 52.0,
+    estimatedLaborHours: 42,
+  });
+
   // Calculate results
   const concreteRes = calculateConcrete(concreteState);
   const brickRes = calculateBrick(brickState);
@@ -365,6 +389,7 @@ export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspacePr
   const vaporRes = calculateVaporBarrier(vaporState);
   const garageRes = calculateGarageDoorSize(garageState);
   const doorFrameRes = calculateDoorFrame(doorFrameState);
+  const sidingRes = calculateSidingMaterial(sidingState);
 
   // Copy results helper
   const copyTakeoff = async (text: string) => {
@@ -392,6 +417,42 @@ export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspacePr
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, []);
+
+  // Dynamically initialize and mount responsive ads on desktop and mid-content
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const mountSlot = (containerId: string, key: string, w: number, h: number) => {
+      const el = document.getElementById(containerId);
+      if (!el || el.querySelector('iframe')) return;
+      const iframe = document.createElement('iframe');
+      iframe.width = String(w);
+      iframe.height = String(h);
+      iframe.style.width = w + 'px';
+      iframe.style.height = h + 'px';
+      iframe.style.maxWidth = '100%';
+      iframe.style.border = '0';
+      iframe.setAttribute('scrolling', 'no');
+      iframe.setAttribute('frameborder', '0');
+      iframe.setAttribute('title', 'Sponsored Advertisement');
+      const adHtml = `<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;padding:0;overflow:hidden;background:transparent;display:flex;align-items:center;justify-content:center;}</style></head><body><script>atOptions = { "key": "${key}", "format": "iframe", "height": ${h}, "width": ${w}, "params": {} };</script><script src="https://www.highrevenueformat.com/${key}/invoke.js"></script></body></html>`;
+      iframe.srcdoc = adHtml;
+      el.appendChild(iframe);
+    };
+
+    const timer = setTimeout(() => {
+      const vpWidth = window.innerWidth || document.documentElement.clientWidth || 1024;
+      if (vpWidth >= 860) {
+        mountSlot('wanjaaro-ad-slot-desktop-sidebar-1', '830d5085b52c47187da5de38d29787cd', 160, 600);
+        mountSlot('wanjaaro-ad-slot-desktop-sidebar-2', '3fa238068881377f24b1b67fa0787b9d', 160, 300);
+      }
+      if (vpWidth >= 760) {
+        mountSlot('wanjaaro-ad-slot-mid-1', '49fb7f861b88900800f4aa0964cec1bf', 728, 90);
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [activeCalcId]);
 
   return (
     <div className="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen">
@@ -545,10 +606,10 @@ export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspacePr
       </header>
 
       {/* ============================================================== */}
-      {/* 2. MAIN LAYOUT: 75% CONTENT + 25% GLOBAL RIGHT AD ON DESKTOP */}
+      {/* 2. MAIN LAYOUT: CONTENT + GLOBAL RIGHT AD ON DESKTOP / PREVIEWS */}
       {/* ============================================================== */}
-      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 py-6 lg:flex lg:items-start lg:gap-8">
-        <main className="w-full lg:w-[75%] min-w-0 space-y-8">
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 py-6 min-[860px]:flex min-[860px]:items-start min-[860px]:gap-6 lg:gap-8">
+        <main className="w-full min-[860px]:flex-1 min-w-0 space-y-8">
           {/* BREADCRUMB: WITH CATEGORY PROMINENTLY DISPLAYED ON MOBILE */}
           <nav aria-label="Breadcrumb navigation" className="text-xs text-slate-600 dark:text-slate-400 no-print">
             <ol className="flex flex-wrap items-center gap-x-2 gap-y-1.5 font-medium">
@@ -5242,6 +5303,890 @@ export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspacePr
               </div>
             </div>
           )}
+
+          {/* 15. SIDING MATERIAL & HOUSE WRAP CALCULATOR */}
+          {activeCalcId === 'siding-material' && (
+            <div className="space-y-6">
+              {/* Presets Bar */}
+              <div className="flex flex-wrap items-center gap-2 p-3 bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-xl no-print">
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                  Quick Presets:
+                </span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setSidingState((prev) => ({
+                      ...prev,
+                      grossWallAreaSqFt: 1800,
+                      windowCount: 8,
+                      windowAvgSqFt: 15,
+                      doorCount: 2,
+                      doorAvgSqFt: 21,
+                      sidingType: 'vinyl_double_4',
+                      outsideCornerFt: 40,
+                      insideCornerFt: 20,
+                      perimeterTrimFt: 140,
+                      wastePct: 10,
+                      sidingSquarePrice: 135.0,
+                    }))
+                  }
+                  className="px-2.5 py-1 text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-sky-600 hover:text-sky-700 dark:hover:text-sky-400 transition-colors cursor-pointer"
+                >
+                  🏠 1,800 sq ft Ranch (Vinyl D4)
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setSidingState((prev) => ({
+                      ...prev,
+                      grossWallAreaSqFt: 2400,
+                      windowCount: 12,
+                      windowAvgSqFt: 15,
+                      doorCount: 3,
+                      doorAvgSqFt: 21,
+                      sidingType: 'fiber_cement_hardie',
+                      outsideCornerFt: 60,
+                      insideCornerFt: 20,
+                      perimeterTrimFt: 180,
+                      wastePct: 12,
+                      sidingSquarePrice: 245.0,
+                    }))
+                  }
+                  className="px-2.5 py-1 text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-sky-600 hover:text-sky-700 dark:hover:text-sky-400 transition-colors cursor-pointer"
+                >
+                  🏡 2,400 sq ft 2-Story (HardiePlank)
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setSidingState((prev) => ({
+                      ...prev,
+                      grossWallAreaSqFt: 1600,
+                      windowCount: 6,
+                      windowAvgSqFt: 16,
+                      doorCount: 2,
+                      doorAvgSqFt: 21,
+                      sidingType: 'board_batten',
+                      outsideCornerFt: 40,
+                      insideCornerFt: 10,
+                      perimeterTrimFt: 130,
+                      wastePct: 10,
+                      sidingSquarePrice: 195.0,
+                    }))
+                  }
+                  className="px-2.5 py-1 text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-sky-600 hover:text-sky-700 dark:hover:text-sky-400 transition-colors cursor-pointer"
+                >
+                  🏚 1,600 sq ft Farmhouse (Board &amp; Batten)
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setSidingState((prev) => ({
+                      ...prev,
+                      grossWallAreaSqFt: 1200,
+                      windowCount: 5,
+                      windowAvgSqFt: 15,
+                      doorCount: 2,
+                      doorAvgSqFt: 21,
+                      sidingType: 'wood_cedar_lap',
+                      outsideCornerFt: 36,
+                      insideCornerFt: 10,
+                      perimeterTrimFt: 110,
+                      wastePct: 15,
+                      sidingSquarePrice: 285.0,
+                    }))
+                  }
+                  className="px-2.5 py-1 text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-sky-600 hover:text-sky-700 dark:hover:text-sky-400 transition-colors cursor-pointer"
+                >
+                  🌲 1,200 sq ft Cabin (Cedar Lap)
+                </button>
+              </div>
+
+              {/* 2-Column Responsive Layout */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                {/* LEFT COLUMN: Inputs & Configuration (5 cols) */}
+                <div className="lg:col-span-5 space-y-6">
+                  {/* Card 1: Gross Wall Area & Openings Deductions */}
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-5 bg-white dark:bg-slate-900 space-y-4">
+                    <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+                      <h3 className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+                        <span>📐</span> Wall Area &amp; Deductions
+                      </h3>
+                      <span className="text-[11px] font-mono text-sky-700 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/50 px-2 py-0.5 rounded">
+                        IRC R703 Compliant
+                      </span>
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between items-center text-xs font-medium mb-1">
+                        <label htmlFor="siding-gross-area">Gross Wall Surface Area</label>
+                        <span className="font-mono text-sky-700 dark:text-sky-400 font-bold">
+                          {sidingState.grossWallAreaSqFt.toLocaleString()} sq ft
+                        </span>
+                      </div>
+                      <input
+                        id="siding-gross-area"
+                        type="range"
+                        min="200"
+                        max="6000"
+                        step="50"
+                        value={sidingState.grossWallAreaSqFt}
+                        onChange={(e) =>
+                          setSidingState((prev) => ({
+                            ...prev,
+                            grossWallAreaSqFt: Number(e.target.value),
+                          }))
+                        }
+                        className="w-full accent-sky-600 cursor-pointer"
+                      />
+                      <div className="flex justify-between text-[10px] text-slate-400 font-mono mt-0.5">
+                        <span>200 sq ft</span>
+                        <span>3,000 sq ft</span>
+                        <span>6,000 sq ft</span>
+                      </div>
+                    </div>
+
+                    {/* Window & Door Deductions */}
+                    <div className="grid grid-cols-2 gap-3 pt-2">
+                      <div>
+                        <label htmlFor="siding-win-count" className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                          Window Count
+                        </label>
+                        <input
+                          id="siding-win-count"
+                          type="number"
+                          min="0"
+                          max="50"
+                          value={sidingState.windowCount}
+                          onChange={(e) =>
+                            setSidingState((prev) => ({
+                              ...prev,
+                              windowCount: Math.max(0, Number(e.target.value)),
+                            }))
+                          }
+                          className="w-full px-3 py-1.5 text-xs font-mono rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="siding-win-avg" className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                          Avg Window (sq ft)
+                        </label>
+                        <input
+                          id="siding-win-avg"
+                          type="number"
+                          min="1"
+                          max="80"
+                          value={sidingState.windowAvgSqFt}
+                          onChange={(e) =>
+                            setSidingState((prev) => ({
+                              ...prev,
+                              windowAvgSqFt: Math.max(1, Number(e.target.value)),
+                            }))
+                          }
+                          className="w-full px-3 py-1.5 text-xs font-mono rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label htmlFor="siding-door-count" className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                          Exterior Door Count
+                        </label>
+                        <input
+                          id="siding-door-count"
+                          type="number"
+                          min="0"
+                          max="15"
+                          value={sidingState.doorCount}
+                          onChange={(e) =>
+                            setSidingState((prev) => ({
+                              ...prev,
+                              doorCount: Math.max(0, Number(e.target.value)),
+                            }))
+                          }
+                          className="w-full px-3 py-1.5 text-xs font-mono rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="siding-door-avg" className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                          Avg Door (sq ft)
+                        </label>
+                        <input
+                          id="siding-door-avg"
+                          type="number"
+                          min="5"
+                          max="100"
+                          value={sidingState.doorAvgSqFt}
+                          onChange={(e) =>
+                            setSidingState((prev) => ({
+                              ...prev,
+                              doorAvgSqFt: Math.max(5, Number(e.target.value)),
+                            }))
+                          }
+                          className="w-full px-3 py-1.5 text-xs font-mono rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Live Deduction Breakdown Box */}
+                    <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-lg border border-slate-200 dark:border-slate-800 text-xs space-y-1 font-mono">
+                      <div className="flex justify-between text-slate-600 dark:text-slate-400">
+                        <span>Gross Area:</span>
+                        <span>{sidingRes.grossWallAreaSqFt.toLocaleString()} sq ft</span>
+                      </div>
+                      <div className="flex justify-between text-amber-700 dark:text-amber-400">
+                        <span>− Openings Deductions:</span>
+                        <span>−{sidingRes.deductionsAreaSqFt.toLocaleString()} sq ft ({sidingState.windowCount} wins + {sidingState.doorCount} doors)</span>
+                      </div>
+                      <div className="flex justify-between font-bold text-slate-900 dark:text-white pt-1 border-t border-slate-200 dark:border-slate-800">
+                        <span>= Net Siding Surface:</span>
+                        <span className="text-sky-700 dark:text-sky-400">{sidingRes.netWallAreaSqFt.toLocaleString()} sq ft</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Card 2: Siding Material Profile & Waste */}
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-5 bg-white dark:bg-slate-900 space-y-4">
+                    <h3 className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
+                      <span>🏷</span> Material Profile &amp; Waste Factor
+                    </h3>
+
+                    <div>
+                      <label htmlFor="siding-material-type" className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                        Siding Material &amp; Profile Type
+                      </label>
+                      <select
+                        id="siding-material-type"
+                        value={sidingState.sidingType}
+                        onChange={(e) => {
+                          const val = e.target.value as SidingInput['sidingType'];
+                          const defaultPrices = {
+                            vinyl_double_4: 135.0,
+                            fiber_cement_hardie: 245.0,
+                            wood_cedar_lap: 285.0,
+                            board_batten: 195.0,
+                          };
+                          setSidingState((prev) => ({
+                            ...prev,
+                            sidingType: val,
+                            sidingSquarePrice: defaultPrices[val],
+                          }));
+                        }}
+                        className="w-full px-3 py-2 text-xs rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950 font-medium"
+                      >
+                        <option value="vinyl_double_4">Vinyl Lap Siding (Double 4" / 5" — 2 Squares/Carton)</option>
+                        <option value="fiber_cement_hardie">Fiber Cement HardiePlank (8.25" Lap — 7" Exposure)</option>
+                        <option value="board_batten">Board &amp; Batten (12" Vertical Board + 2.5" Batten)</option>
+                        <option value="wood_cedar_lap">Wood / Western Red Cedar Bevel Lap (1x8 Lap)</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <div className="flex justify-between items-center text-xs font-medium mb-1">
+                        <label htmlFor="siding-waste-pct">Waste Factor Allowance</label>
+                        <span className="font-mono text-sky-700 dark:text-sky-400 font-bold">
+                          {sidingState.wastePct}% ({sidingState.wastePct > 12 ? 'Complex/Gables' : 'Standard Laps'})
+                        </span>
+                      </div>
+                      <input
+                        id="siding-waste-pct"
+                        type="range"
+                        min="5"
+                        max="25"
+                        step="1"
+                        value={sidingState.wastePct}
+                        onChange={(e) =>
+                          setSidingState((prev) => ({
+                            ...prev,
+                            wastePct: Number(e.target.value),
+                          }))
+                        }
+                        className="w-full accent-sky-600 cursor-pointer"
+                      />
+                      <div className="flex justify-between text-[10px] text-slate-400 font-mono mt-0.5">
+                        <span>5% (Simple)</span>
+                        <span>10% (Normal)</span>
+                        <span>15% (Gables)</span>
+                        <span>25% (Complex)</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Card 3: Trims, Corners & Accessories */}
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-5 bg-white dark:bg-slate-900 space-y-4">
+                    <h3 className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
+                      <span>🔨</span> Trims, Corners &amp; Weather Barrier
+                    </h3>
+
+                    <div className="space-y-3">
+                      <div>
+                        <label htmlFor="siding-perimeter-trim" className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                          Starter Strip Perimeter (Linear Feet)
+                        </label>
+                        <input
+                          id="siding-perimeter-trim"
+                          type="number"
+                          min="10"
+                          max="1000"
+                          value={sidingState.perimeterTrimFt}
+                          onChange={(e) =>
+                            setSidingState((prev) => ({
+                              ...prev,
+                              perimeterTrimFt: Math.max(10, Number(e.target.value)),
+                            }))
+                          }
+                          className="w-full px-3 py-1.5 text-xs font-mono rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+                        />
+                        <span className="text-[10px] text-slate-400">Total foundation baseline run requiring galvanized starter strip.</span>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label htmlFor="siding-outside-corner" className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                            Outside Corners (LF)
+                          </label>
+                          <input
+                            id="siding-outside-corner"
+                            type="number"
+                            min="0"
+                            max="300"
+                            value={sidingState.outsideCornerFt}
+                            onChange={(e) =>
+                              setSidingState((prev) => ({
+                                ...prev,
+                                outsideCornerFt: Math.max(0, Number(e.target.value)),
+                              }))
+                            }
+                            className="w-full px-3 py-1.5 text-xs font-mono rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+                          />
+                        </div>
+                        <div>
+                          <label htmlFor="siding-inside-corner" className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                            Inside Corners (LF)
+                          </label>
+                          <input
+                            id="siding-inside-corner"
+                            type="number"
+                            min="0"
+                            max="300"
+                            value={sidingState.insideCornerFt}
+                            onChange={(e) =>
+                              setSidingState((prev) => ({
+                                ...prev,
+                                insideCornerFt: Math.max(0, Number(e.target.value)),
+                              }))
+                            }
+                            className="w-full px-3 py-1.5 text-xs font-mono rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Card 4: Unit Prices & Labor Rate */}
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-5 bg-white dark:bg-slate-900 space-y-4">
+                    <h3 className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
+                      <span>💲</span> Cost Factors &amp; Labor Rates
+                    </h3>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label htmlFor="siding-price-square" className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                          Price per Square ($)
+                        </label>
+                        <input
+                          id="siding-price-square"
+                          type="number"
+                          min="50"
+                          max="1000"
+                          step="5"
+                          value={sidingState.sidingSquarePrice}
+                          onChange={(e) =>
+                            setSidingState((prev) => ({
+                              ...prev,
+                              sidingSquarePrice: Math.max(1, Number(e.target.value)),
+                            }))
+                          }
+                          className="w-full px-3 py-1.5 text-xs font-mono rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="siding-wrap-price" className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                          Housewrap Roll ($)
+                        </label>
+                        <input
+                          id="siding-wrap-price"
+                          type="number"
+                          min="40"
+                          max="300"
+                          value={sidingState.houseWrapRollPrice}
+                          onChange={(e) =>
+                            setSidingState((prev) => ({
+                              ...prev,
+                              houseWrapRollPrice: Math.max(1, Number(e.target.value)),
+                            }))
+                          }
+                          className="w-full px-3 py-1.5 text-xs font-mono rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label htmlFor="siding-starter-price" className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                          Starter Strip 10ft ($)
+                        </label>
+                        <input
+                          id="siding-starter-price"
+                          type="number"
+                          min="2"
+                          max="30"
+                          step="0.5"
+                          value={sidingState.starterPricePer10ft}
+                          onChange={(e) =>
+                            setSidingState((prev) => ({
+                              ...prev,
+                              starterPricePer10ft: Math.max(0.5, Number(e.target.value)),
+                            }))
+                          }
+                          className="w-full px-3 py-1.5 text-xs font-mono rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="siding-jchannel-price" className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                          J-Channel 12ft ($)
+                        </label>
+                        <input
+                          id="siding-jchannel-price"
+                          type="number"
+                          min="2"
+                          max="30"
+                          step="0.5"
+                          value={sidingState.jChannelPricePer12ft}
+                          onChange={(e) =>
+                            setSidingState((prev) => ({
+                              ...prev,
+                              jChannelPricePer12ft: Math.max(0.5, Number(e.target.value)),
+                            }))
+                          }
+                          className="w-full px-3 py-1.5 text-xs font-mono rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label htmlFor="siding-labor-rate" className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                          Labor Rate ($/hr)
+                        </label>
+                        <input
+                          id="siding-labor-rate"
+                          type="number"
+                          min="25"
+                          max="150"
+                          value={sidingState.laborRatePerHour}
+                          onChange={(e) =>
+                            setSidingState((prev) => ({
+                              ...prev,
+                              laborRatePerHour: Math.max(10, Number(e.target.value)),
+                            }))
+                          }
+                          className="w-full px-3 py-1.5 text-xs font-mono rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="siding-labor-hours" className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                          Estimated Hours
+                        </label>
+                        <input
+                          id="siding-labor-hours"
+                          type="number"
+                          min="4"
+                          max="300"
+                          value={sidingState.estimatedLaborHours}
+                          onChange={(e) =>
+                            setSidingState((prev) => ({
+                              ...prev,
+                              estimatedLaborHours: Math.max(1, Number(e.target.value)),
+                            }))
+                          }
+                          className="w-full px-3 py-1.5 text-xs font-mono rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-950"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* RIGHT COLUMN: Results, Elevation Diagram & Takeoff (7 cols) */}
+                <div className="lg:col-span-7 space-y-6">
+                  {/* Primary KPI Summary Cards */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div className="border border-sky-600/40 dark:border-sky-500/40 rounded-xl p-3.5 bg-sky-50/70 dark:bg-sky-950/30">
+                      <span className="text-[10px] uppercase font-mono tracking-wider text-slate-600 dark:text-slate-400 block mb-0.5">
+                        Net Siding Area
+                      </span>
+                      <span className="text-xl sm:text-2xl font-bold font-mono text-sky-700 dark:text-sky-400 block">
+                        {sidingRes.netWallAreaSqFt.toLocaleString()}
+                      </span>
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400">square feet net</span>
+                    </div>
+
+                    <div className="border border-amber-500/60 dark:border-amber-500/60 rounded-xl p-3.5 bg-amber-50/70 dark:bg-amber-950/30">
+                      <span className="text-[10px] uppercase font-mono tracking-wider text-slate-600 dark:text-slate-400 block mb-0.5">
+                        Siding Squares
+                      </span>
+                      <span className="text-xl sm:text-2xl font-bold font-mono text-amber-700 dark:text-amber-400 block">
+                        {sidingRes.sidingSquares.toFixed(1)}
+                      </span>
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+                        incl. {sidingState.wastePct}% waste
+                      </span>
+                    </div>
+
+                    <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-3.5 bg-white dark:bg-slate-900">
+                      <span className="text-[10px] uppercase font-mono tracking-wider text-slate-600 dark:text-slate-400 block mb-0.5">
+                        Material Units
+                      </span>
+                      <span className="text-xl sm:text-2xl font-bold font-mono text-slate-900 dark:text-white block">
+                        {sidingRes.cartonOrBoardCount}
+                      </span>
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400 truncate block" title={sidingRes.unitLabel}>
+                        {sidingRes.unitLabel}
+                      </span>
+                    </div>
+
+                    <div className="border border-emerald-500/50 dark:border-emerald-500/50 rounded-xl p-3.5 bg-emerald-50/60 dark:bg-emerald-950/30">
+                      <span className="text-[10px] uppercase font-mono tracking-wider text-slate-600 dark:text-slate-400 block mb-0.5">
+                        Housewrap Rolls
+                      </span>
+                      <span className="text-xl sm:text-2xl font-bold font-mono text-emerald-700 dark:text-emerald-400 block">
+                        {sidingRes.houseWrapRolls}
+                      </span>
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+                        9'×100' + {sidingRes.seamTapeRolls} tape
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Architectural Siding Elevation SVG Diagram */}
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-5 bg-white dark:bg-slate-900 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-bold text-xs uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                        <span>🖼</span> Wall Elevation &amp; Profile Visualizer
+                      </h4>
+                      <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
+                        {sidingState.sidingType.replace(/_/g, ' ').toUpperCase()}
+                      </span>
+                    </div>
+
+                    <div className="w-full bg-slate-100 dark:bg-slate-950 rounded-lg p-3 overflow-x-auto flex items-center justify-center border border-slate-200 dark:border-slate-800">
+                      <svg
+                        viewBox="0 0 540 260"
+                        className="w-full max-w-[500px] h-auto font-mono text-[10px] select-none"
+                      >
+                        <defs>
+                          {/* Weather-resistive barrier pattern */}
+                          <pattern id="wrbPattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                            <rect width="40" height="40" fill="#e0f2fe" fillOpacity="0.45" />
+                            <path d="M 0 20 L 40 20 M 20 0 L 20 40" stroke="#0284c7" strokeWidth="0.5" strokeDasharray="2,2" strokeOpacity="0.4" />
+                            <text x="5" y="15" fill="#0369a1" fontSize="6" fontFamily="sans-serif" opacity="0.45">TYVEK</text>
+                          </pattern>
+                          {/* Siding lap shadow */}
+                          <linearGradient id="lapShade" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.8" />
+                            <stop offset="85%" stopColor="#e2e8f0" stopOpacity="0.2" />
+                            <stop offset="100%" stopColor="#94a3b8" stopOpacity="0.6" />
+                          </linearGradient>
+                        </defs>
+
+                        {/* Sheathing substrate */}
+                        <rect x="40" y="20" width="460" height="210" fill="#fde68a" fillOpacity="0.3" stroke="#d97706" strokeWidth="1" />
+
+                        {/* Weather-Resistive Barrier Layer (Left cutaway) */}
+                        <rect x="40" y="20" width="130" height="210" fill="url(#wrbPattern)" stroke="#0284c7" strokeWidth="1" />
+                        <text x="50" y="40" fill="#0369a1" fontWeight="bold" fontSize="9">HOUSEWRAP (WRB)</text>
+                        <text x="50" y="55" fill="#0369a1" fontSize="8">15% Lap Allowance</text>
+
+                        {/* Siding Courses (Right portion) */}
+                        {sidingState.sidingType === 'board_batten' ? (
+                          // Vertical Board & Batten
+                          <g>
+                            {[170, 205, 240, 275, 310, 345, 380, 415, 450, 485].map((xPos, i) => (
+                              <g key={i}>
+                                <rect x={xPos} y="20" width="30" height="210" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="1" />
+                                <rect x={xPos + 25} y="20" width="8" height="210" fill="#e2e8f0" stroke="#94a3b8" strokeWidth="1" />
+                              </g>
+                            ))}
+                          </g>
+                        ) : (
+                          // Horizontal Lap (Vinyl, Fiber Cement, Cedar)
+                          <g>
+                            {[20, 38, 56, 74, 92, 110, 128, 146, 164, 182, 200, 218].map((yPos, i) => (
+                              <g key={i}>
+                                <rect x="170" y={yPos} width="330" height="18" fill="#f8fafc" stroke="#cbd5e1" strokeWidth="0.75" />
+                                <line x1="170" y1={yPos + 18} x2="500" y2={yPos + 18} stroke="#64748b" strokeWidth="1.2" />
+                              </g>
+                            ))}
+                          </g>
+                        )}
+
+                        {/* Window cutout with J-Channel casing trim */}
+                        <g>
+                          {/* J-Channel outer flange */}
+                          <rect x="250" y="60" width="130" height="95" fill="none" stroke="#0284c7" strokeWidth="3" />
+                          {/* Window glass */}
+                          <rect x="254" y="64" width="122" height="87" fill="#bae6fd" fillOpacity="0.4" stroke="#0369a1" strokeWidth="1.5" />
+                          <line x1="315" y1="64" x2="315" y2="151" stroke="#0369a1" strokeWidth="1.5" />
+                          <line x1="254" y1="107" x2="376" y2="107" stroke="#0369a1" strokeWidth="1.5" />
+                          <text x="268" y="112" fill="#0369a1" fontWeight="bold" fontSize="9">WINDOW OPENING</text>
+                          {/* Drip cap flashing on top */}
+                          <rect x="248" y="58" width="134" height="4" fill="#64748b" />
+                          <text x="260" y="52" fill="#475569" fontSize="7">METAL HEAD DRIP CAP</text>
+                        </g>
+
+                        {/* Outside Corner Post (Left edge) */}
+                        <rect x="40" y="20" width="12" height="210" fill="#cbd5e1" stroke="#475569" strokeWidth="1.5" />
+                        <text x="10" y="130" fill="#475569" fontSize="8" transform="rotate(-90 20,130)">OUTSIDE CORNER</text>
+
+                        {/* Starter Strip at bottom */}
+                        <rect x="40" y="226" width="460" height="4" fill="#0284c7" />
+                        <line x1="40" y1="230" x2="500" y2="230" stroke="#0f172a" strokeWidth="2" />
+                        <text x="180" y="248" fill="#0369a1" fontWeight="bold" fontSize="8">
+                          GALVANIZED STARTER STRIP ({sidingRes.starterPcs10ft} PCS × 10 FT)
+                        </text>
+
+                        {/* Callout Badges */}
+                        <g transform="translate(390, 175)">
+                          <rect width="105" height="44" rx="4" fill="#ffffff" fillOpacity="0.95" stroke="#0284c7" strokeWidth="1" />
+                          <text x="8" y="15" fill="#0f172a" fontWeight="bold" fontSize="8">TAKEOFF SPECS</text>
+                          <text x="8" y="27" fill="#0369a1" fontSize="7">{sidingRes.sidingSquares} Siding Squares</text>
+                          <text x="8" y="38" fill="#475569" fontSize="7">{sidingRes.cartonOrBoardCount} {sidingRes.unitLabel.split(' ')[0]}</text>
+                        </g>
+                      </svg>
+                    </div>
+
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                      Schematic illustrates proper layered weather barrier (WRB), window J-channel surround with drip cap flashing, outside corner posts, and continuous starter strip at the foundation sill plate.
+                    </p>
+                  </div>
+
+                  {/* Complete Bill of Materials (BOM) */}
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-5 bg-white dark:bg-slate-900 space-y-4">
+                    <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+                      <h4 className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+                        <span>📋</span> Itemized Bill of Materials &amp; Budget
+                      </h4>
+                      <span className="font-mono text-xs font-bold text-sky-700 dark:text-sky-400">
+                        ${sidingRes.totalEstimatedCost.toLocaleString()} Total (${sidingRes.costPerSqFt}/sq ft)
+                      </span>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-xs text-left">
+                        <thead>
+                          <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 font-mono">
+                            <th className="py-2 font-medium">Material Component</th>
+                            <th className="py-2 font-medium">Trade Specification</th>
+                            <th className="py-2 font-medium text-center">Qty</th>
+                            <th className="py-2 font-medium text-right">Est. Unit</th>
+                            <th className="py-2 font-medium text-right">Subtotal</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-mono">
+                          <tr>
+                            <td className="py-2 text-slate-900 dark:text-white font-medium">Siding Material</td>
+                            <td className="py-2 text-slate-500">{sidingRes.unitLabel}</td>
+                            <td className="py-2 text-center text-slate-800 dark:text-slate-200 font-bold">{sidingRes.sidingSquares} sq</td>
+                            <td className="py-2 text-right text-slate-500">${sidingState.sidingSquarePrice?.toFixed(2)}</td>
+                            <td className="py-2 text-right font-bold text-slate-900 dark:text-white">${sidingRes.sidingCost.toLocaleString()}</td>
+                          </tr>
+                          <tr>
+                            <td className="py-2 text-slate-900 dark:text-white font-medium">Weather Barrier (Housewrap)</td>
+                            <td className="py-2 text-slate-500">9'×100' Rolls (900 sq ft) + Seam Tape</td>
+                            <td className="py-2 text-center text-slate-800 dark:text-slate-200 font-bold">{sidingRes.houseWrapRolls} rolls</td>
+                            <td className="py-2 text-right text-slate-500">${sidingState.houseWrapRollPrice?.toFixed(2)}</td>
+                            <td className="py-2 text-right font-bold text-slate-900 dark:text-white">${sidingRes.wrapCost.toLocaleString()}</td>
+                          </tr>
+                          <tr>
+                            <td className="py-2 text-slate-900 dark:text-white font-medium">Perimeter Starter Strip</td>
+                            <td className="py-2 text-slate-500">10-ft Galvanized / Vinyl Strips</td>
+                            <td className="py-2 text-center text-slate-800 dark:text-slate-200 font-bold">{sidingRes.starterPcs10ft} pcs</td>
+                            <td className="py-2 text-right text-slate-500">${sidingState.starterPricePer10ft?.toFixed(2)}</td>
+                            <td className="py-2 text-right font-bold text-slate-900 dark:text-white">${sidingRes.starterCost.toLocaleString()}</td>
+                          </tr>
+                          <tr>
+                            <td className="py-2 text-slate-900 dark:text-white font-medium">J-Channel &amp; Window Trim</td>
+                            <td className="py-2 text-slate-500">12-ft Universal Trim Profiles</td>
+                            <td className="py-2 text-center text-slate-800 dark:text-slate-200 font-bold">{sidingRes.jChannelPcs12ft} pcs</td>
+                            <td className="py-2 text-right text-slate-500">${sidingState.jChannelPricePer12ft?.toFixed(2)}</td>
+                            <td className="py-2 text-right font-bold text-slate-900 dark:text-white">${sidingRes.jChannelCost.toLocaleString()}</td>
+                          </tr>
+                          <tr>
+                            <td className="py-2 text-slate-900 dark:text-white font-medium">Corner Posts (Outside/Inside)</td>
+                            <td className="py-2 text-slate-500">10-ft Flanged Corner Units</td>
+                            <td className="py-2 text-center text-slate-800 dark:text-slate-200 font-bold">{sidingRes.outsideCorners + sidingRes.insideCorners} pcs</td>
+                            <td className="py-2 text-right text-slate-500">${sidingState.cornerPostPrice?.toFixed(2)}</td>
+                            <td className="py-2 text-right font-bold text-slate-900 dark:text-white">${sidingRes.cornersCost.toLocaleString()}</td>
+                          </tr>
+                          <tr>
+                            <td className="py-2 text-slate-900 dark:text-white font-medium">Fasteners (Siding Nails)</td>
+                            <td className="py-2 text-slate-500">5-lb Box 1-1/2" Ring Shank Galv.</td>
+                            <td className="py-2 text-center text-slate-800 dark:text-slate-200 font-bold">{sidingRes.nailBoxes} boxes</td>
+                            <td className="py-2 text-right text-slate-500">${sidingState.sidingNailBoxPrice?.toFixed(2)}</td>
+                            <td className="py-2 text-right font-bold text-slate-900 dark:text-white">${sidingRes.fastenersCost.toLocaleString()}</td>
+                          </tr>
+                          <tr className="bg-slate-50 dark:bg-slate-950 font-bold">
+                            <td className="py-2 text-slate-900 dark:text-white">TOTAL MATERIALS SUB-TOTAL</td>
+                            <td className="py-2 text-slate-500 font-normal">All Siding &amp; Accessories</td>
+                            <td className="py-2 text-center">—</td>
+                            <td className="py-2 text-right">—</td>
+                            <td className="py-2 text-right text-sky-700 dark:text-sky-400">${sidingRes.materialsSubtotal.toLocaleString()}</td>
+                          </tr>
+                          <tr>
+                            <td className="py-2 text-slate-900 dark:text-white font-medium">Siding Installation Labor</td>
+                            <td className="py-2 text-slate-500">Professional Siding Crew</td>
+                            <td className="py-2 text-center text-slate-800 dark:text-slate-200 font-bold">{sidingRes.laborHours} hrs</td>
+                            <td className="py-2 text-right text-slate-500">${sidingState.laborRatePerHour?.toFixed(2)}/hr</td>
+                            <td className="py-2 text-right font-bold text-slate-900 dark:text-white">${sidingRes.laborCost.toLocaleString()}</td>
+                          </tr>
+                          <tr className="bg-sky-50/70 dark:bg-sky-950/40 text-slate-900 dark:text-white font-bold">
+                            <td className="py-2.5 font-sans text-sm">TOTAL ESTIMATED PROJECT COST</td>
+                            <td className="py-2.5 text-slate-500 font-normal">Turnkey Materials &amp; Labor</td>
+                            <td className="py-2.5 text-center">—</td>
+                            <td className="py-2.5 text-right">—</td>
+                            <td className="py-2.5 text-right text-base text-sky-800 dark:text-sky-300">
+                              ${sidingRes.totalEstimatedCost.toLocaleString()}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* IRC 2024 / ASTM D3679 Installation Guide */}
+                  <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-5 bg-white dark:bg-slate-900 space-y-3">
+                    <h4 className="font-bold text-xs uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                      <span>📖</span> IRC 2024 &amp; ASTM D3679 Siding Installation Code
+                    </h4>
+                    <ul className="text-xs text-slate-600 dark:text-slate-400 space-y-2 list-disc list-inside leading-relaxed">
+                      <li>
+                        <strong className="text-slate-800 dark:text-slate-200">Fastening Expansion Gap:</strong> Do not drive nails tight against vinyl siding flanges. Maintain a minimum 1/16" (1.6 mm) gap between the nail head and siding hem to allow free thermal expansion and prevent panel buckling.
+                      </li>
+                      <li>
+                        <strong className="text-slate-800 dark:text-slate-200">Nail Placement:</strong> Drive fasteners straight and level directly into the center of the pre-punched nailing slots at 16" on center into structural wall studs (minimum 3/4" penetration).
+                      </li>
+                      <li>
+                        <strong className="text-slate-800 dark:text-slate-200">Weather Barrier Lapping:</strong> Housewrap (WRB) must be lapped shingle-fashion with minimum 6" horizontal laps and 12" vertical laps. Tape all seams with code-approved acrylic seam tape.
+                      </li>
+                      <li>
+                        <strong className="text-slate-800 dark:text-slate-200">Window &amp; Door Flashing:</strong> Install rigid metal drip cap flashing across window and door heads with leg tucked underneath the weather barrier. Leave 1/4" clearance between J-channel and accessories in warm temperatures (3/8" if below 40°F).
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* Action Buttons Bar */}
+                  <div className="flex flex-wrap items-center gap-3 pt-2 no-print">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        copyTakeoff(
+                          `WANJAARO SIDING & HOUSE WRAP TAKEOFF\n` +
+                          `========================================\n` +
+                          `Gross Wall Area: ${sidingRes.grossWallAreaSqFt} sq ft\n` +
+                          `Openings Deductions: ${sidingRes.deductionsAreaSqFt} sq ft (${sidingState.windowCount} windows, ${sidingState.doorCount} doors)\n` +
+                          `Net Siding Area: ${sidingRes.netWallAreaSqFt} sq ft\n` +
+                          `Siding Squares (${sidingState.wastePct}% waste): ${sidingRes.sidingSquares} sq\n` +
+                          `Packaging Count: ${sidingRes.cartonOrBoardCount} ${sidingRes.unitLabel}\n` +
+                          `Housewrap Rolls (9'x100'): ${sidingRes.houseWrapRolls} rolls\n` +
+                          `Seam Tape Rolls: ${sidingRes.seamTapeRolls} rolls\n` +
+                          `Starter Strip (10ft pcs): ${sidingRes.starterPcs10ft} pcs\n` +
+                          `J-Channel (12ft pcs): ${sidingRes.jChannelPcs12ft} pcs\n` +
+                          `Corner Posts (Outside/Inside): ${sidingRes.outsideCorners} outside / ${sidingRes.insideCorners} inside\n` +
+                          `Fastener Boxes: ${sidingRes.nailBoxes} boxes\n` +
+                          `----------------------------------------\n` +
+                          `Material Subtotal: $${sidingRes.materialsSubtotal.toLocaleString()}\n` +
+                          `Labor Cost (${sidingRes.laborHours} hrs @ $${sidingState.laborRatePerHour}/hr): $${sidingRes.laborCost.toLocaleString()}\n` +
+                          `TOTAL ESTIMATED COST: $${sidingRes.totalEstimatedCost.toLocaleString()} ($${sidingRes.costPerSqFt}/sq ft)`
+                        )
+                      }
+                      className="px-4 py-2 text-xs font-semibold rounded-md bg-sky-700 text-white hover:bg-sky-800 transition-colors cursor-pointer"
+                    >
+                      {copiedText || '📋 Copy Siding Takeoff'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => window.print()}
+                      className="px-4 py-2 text-xs font-semibold rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                    >
+                      🖨 Print Spec Sheet
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setSidingState({
+                          grossWallAreaSqFt: 1800,
+                          windowCount: 8,
+                          windowAvgSqFt: 15,
+                          doorCount: 2,
+                          doorAvgSqFt: 21,
+                          sidingType: 'vinyl_double_4',
+                          outsideCornerFt: 40,
+                          insideCornerFt: 20,
+                          perimeterTrimFt: 140,
+                          wastePct: 10,
+                          sidingSquarePrice: 135.0,
+                          houseWrapRollPrice: 110.0,
+                          starterPricePer10ft: 7.5,
+                          jChannelPricePer12ft: 9.2,
+                          cornerPostPrice: 19.5,
+                          sidingNailBoxPrice: 26.0,
+                          laborRatePerHour: 52.0,
+                          estimatedLaborHours: 42,
+                        })
+                      }
+                      className="px-3 py-2 text-xs text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                    >
+                      ↺ Reset Defaults
+                    </button>
+                  </div>
+
+                  {/* Related Calculators Cross-Navigation */}
+                  <div className="pt-4 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400">
+                    <span className="font-semibold text-slate-700 dark:text-slate-300 mr-2">Related Calculators:</span>
+                    <button
+                      type="button"
+                      onClick={() => switchCalculator('sheathing')}
+                      className="text-sky-700 dark:text-sky-400 hover:underline mr-3 cursor-pointer"
+                    >
+                      Plywood &amp; OSB Sheathing →
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => switchCalculator('vapor-barrier')}
+                      className="text-sky-700 dark:text-sky-400 hover:underline mr-3 cursor-pointer"
+                    >
+                      Vapor Barrier &amp; Retarder →
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => switchCalculator('framing')}
+                      className="text-sky-700 dark:text-sky-400 hover:underline mr-3 cursor-pointer"
+                    >
+                      Wall Framing &amp; Studs →
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => switchCalculator('roofing')}
+                      className="text-sky-700 dark:text-sky-400 hover:underline cursor-pointer"
+                    >
+                      Roofing Shingles →
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
             </>
           )}
 
@@ -5311,34 +6256,63 @@ export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspacePr
         </main>
 
         {/* ============================================================== */}
-        {/* 5. GLOBAL RIGHT AD COLUMN (Desktop lg: 25% screen width) */}
+        {/* 5. GLOBAL RIGHT AD COLUMN (Desktop / Previews min-[860px]) */}
         {/* ============================================================== */}
         <aside
           id="wanjaaro-desktop-right-ad"
           aria-label="Sponsored partner content"
-          className="hidden lg:flex lg:flex-col lg:w-[25%] shrink-0 space-y-6 no-print"
+          className="hidden min-[860px]:flex min-[860px]:flex-col min-[860px]:w-[260px] lg:w-[280px] xl:w-[320px] shrink-0 space-y-6 no-print"
         >
-          <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-4 bg-slate-50/60 dark:bg-slate-900/60 flex flex-col items-center">
+          {/* Slot 1: Native Bridge / CPM Partner */}
+          <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-4 bg-slate-50/70 dark:bg-slate-900/60 flex flex-col items-center min-h-[140px] justify-center text-center">
             <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
-              Sponsored
+              Sponsored Partner
             </span>
-            <div id="container-5ec3c4b0a267d356073051679993785a" className="w-full overflow-hidden"></div>
+            <div id="container-5ec3c4b0a267d356073051679993785a" className="w-full flex justify-center overflow-hidden"></div>
+            <div className="w-full py-2.5 px-3 rounded-lg bg-white/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/60 mt-2">
+              <span className="text-[11px] font-bold text-sky-700 dark:text-sky-400 block">Civil &amp; Structural Calculators</span>
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 block mt-0.5">High-Accuracy Takeoff Tools</span>
+            </div>
           </div>
 
-          <div
-            id="wanjaaro-ad-slot-desktop-sidebar-1"
-            className="border border-slate-200 dark:border-slate-800 rounded-xl p-4 bg-slate-50/60 dark:bg-slate-900/60 flex flex-col items-center justify-center overflow-hidden"
-          ></div>
+          {/* Slot 2: Skyscraper 160x600 Frame */}
+          <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-4 bg-slate-50/70 dark:bg-slate-900/60 flex flex-col items-center justify-center min-h-[640px] relative overflow-hidden">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
+              Advertisement (160×600)
+            </span>
+            <div
+              id="wanjaaro-ad-slot-desktop-sidebar-1"
+              className="w-[160px] min-h-[600px] flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-800/50 rounded border border-dashed border-slate-300 dark:border-slate-700 overflow-hidden"
+            >
+              <div className="p-3 text-center text-slate-400 dark:text-slate-500 text-[11px] space-y-2">
+                <div className="w-10 h-10 mx-auto rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 font-bold">Ad</div>
+                <div className="font-semibold text-slate-600 dark:text-slate-300">Commercial Contractor Tools</div>
+                <div className="text-[10px] leading-tight text-slate-400">Direct material wholesale rates &amp; estimating resources</div>
+              </div>
+            </div>
+          </div>
 
-          <div
-            id="wanjaaro-ad-slot-desktop-sidebar-2"
-            className="border border-slate-200 dark:border-slate-800 rounded-xl p-4 bg-slate-50/60 dark:bg-slate-900/60 flex flex-col items-center justify-center overflow-hidden"
-          ></div>
+          {/* Slot 3: Box 160x300 Frame */}
+          <div className="border border-slate-200 dark:border-slate-800 rounded-xl p-4 bg-slate-50/70 dark:bg-slate-900/60 flex flex-col items-center justify-center min-h-[340px] relative overflow-hidden">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-2">
+              Advertisement (160×300)
+            </span>
+            <div
+              id="wanjaaro-ad-slot-desktop-sidebar-2"
+              className="w-[160px] min-h-[300px] flex flex-col items-center justify-center bg-slate-100 dark:bg-slate-800/50 rounded border border-dashed border-slate-300 dark:border-slate-700 overflow-hidden"
+            >
+              <div className="p-3 text-center text-slate-400 dark:text-slate-500 text-[11px] space-y-2">
+                <div className="w-8 h-8 mx-auto rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 font-bold">W</div>
+                <div className="font-semibold text-slate-600 dark:text-slate-300">Wanjaaro Partners</div>
+                <div className="text-[10px] leading-tight text-slate-400">Verified civil &amp; structural takeoff guides</div>
+              </div>
+            </div>
+          </div>
         </aside>
       </div>
 
       {/* ============================================================== */}
-      {/* 6. COMPREHENSIVE FOOTER */}
+      {/* 6. COMPREHENSIVE 4-COLUMN FOOTER */}
       {/* ============================================================== */}
       <footer className="border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 mt-12 py-10 px-4 sm:px-6 text-xs text-slate-600 dark:text-slate-400 no-print">
         <div className="max-w-[1440px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -5362,7 +6336,7 @@ export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspacePr
             </p>
           </div>
 
-          {/* Column 2: Masonry & Foundation (Part 1 - 5 links) */}
+          {/* Column 2: Masonry & Foundation (5 links) */}
           <div className="space-y-2.5">
             <h4 className="font-bold uppercase tracking-wider text-[11px] text-slate-900 dark:text-slate-200">
               Masonry &amp; Foundation
@@ -5416,10 +6390,10 @@ export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspacePr
             </ul>
           </div>
 
-          {/* Column 3: Framing & Openings (Part 2 - 5 links) */}
+          {/* Column 3: Framing, Openings & Siding (5 links) */}
           <div className="space-y-2.5">
             <h4 className="font-bold uppercase tracking-wider text-[11px] text-slate-900 dark:text-slate-200">
-              Framing &amp; Openings
+              Framing &amp; Exterior
             </h4>
             <ul className="space-y-2">
               <li>
@@ -5460,6 +6434,24 @@ export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspacePr
               </li>
               <li>
                 <a
+                  href="/siding-material-calculator"
+                  onClick={(e) => { e.preventDefault(); switchCalculator('siding-material'); }}
+                  className="hover:text-sky-700 dark:hover:text-sky-400 hover:underline transition-colors font-medium text-sky-700 dark:text-sky-400 block text-left"
+                >
+                  ★ Siding Material &amp; House Wrap
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 4: Finishes & Turnkey Cost (5 links + Home) */}
+          <div className="space-y-2.5">
+            <h4 className="font-bold uppercase tracking-wider text-[11px] text-slate-900 dark:text-slate-200">
+              Finishes &amp; Turnkey Cost
+            </h4>
+            <ul className="space-y-2">
+              <li>
+                <a
                   href="/drywall-calculator"
                   onClick={(e) => { e.preventDefault(); switchCalculator('drywall'); }}
                   className="hover:text-sky-700 dark:hover:text-sky-400 hover:underline transition-colors block text-left"
@@ -5467,15 +6459,6 @@ export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspacePr
                   Drywall &amp; Sheetrock
                 </a>
               </li>
-            </ul>
-          </div>
-
-          {/* Column 4: Finishes & Turnkey Cost (Part 3 - 5 links) */}
-          <div className="space-y-2.5">
-            <h4 className="font-bold uppercase tracking-wider text-[11px] text-slate-900 dark:text-slate-200">
-              Finishes &amp; Turnkey Cost
-            </h4>
-            <ul className="space-y-2">
               <li>
                 <a
                   href="/paint-calculator"
@@ -5512,11 +6495,11 @@ export default function BuildingWorkspace({ initialCalcId }: BuildingWorkspacePr
                   Construction Cost &amp; Budget
                 </a>
               </li>
-              <li>
+              <li className="pt-1 border-t border-slate-200 dark:border-slate-800">
                 <a
                   href="/"
                   onClick={(e) => { e.preventDefault(); switchCalculator('home'); }}
-                  className="hover:text-sky-700 dark:hover:text-sky-400 hover:underline transition-colors font-medium block text-left"
+                  className="hover:text-sky-700 dark:hover:text-sky-400 hover:underline transition-colors font-semibold text-slate-800 dark:text-slate-200 block text-left"
                 >
                   ← All Calculators (Home)
                 </a>

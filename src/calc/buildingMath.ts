@@ -7,9 +7,9 @@
 export const CALCULATOR_CATEGORIES = [
   {
     id: 'concrete-masonry',
-    name: 'Concrete & Masonry',
-    shortName: 'Concrete',
-    description: 'Slabs, footings, post holes, bricks, blocks, and mortar',
+    name: 'Concrete, Masonry & Reinforcement',
+    shortName: 'Concrete & Masonry',
+    description: 'Slabs, footings, rebar grid, bricks, CMU blocks, and vapor retarders',
     calculators: [
       {
         id: 'concrete',
@@ -19,6 +19,15 @@ export const CALCULATOR_CATEGORIES = [
         badge: 'Cubic Yards & Bags',
         summary: 'Calculate volume in cubic yards, pre-mixed bags (40, 60, 80 lb), and rebar grid requirements.',
         lastmod: '2026-10-13',
+      },
+      {
+        id: 'rebar-mesh',
+        slug: 'rebar-mesh-calculator',
+        name: 'Concrete Rebar & Wire Mesh Calculator',
+        shortTitle: 'Rebar & Mesh',
+        badge: 'Sticks, Ties & Chairs',
+        summary: 'Calculate rebar grid linear footage, 20-foot sticks (#3, #4, #5, #6), lap splices, support chairs, and welded wire mesh rolls.',
+        lastmod: '2026-10-19',
       },
       {
         id: 'brick-mortar',
@@ -51,9 +60,9 @@ export const CALCULATOR_CATEGORIES = [
   },
   {
     id: 'framing-lumber',
-    name: 'Framing & Lumber',
-    shortName: 'Framing',
-    description: 'Wall studs, plates, headers, stairs, door frames, garage doors, and sheathing',
+    name: 'Framing, Openings & Decks',
+    shortName: 'Framing & Lumber',
+    description: 'Wall studs, plates, headers, stairs, door frames, garage doors, deck lumber, and sheathing',
     calculators: [
       {
         id: 'framing',
@@ -92,6 +101,15 @@ export const CALCULATOR_CATEGORIES = [
         lastmod: '2026-10-15',
       },
       {
+        id: 'deck',
+        slug: 'deck-calculator',
+        name: 'Deck & Patio Framing Calculator',
+        shortTitle: 'Deck Framing',
+        badge: 'Joists, Beams & Piers',
+        summary: 'Calculate ledger boards, joist layout, beam lumber, post count, frost pier footings, decking boards, and hardware takeoff.',
+        lastmod: '2026-10-19',
+      },
+      {
         id: 'sheathing',
         slug: 'sheathing-calculator',
         name: 'Plywood & OSB Sheathing Calculator',
@@ -103,10 +121,107 @@ export const CALCULATOR_CATEGORIES = [
     ],
   },
   {
-    id: 'drywall-paint',
-    name: 'Drywall & Paint',
-    shortName: 'Drywall & Paint',
-    description: 'Sheetrock boards, joint compound, primer, and wall paint',
+    id: 'earthwork-paving',
+    name: 'Earthwork, Aggregates & Paving',
+    shortName: 'Earthwork & Paving',
+    description: 'Excavation, trenching, gravel sub-bases, retaining walls, and asphalt paving',
+    calculators: [
+      {
+        id: 'gravel',
+        slug: 'gravel-calculator',
+        name: 'Gravel, Sand & Aggregate Base Calculator',
+        shortTitle: 'Gravel & Sand',
+        badge: 'Tons & Truckloads',
+        summary: 'Calculate crushed stone, gravel, and sand volumes in cubic yards and tons with compaction factor and dump truck delivery loads.',
+        lastmod: '2026-10-19',
+      },
+      {
+        id: 'retaining-wall',
+        slug: 'retaining-wall-calculator',
+        name: 'Retaining Wall Block & Geogrid Calculator',
+        shortTitle: 'Retaining Wall',
+        badge: 'SRW Blocks & Geogrid',
+        summary: 'Calculate segmental retaining wall blocks, buried base course, drainage gravel backfill, geogrid reinforcement, and cap units.',
+        lastmod: '2026-10-19',
+      },
+      {
+        id: 'excavation',
+        slug: 'excavation-calculator',
+        name: 'Excavation & Trench Earthwork Calculator',
+        shortTitle: 'Excavation & Trench',
+        badge: 'Cubic Yards & Swell',
+        summary: 'Calculate bank cubic yards, loose swell volume, OSHA layback slopes, dump truck cycles, and excavator machine hours.',
+        lastmod: '2026-10-19',
+      },
+      {
+        id: 'asphalt-paving',
+        slug: 'asphalt-paving-calculator',
+        name: 'Asphalt Driveway & Paving Cost Calculator',
+        shortTitle: 'Asphalt Paving',
+        badge: 'HMA Tons & Base',
+        summary: 'Calculate hot-mix asphalt (HMA) tons, stone sub-base, tack coat primer, roller hours, and square foot paving contractor costs.',
+        lastmod: '2026-10-19',
+      },
+    ],
+  },
+  {
+    id: 'envelope-exterior',
+    name: 'Exterior Envelope, Siding & Roofing',
+    shortName: 'Envelope & Roofing',
+    description: 'Roofing shingles, siding, soffit, gutters, fencing, and thermal insulation',
+    calculators: [
+      {
+        id: 'roofing',
+        slug: 'roofing-calculator',
+        name: 'Roofing Shingle & Pitch Calculator',
+        shortTitle: 'Roof Shingles',
+        badge: 'Squares & Bundles',
+        summary: 'Calculate roofing squares, architectural bundles, pitch multipliers, felt, and ridge caps.',
+        lastmod: '2026-10-06',
+      },
+      {
+        id: 'siding-material',
+        slug: 'siding-material-calculator',
+        name: 'Siding Material & House Wrap Calculator',
+        shortTitle: 'Siding Material',
+        badge: 'Squares, Trim & Tyvek',
+        summary: 'Calculate siding squares (vinyl, fiber cement, cedar, board & batten), starter strips, J-channels, corner posts, and housewrap.',
+        lastmod: '2026-10-21',
+      },
+      {
+        id: 'soffit-gutter',
+        slug: 'soffit-fascia-gutter-calculator',
+        name: 'Soffit, Fascia & Seamless Gutter Calculator',
+        shortTitle: 'Soffit & Gutters',
+        badge: 'Gutters & Downspouts',
+        summary: 'Calculate vented soffit panels, pre-bent fascia covers, seamless K-style gutters, downspouts, elbows, and hidden screw hangers.',
+        lastmod: '2026-10-19',
+      },
+      {
+        id: 'fence',
+        slug: 'fence-calculator',
+        name: 'Fence Material & Post Spacing Calculator',
+        shortTitle: 'Fence & Posts',
+        badge: 'Pickets, Rails & Bags',
+        summary: 'Calculate line/corner posts, concrete bags per hole, 2x4 horizontal rails, dog-ear pickets, and gate hardware for privacy fences.',
+        lastmod: '2026-10-19',
+      },
+      {
+        id: 'insulation',
+        slug: 'insulation-calculator',
+        name: 'Insulation R-Value & Batt/Blow Calculator',
+        shortTitle: 'Insulation',
+        badge: 'R-Value, Batts & Bags',
+        summary: 'Calculate fiberglass batts, blown-in cellulose/fiberglass bag counts, and rigid foam boards for attics, exterior walls, and crawlspaces.',
+        lastmod: '2026-10-19',
+      },
+    ],
+  },
+  {
+    id: 'cost-budget',
+    name: 'Interior Finishes & Project Budget',
+    shortName: 'Finishes & Budget',
+    description: 'Drywall, paint coverage, tile flooring, and comprehensive construction cost estimation',
     calculators: [
       {
         id: 'drywall',
@@ -126,23 +241,6 @@ export const CALCULATOR_CATEGORIES = [
         summary: 'Estimate gallons of wall/ceiling paint and primer with window and door deduction.',
         lastmod: '2026-10-07',
       },
-    ],
-  },
-  {
-    id: 'roofing-flooring',
-    name: 'Roofing & Flooring',
-    shortName: 'Roof & Floor',
-    description: 'Shingles, pitch multiplier, tile layout, and grout weight',
-    calculators: [
-      {
-        id: 'roofing',
-        slug: 'roofing-calculator',
-        name: 'Roofing Shingle & Pitch Calculator',
-        shortTitle: 'Roof Shingles',
-        badge: 'Squares & Bundles',
-        summary: 'Calculate roofing squares, architectural bundles, pitch multipliers, felt, and ridge caps.',
-        lastmod: '2026-10-06',
-      },
       {
         id: 'flooring-tile',
         slug: 'flooring-tile-calculator',
@@ -152,14 +250,6 @@ export const CALCULATOR_CATEGORIES = [
         summary: 'Calculate square footage, tile boxes with waste, grout weight (lbs), and thin-set bags.',
         lastmod: '2026-10-05',
       },
-    ],
-  },
-  {
-    id: 'cost-budget',
-    name: 'Cost Estimator',
-    shortName: 'Cost Estimator',
-    description: 'Comprehensive construction budget, labor, markup, and contingency',
-    calculators: [
       {
         id: 'construction-cost',
         slug: 'construction-cost-calculator',
@@ -1356,5 +1446,913 @@ export function calculateDoorFrame(input: DoorFrameInput) {
     materialsSubtotal,
     laborCost,
     totalEstimatedCost,
+  };
+}
+
+// ============================================================================
+// 15. Concrete Rebar & Wire Mesh Calculator
+// ============================================================================
+export interface RebarMeshInput {
+  slabLengthFt: number;
+  slabWidthFt: number;
+  reinforcementType: 'rebar_grid' | 'wire_mesh' | 'both';
+  rebarSize: '#3' | '#4' | '#5' | '#6';
+  gridSpacingIn: number;
+  edgeClearanceIn: number;
+  lapSpliceIn: number;
+  meshType: 'roll_5x150' | 'sheet_8x15';
+  wastePct: number;
+  rebarStick20ftPrice?: number;
+  meshUnitPrice?: number;
+  chairPrice?: number;
+  tieWireRollPrice?: number;
+  laborRatePerHour?: number;
+  estimatedLaborHours?: number;
+}
+
+export function calculateRebarMesh(input: RebarMeshInput) {
+  const lengthFt = Math.max(1, Number(input.slabLengthFt) || 30);
+  const widthFt = Math.max(1, Number(input.slabWidthFt) || 24);
+  const gridSpacing = Math.max(6, Number(input.gridSpacingIn) || 18);
+  const edgeClearance = Math.max(1, Number(input.edgeClearanceIn) || 2);
+  const lapSplice = Math.max(6, Number(input.lapSpliceIn) || 16);
+  const waste = Math.max(0, Number(input.wastePct) || 10);
+
+  const slabAreaSqFt = lengthFt * widthFt;
+  const effLengthIn = Math.max(12, (lengthFt * 12) - (2 * edgeClearance));
+  const effWidthIn = Math.max(12, (widthFt * 12) - (2 * edgeClearance));
+
+  const numLongBars = Math.floor(effWidthIn / gridSpacing) + 1;
+  const numTransBars = Math.floor(effLengthIn / gridSpacing) + 1;
+
+  const longSplices = Math.floor(lengthFt / 20);
+  const transSplices = Math.floor(widthFt / 20);
+
+  const longLinFtPerRun = lengthFt + (longSplices * (lapSplice / 12));
+  const transLinFtPerRun = widthFt + (transSplices * (lapSplice / 12));
+
+  const rawRebarLinFt = (numLongBars * longLinFtPerRun) + (numTransBars * transLinFtPerRun);
+  const totalRebarLinFt = Math.ceil(rawRebarLinFt * (1 + waste / 100));
+  const rebar20ftSticks = Math.ceil(totalRebarLinFt / 20);
+
+  const unitWeights: Record<string, number> = {
+    '#3': 0.376,
+    '#4': 0.668,
+    '#5': 1.043,
+    '#6': 1.502,
+  };
+  const unitWeight = unitWeights[input.rebarSize] || 0.668;
+  const totalRebarWeightLbs = Math.round(totalRebarLinFt * unitWeight);
+
+  const chairCount = Math.ceil(slabAreaSqFt / 8);
+  const intersections = numLongBars * numTransBars;
+  const tieWireRolls = Math.max(1, Math.ceil(intersections / 900));
+
+  let meshUnits = 0;
+  if (input.reinforcementType === 'wire_mesh' || input.reinforcementType === 'both') {
+    if (input.meshType === 'sheet_8x15') {
+      meshUnits = Math.ceil((slabAreaSqFt * 1.15) / 120);
+    } else {
+      meshUnits = Math.ceil((slabAreaSqFt * 1.12) / 750);
+    }
+  }
+
+  const rebarPrice = Number(input.rebarStick20ftPrice) || 11.50;
+  const meshPrice = Number(input.meshUnitPrice) || (input.meshType === 'sheet_8x15' ? 24.00 : 125.00);
+  const chairPrice = Number(input.chairPrice) || 0.65;
+  const tiePrice = Number(input.tieWireRollPrice) || 12.00;
+  const laborRate = Number(input.laborRatePerHour) || 48.00;
+  const laborHours = Number(input.estimatedLaborHours) || Math.max(2, Math.round((slabAreaSqFt / 180) * 10) / 10);
+
+  let rebarCost = 0;
+  if (input.reinforcementType !== 'wire_mesh') {
+    rebarCost = Math.round(rebar20ftSticks * rebarPrice);
+  }
+  let meshCost = 0;
+  if (input.reinforcementType !== 'rebar_grid') {
+    meshCost = Math.round(meshUnits * meshPrice);
+  }
+  const accessoriesCost = Math.round((chairCount * chairPrice) + (tieWireRolls * tiePrice));
+  const materialsSubtotal = rebarCost + meshCost + accessoriesCost;
+  const laborCost = Math.round(laborHours * laborRate);
+  const totalEstimatedCost = materialsSubtotal + laborCost;
+
+  return {
+    valid: true,
+    slabAreaSqFt,
+    numLongBars,
+    numTransBars,
+    totalRebarLinFt,
+    rebar20ftSticks,
+    rebarSize: input.rebarSize,
+    totalRebarWeightLbs,
+    chairCount,
+    intersections,
+    tieWireRolls,
+    meshUnits,
+    meshType: input.meshType,
+    reinforcementType: input.reinforcementType,
+    rebarCost,
+    meshCost,
+    accessoriesCost,
+    materialsSubtotal,
+    laborHours,
+    laborCost,
+    totalEstimatedCost,
+  };
+}
+
+// ============================================================================
+// 16. Deck & Patio Framing Calculator
+// ============================================================================
+export interface DeckInput {
+  lengthFt: number;
+  widthFt: number;
+  heightFt: number;
+  joistSpacingIn: 12 | 16 | 24;
+  beamType: 'double_2x10' | 'double_2x12' | 'triple_2x10';
+  deckingType: 'pt_wood_54' | 'composite_trex' | 'cedar_2x6';
+  postSpacingFt: number;
+  wastePct: number;
+  deckingBoardPrice?: number;
+  joistPrice?: number;
+  beamBoardPrice?: number;
+  postPrice?: number;
+  concreteBagPrice?: number;
+  hardwareLumpSum?: number;
+  laborRatePerHour?: number;
+  estimatedLaborHours?: number;
+}
+
+export function calculateDeck(input: DeckInput) {
+  const lengthFt = Math.max(4, Number(input.lengthFt) || 16);
+  const widthFt = Math.max(4, Number(input.widthFt) || 12);
+  const heightFt = Math.max(1, Number(input.heightFt) || 4);
+  const spacingIn = Number(input.joistSpacingIn) || 16;
+  const postSpan = Math.max(4, Number(input.postSpacingFt) || 8);
+  const waste = Math.max(0, Number(input.wastePct) || 10);
+
+  const deckAreaSqFt = lengthFt * widthFt;
+  const ledgerBoards16ft = Math.ceil(lengthFt / 16);
+  const joistCount = Math.ceil((lengthFt * 12) / spacingIn) + 2; // includes 2 rim joists
+  const joistLengthFt = Math.ceil(widthFt);
+
+  const beamPiles = input.beamType === 'triple_2x10' ? 3 : 2;
+  const beamBoards16ft = Math.ceil((lengthFt * beamPiles) / 16);
+
+  const postCount = Math.ceil(lengthFt / postSpan) + 1;
+  const concreteBags60lb = postCount * 3; // 3 bags 60lb per 10"x36" footing
+
+  // 5.5" board + 1/8" gap = 5.625"
+  const deckingRows = Math.ceil((widthFt * 12) / 5.625);
+  const deckingLinFt = Math.ceil(deckingRows * lengthFt * (1 + waste / 100));
+  const deckingBoards16ft = Math.ceil(deckingLinFt / 16);
+
+  const joistHangers = joistCount * 2;
+  const screwBuckets5lb = Math.max(1, Math.ceil(deckAreaSqFt / 220));
+
+  const deckingPrice = Number(input.deckingBoardPrice) || (input.deckingType === 'composite_trex' ? 44.00 : 16.50);
+  const joistPrice = Number(input.joistPrice) || 18.50;
+  const beamPrice = Number(input.beamBoardPrice) || 26.00;
+  const postPrice = Number(input.postPrice) || (heightFt > 6 ? 48.00 : 32.00);
+  const concretePrice = Number(input.concreteBagPrice) || 5.85;
+  const hardwareCost = Number(input.hardwareLumpSum) || Math.round(deckAreaSqFt * 1.25);
+  const laborRate = Number(input.laborRatePerHour) || 55.00;
+  const laborHours = Number(input.estimatedLaborHours) || Math.max(8, Math.round(deckAreaSqFt * 0.16));
+
+  const deckingCost = Math.round(deckingBoards16ft * deckingPrice);
+  const framingLumberCost = Math.round((joistCount * joistPrice) + (beamBoards16ft * beamPrice) + (ledgerBoards16ft * beamPrice * 0.8));
+  const postsFootingsCost = Math.round((postCount * postPrice) + (concreteBags60lb * concretePrice));
+
+  const materialsSubtotal = deckingCost + framingLumberCost + postsFootingsCost + hardwareCost;
+  const laborCost = Math.round(laborHours * laborRate);
+  const totalEstimatedCost = materialsSubtotal + laborCost;
+
+  return {
+    valid: true,
+    deckAreaSqFt,
+    ledgerBoards16ft,
+    joistCount,
+    joistLengthFt,
+    beamBoards16ft,
+    beamType: input.beamType,
+    postCount,
+    concreteBags60lb,
+    deckingBoards16ft,
+    deckingType: input.deckingType,
+    deckingLinFt,
+    joistHangers,
+    screwBuckets5lb,
+    deckingCost,
+    framingLumberCost,
+    postsFootingsCost,
+    hardwareCost,
+    materialsSubtotal,
+    laborHours,
+    laborCost,
+    totalEstimatedCost,
+  };
+}
+
+// ============================================================================
+// 17. Gravel, Sand & Aggregate Base Calculator
+// ============================================================================
+export interface GravelInput {
+  shape: 'rectangle' | 'circle';
+  lengthFt: number;
+  widthFt: number;
+  diameterFt?: number;
+  depthIn: number;
+  materialType: 'crushed_stone_57' | 'dense_grade_crusher_run' | 'pea_gravel' | 'washed_sand' | 'river_rock' | 'topsoil';
+  compactionFactorPct: number;
+  wastePct: number;
+  truckCapacityTons: number;
+  pricePerTon?: number;
+  deliveryFeePerLoad?: number;
+  laborRatePerHour?: number;
+  spreadingHours?: number;
+}
+
+export function calculateGravel(input: GravelInput) {
+  const isCircle = input.shape === 'circle';
+  const lengthFt = Math.max(1, Number(input.lengthFt) || 40);
+  const widthFt = Math.max(1, Number(input.widthFt) || 12);
+  const diameterFt = Math.max(1, Number(input.diameterFt) || widthFt);
+  const depthIn = Math.max(0.5, Number(input.depthIn) || 4);
+  const compactionPct = Math.max(0, Number(input.compactionFactorPct) || 15);
+  const wastePct = Math.max(0, Number(input.wastePct) || 5);
+  const truckCapacity = Math.max(5, Number(input.truckCapacityTons) || 15);
+
+  const areaSqFt = isCircle ? Math.PI * Math.pow(diameterFt / 2, 2) : lengthFt * widthFt;
+  const rawCuFt = areaSqFt * (depthIn / 12);
+  const rawCuYd = Math.round((rawCuFt / 27) * 100) / 100;
+
+  const compactionMultiplier = (1 + compactionPct / 100) * (1 + wastePct / 100);
+  const totalCompactedCuYd = Math.round(rawCuYd * compactionMultiplier * 100) / 100;
+
+  const densities: Record<string, number> = {
+    crushed_stone_57: 1.35,
+    dense_grade_crusher_run: 1.55,
+    pea_gravel: 1.42,
+    washed_sand: 1.35,
+    river_rock: 1.40,
+    topsoil: 1.10,
+  };
+  const densityTonsPerYd = densities[input.materialType] || 1.35;
+  const totalTons = Math.round(totalCompactedCuYd * densityTonsPerYd * 10) / 10;
+  const truckLoads = Math.ceil(totalTons / truckCapacity);
+
+  const pricePerTon = Number(input.pricePerTon) || 38.00;
+  const deliveryFee = Number(input.deliveryFeePerLoad) || 95.00;
+  const laborRate = Number(input.laborRatePerHour) || 45.00;
+  const laborHours = Number(input.spreadingHours) || Math.max(2, Math.round((totalTons / 3.5) * 10) / 10);
+
+  const materialsCost = Math.round(totalTons * pricePerTon);
+  const deliveryCost = Math.round(truckLoads * deliveryFee);
+  const laborCost = Math.round(laborHours * laborRate);
+  const totalEstimatedCost = materialsCost + deliveryCost + laborCost;
+
+  return {
+    valid: true,
+    areaSqFt: Math.round(areaSqFt),
+    rawCuYd,
+    totalCompactedCuYd,
+    totalTons,
+    truckLoads,
+    densityTonsPerYd,
+    materialType: input.materialType,
+    materialsCost,
+    deliveryCost,
+    laborHours,
+    laborCost,
+    totalEstimatedCost,
+  };
+}
+
+// ============================================================================
+// 18. Retaining Wall Block & Geogrid Calculator
+// ============================================================================
+export interface RetainingWallInput {
+  lengthFt: number;
+  exposedHeightFt: number;
+  blockType: 'standard_srw' | 'compact_srw' | 'jumbo_srw';
+  buriedBaseIn: number;
+  drainageGravelWidthFt: number;
+  wastePct: number;
+  blockUnitPrice?: number;
+  capUnitPrice?: number;
+  drainGravelPricePerTon?: number;
+  drainPipePricePerFt?: number;
+  geogridPricePerRoll?: number;
+  laborRatePerHour?: number;
+  estimatedLaborHours?: number;
+}
+
+export function calculateRetainingWall(input: RetainingWallInput) {
+  const lengthFt = Math.max(2, Number(input.lengthFt) || 30);
+  const exposedHeightFt = Math.max(1, Number(input.exposedHeightFt) || 3.5);
+  const buriedIn = Math.max(4, Number(input.buriedBaseIn) || 6);
+  const drainWidthFt = Math.max(0.5, Number(input.drainageGravelWidthFt) || 1.0);
+  const waste = Math.max(0, Number(input.wastePct) || 5);
+
+  const totalHeightFt = exposedHeightFt + (buriedIn / 12);
+  const wallFaceSqFt = Math.round(lengthFt * totalHeightFt * 10) / 10;
+
+  const blockSpecs = {
+    standard_srw: { widthIn: 18, heightIn: 8, faceSqFt: 1.0, weightLbs: 75, price: 6.85 },
+    compact_srw: { widthIn: 12, heightIn: 6, faceSqFt: 0.5, weightLbs: 35, price: 3.95 },
+    jumbo_srw: { widthIn: 18, heightIn: 6, faceSqFt: 0.75, weightLbs: 60, price: 5.75 },
+  };
+  const spec = blockSpecs[input.blockType] || blockSpecs.standard_srw;
+
+  const courses = Math.ceil((totalHeightFt * 12) / spec.heightIn);
+  const blocksPerCourse = Math.ceil((lengthFt * 12) / spec.widthIn);
+  const totalBlocks = Math.ceil(courses * blocksPerCourse * (1 + waste / 100));
+  const capBlocks = Math.ceil((lengthFt * 12) / spec.widthIn);
+
+  // Base leveling gravel (6" thick x 24" wide)
+  const baseGravelCuYd = (lengthFt * 2.0 * 0.5) / 27;
+  const baseGravelTons = Math.round(baseGravelCuYd * 1.45 * 10) / 10;
+
+  // Drainage chimney gravel behind wall
+  const drainGravelCuYd = (lengthFt * drainWidthFt * exposedHeightFt) / 27;
+  const drainGravelTons = Math.round(drainGravelCuYd * 1.40 * 10) / 10;
+
+  const drainPipeLF = Math.ceil(lengthFt + 10);
+
+  // Geogrid reinforcement if exposed height > 3ft
+  let geogridLayers = 0;
+  let geogridRolls = 0;
+  if (exposedHeightFt > 3.0) {
+    geogridLayers = Math.max(1, Math.floor(exposedHeightFt / 1.5));
+    const embedLengthFt = Math.max(4.0, exposedHeightFt * 0.8);
+    const geogridSqFt = geogridLayers * lengthFt * embedLengthFt;
+    geogridRolls = Math.ceil(geogridSqFt / 200); // 4x50ft rolls
+  }
+
+  const blockPrice = Number(input.blockUnitPrice) || spec.price;
+  const capPrice = Number(input.capUnitPrice) || 4.25;
+  const gravelPrice = Number(input.drainGravelPricePerTon) || 38.00;
+  const pipePrice = Number(input.drainPipePricePerFt) || 1.85;
+  const geogridPrice = Number(input.geogridPricePerRoll) || 68.00;
+  const laborRate = Number(input.laborRatePerHour) || 52.00;
+  const laborHours = Number(input.estimatedLaborHours) || Math.max(6, Math.round(totalBlocks * 0.25));
+
+  const blocksCost = Math.round(totalBlocks * blockPrice);
+  const capsCost = Math.round(capBlocks * capPrice);
+  const gravelCost = Math.round((baseGravelTons + drainGravelTons) * gravelPrice);
+  const drainPipeCost = Math.round(drainPipeLF * pipePrice);
+  const geogridCost = Math.round(geogridRolls * geogridPrice);
+
+  const materialsSubtotal = blocksCost + capsCost + gravelCost + drainPipeCost + geogridCost;
+  const laborCost = Math.round(laborHours * laborRate);
+  const totalEstimatedCost = materialsSubtotal + laborCost;
+
+  return {
+    valid: true,
+    totalHeightFt: Math.round(totalHeightFt * 10) / 10,
+    wallFaceSqFt,
+    courses,
+    blocksPerCourse,
+    totalBlocks,
+    capBlocks,
+    baseGravelTons,
+    drainGravelTons,
+    drainPipeLF,
+    geogridLayers,
+    geogridRolls,
+    blockType: input.blockType,
+    blocksCost,
+    capsCost,
+    gravelCost,
+    materialsSubtotal,
+    laborHours,
+    laborCost,
+    totalEstimatedCost,
+  };
+}
+
+// ============================================================================
+// 19. Excavation & Trench Earthwork Calculator
+// ============================================================================
+export interface ExcavationInput {
+  projectType: 'trench' | 'basement' | 'grading';
+  lengthFt: number;
+  widthFt: number;
+  depthFt: number;
+  soilType: 'type_a_clay' | 'type_b_silt' | 'type_c_sand' | 'rock';
+  truckCapacityCuYd: number;
+  machineType: 'mini_excavator' | 'backhoe' | 'excavator_20ton';
+  hourlyMachineRate?: number;
+  hourlyOperatorRate?: number;
+  haulingFeePerTrip?: number;
+}
+
+export function calculateExcavation(input: ExcavationInput) {
+  const lengthFt = Math.max(1, Number(input.lengthFt) || 80);
+  const widthFt = Math.max(1, Number(input.widthFt) || 2.5);
+  const depthFt = Math.max(0.5, Number(input.depthFt) || 4);
+  const truckCapacity = Math.max(5, Number(input.truckCapacityCuYd) || 12);
+
+  // Bank Layback (OSHA)
+  const laybackRatios: Record<string, number> = {
+    type_a_clay: 0.75,
+    type_b_silt: 1.0,
+    type_c_sand: 1.5,
+    rock: 0.0,
+  };
+  const layback = depthFt > 5 && input.projectType !== 'grading' ? (laybackRatios[input.soilType] || 1.0) : 0;
+  const topWidthFt = widthFt + (2 * layback * depthFt);
+  const avgWidthFt = (widthFt + topWidthFt) / 2;
+
+  const bankCuFt = lengthFt * avgWidthFt * depthFt;
+  const bankCuYd = Math.round((bankCuFt / 27) * 10) / 10;
+
+  const swellPcts: Record<string, number> = {
+    type_a_clay: 25,
+    type_b_silt: 20,
+    type_c_sand: 15,
+    rock: 50,
+  };
+  const swellPct = swellPcts[input.soilType] || 20;
+  const looseCuYd = Math.round(bankCuYd * (1 + swellPct / 100) * 10) / 10;
+  const totalTons = Math.round(bankCuYd * 1.35 * 10) / 10;
+  const dumpTruckTrips = Math.ceil(looseCuYd / truckCapacity);
+
+  const productionRates: Record<string, number> = {
+    mini_excavator: 16,
+    backhoe: 30,
+    excavator_20ton: 65,
+  };
+  const prodRate = productionRates[input.machineType] || 25;
+  const machineHours = Math.round((looseCuYd / prodRate) * 10) / 10;
+
+  const machineRate = Number(input.hourlyMachineRate) || (input.machineType === 'excavator_20ton' ? 165.00 : 85.00);
+  const operatorRate = Number(input.hourlyOperatorRate) || 55.00;
+  const haulFee = Number(input.haulingFeePerTrip) || 85.00;
+
+  const equipmentCost = Math.round(machineHours * machineRate);
+  const laborCost = Math.round(machineHours * operatorRate);
+  const haulingCost = Math.round(dumpTruckTrips * haulFee);
+  const totalEstimatedCost = equipmentCost + laborCost + haulingCost;
+
+  return {
+    valid: true,
+    topWidthFt: Math.round(topWidthFt * 10) / 10,
+    bankCuYd,
+    looseCuYd,
+    totalTons,
+    dumpTruckTrips,
+    machineHours,
+    soilType: input.soilType,
+    machineType: input.machineType,
+    equipmentCost,
+    laborCost,
+    haulingCost,
+    totalEstimatedCost,
+  };
+}
+
+// ============================================================================
+// 20. Asphalt Driveway & Paving Cost Calculator
+// ============================================================================
+export interface AsphaltPavingInput {
+  lengthFt: number;
+  widthFt: number;
+  asphaltThicknessIn: number;
+  baseThicknessIn: number;
+  projectType: 'driveway_new' | 'driveway_overlay' | 'parking_commercial';
+  wastePct: number;
+  asphaltPricePerTon?: number;
+  aggregateBasePricePerTon?: number;
+  tackCoatPricePerGal?: number;
+  laborRatePerSqFt?: number;
+}
+
+export function calculateAsphaltPaving(input: AsphaltPavingInput) {
+  const lengthFt = Math.max(10, Number(input.lengthFt) || 50);
+  const widthFt = Math.max(4, Number(input.widthFt) || 12);
+  const asphaltThick = Math.max(1.5, Number(input.asphaltThicknessIn) || 2.5);
+  const baseThick = Math.max(0, Number(input.baseThicknessIn) || 6);
+  const waste = Math.max(0, Number(input.wastePct) || 6);
+
+  const areaSqFt = lengthFt * widthFt;
+  const asphaltCuFt = areaSqFt * (asphaltThick / 12);
+  // Asphalt density ~145 lbs/cu ft
+  const rawAsphaltTons = (asphaltCuFt * 145) / 2000;
+  const totalAsphaltTons = Math.round(rawAsphaltTons * (1 + waste / 100) * 10) / 10;
+
+  let baseTons = 0;
+  if (baseThick > 0 && input.projectType !== 'driveway_overlay') {
+    const baseCuYd = (areaSqFt * (baseThick / 12)) / 27;
+    baseTons = Math.round(baseCuYd * 1.50 * (1 + waste / 100) * 10) / 10;
+  }
+
+  const tackCoatGallons = Math.round(areaSqFt * 0.05 * 10) / 10;
+
+  const asphaltPrice = Number(input.asphaltPricePerTon) || 98.00;
+  const basePrice = Number(input.aggregateBasePricePerTon) || 32.00;
+  const tackPrice = Number(input.tackCoatPricePerGal) || 16.00;
+  const laborRateSqFt = Number(input.laborRatePerSqFt) || 2.25;
+
+  const asphaltCost = Math.round(totalAsphaltTons * asphaltPrice);
+  const baseCost = Math.round(baseTons * basePrice);
+  const tackCost = Math.round(tackCoatGallons * tackPrice);
+
+  const materialsSubtotal = asphaltCost + baseCost + tackCost;
+  const laborCost = Math.round(areaSqFt * laborRateSqFt);
+  const totalEstimatedCost = materialsSubtotal + laborCost;
+
+  return {
+    valid: true,
+    areaSqFt,
+    asphaltThicknessIn: asphaltThick,
+    totalAsphaltTons,
+    baseTons,
+    tackCoatGallons,
+    projectType: input.projectType,
+    asphaltCost,
+    baseCost,
+    materialsSubtotal,
+    laborCost,
+    totalEstimatedCost,
+    costPerSqFt: Math.round((totalEstimatedCost / areaSqFt) * 100) / 100,
+  };
+}
+
+// ============================================================================
+// 21. Siding & House Wrap Material Calculator
+// ============================================================================
+export interface SidingInput {
+  grossWallAreaSqFt: number;
+  windowCount: number;
+  windowAvgSqFt: number;
+  doorCount: number;
+  doorAvgSqFt: number;
+  sidingType: 'vinyl_double_4' | 'fiber_cement_hardie' | 'wood_cedar_lap' | 'board_batten';
+  outsideCornerFt: number;
+  insideCornerFt: number;
+  perimeterTrimFt: number;
+  wastePct: number;
+  sidingSquarePrice?: number;
+  houseWrapRollPrice?: number;
+  starterPricePer10ft?: number;
+  jChannelPricePer12ft?: number;
+  cornerPostPrice?: number;
+  sidingNailBoxPrice?: number;
+  laborRatePerHour?: number;
+  estimatedLaborHours?: number;
+}
+
+export function calculateSiding(input: SidingInput) {
+  const grossArea = Math.max(100, Number(input.grossWallAreaSqFt) || 1800);
+  const winCount = Math.max(0, Number(input.windowCount) || 8);
+  const winAvg = Math.max(0, Number(input.windowAvgSqFt) || 15);
+  const doorCount = Math.max(0, Number(input.doorCount) || 2);
+  const doorAvg = Math.max(0, Number(input.doorAvgSqFt) || 21);
+  const waste = Math.max(0, Number(input.wastePct) || 10);
+  const sidingType = input.sidingType || 'vinyl_double_4';
+
+  const windowArea = winCount * winAvg;
+  const doorArea = doorCount * doorAvg;
+  const deductionsAreaSqFt = windowArea + doorArea;
+  const netWallAreaSqFt = Math.max(50, grossArea - deductionsAreaSqFt);
+  const sidingSquares = Math.round(((netWallAreaSqFt * (1 + waste / 100)) / 100) * 10) / 10;
+
+  // Material packaging
+  let cartonOrBoardCount = 0;
+  let unitLabel = 'Cartons (2 Squares each)';
+  if (sidingType === 'vinyl_double_4') {
+    cartonOrBoardCount = Math.ceil(sidingSquares / 2); // 2 squares per carton
+    unitLabel = 'Cartons (2 Squares each)';
+  } else if (sidingType === 'fiber_cement_hardie') {
+    cartonOrBoardCount = Math.ceil((netWallAreaSqFt * (1 + waste / 100)) / 7.0); // 12ft x 8.25" board @ 7" exposure
+    unitLabel = '12-ft Planks (7 sq ft exposure)';
+  } else if (sidingType === 'wood_cedar_lap') {
+    cartonOrBoardCount = Math.ceil((netWallAreaSqFt * (1 + waste / 100)) / 4.5);
+    unitLabel = '12-ft Bevel Planks (4.5 sq ft exposure)';
+  } else {
+    cartonOrBoardCount = Math.ceil((netWallAreaSqFt * (1 + waste / 100)) / 10.0);
+    unitLabel = '12″ Boards + 2.5″ Battens';
+  }
+
+  const houseWrapRolls = Math.ceil((grossArea * 1.15) / 900); // 9x100ft roll with 15% overlap
+  const seamTapeRolls = Math.max(1, Math.ceil(grossArea / 600));
+  const perimeterTrim = Number(input.perimeterTrimFt) || 140;
+  const starterPcs10ft = Math.ceil(perimeterTrim / 10);
+  const jChannelPcs12ft = Math.ceil(((winCount * 18) + (doorCount * 17) + (perimeterTrim * 0.4)) / 12);
+  const outsideCorners = Math.ceil((Number(input.outsideCornerFt) || 40) / 10);
+  const insideCorners = Math.ceil((Number(input.insideCornerFt) || 20) / 10);
+  const nailBoxes = Math.max(1, Math.ceil(sidingSquares / 2.5));
+
+  const defaultPrices = {
+    vinyl_double_4: 135.0,
+    fiber_cement_hardie: 245.0,
+    wood_cedar_lap: 285.0,
+    board_batten: 195.0,
+  };
+  const squarePrice = Number(input.sidingSquarePrice) || defaultPrices[sidingType] || 135.0;
+  const wrapPrice = Number(input.houseWrapRollPrice) || 110.0;
+  const starterPrice = Number(input.starterPricePer10ft) || 7.5;
+  const jChannelPrice = Number(input.jChannelPricePer12ft) || 9.2;
+  const cornerPrice = Number(input.cornerPostPrice) || 19.5;
+  const nailBoxPrice = Number(input.sidingNailBoxPrice) || 26.0;
+  const laborRate = Number(input.laborRatePerHour) || 52.0;
+  const laborHours = Number(input.estimatedLaborHours) || Math.max(12, Math.round(sidingSquares * 2.4));
+
+  const sidingCost = Math.round(sidingSquares * squarePrice);
+  const wrapCost = Math.round((houseWrapRolls * wrapPrice) + (seamTapeRolls * 14.5));
+  const starterCost = Math.round(starterPcs10ft * starterPrice);
+  const jChannelCost = Math.round(jChannelPcs12ft * jChannelPrice);
+  const cornersCost = Math.round((outsideCorners + insideCorners) * cornerPrice);
+  const fastenersCost = Math.round(nailBoxes * nailBoxPrice);
+
+  const materialsSubtotal = sidingCost + wrapCost + starterCost + jChannelCost + cornersCost + fastenersCost;
+  const laborCost = Math.round(laborHours * laborRate);
+  const totalEstimatedCost = materialsSubtotal + laborCost;
+  const costPerSqFt = Math.round((totalEstimatedCost / netWallAreaSqFt) * 100) / 100;
+
+  return {
+    valid: true,
+    grossWallAreaSqFt: grossArea,
+    windowArea,
+    doorArea,
+    deductionsAreaSqFt,
+    netWallAreaSqFt,
+    sidingSquares,
+    cartonOrBoardCount,
+    unitLabel,
+    sidingType,
+    houseWrapRolls,
+    seamTapeRolls,
+    starterPcs10ft,
+    jChannelPcs12ft,
+    outsideCorners,
+    insideCorners,
+    nailBoxes,
+    sidingCost,
+    wrapCost,
+    starterCost,
+    jChannelCost,
+    cornersCost,
+    fastenersCost,
+    materialsSubtotal,
+    laborHours,
+    laborCost,
+    totalEstimatedCost,
+    costPerSqFt,
+  };
+}
+
+export const calculateSidingMaterial = calculateSiding;
+export type SidingMaterialInput = SidingInput;
+export type SidingMaterialResult = ReturnType<typeof calculateSiding>;
+
+// ============================================================================
+// 22. Soffit, Fascia & Seamless Gutter Calculator
+// ============================================================================
+export interface SoffitGutterInput {
+  eaveLengthFt: number;
+  rakeLengthFt: number;
+  overhangDepthIn: number;
+  fasciaWidthIn: 6 | 8;
+  gutterSizeIn: 5 | 6;
+  buildingStories: 1 | 2;
+  downspoutCount?: number;
+  gutterGuard: boolean;
+  wastePct: number;
+  gutterPricePerFt?: number;
+  downspoutKitPrice?: number;
+  fasciaCoverPricePer12ft?: number;
+  soffitPanelPricePer12ft?: number;
+  gutterGuardPricePerFt?: number;
+  laborRatePerHour?: number;
+  estimatedLaborHours?: number;
+}
+
+export function calculateSoffitGutter(input: SoffitGutterInput) {
+  const eaveFt = Math.max(10, Number(input.eaveLengthFt) || 80);
+  const rakeFt = Math.max(0, Number(input.rakeLengthFt) || 40);
+  const depthIn = Math.max(6, Number(input.overhangDepthIn) || 16);
+  const stories = Number(input.buildingStories) || 1;
+  const waste = Math.max(0, Number(input.wastePct) || 8);
+
+  const totalPerimeterFt = eaveFt + rakeFt;
+  const soffitAreaSqFt = Math.round(totalPerimeterFt * (depthIn / 12) * (1 + waste / 100));
+  const soffitPanels12ft = Math.ceil(soffitAreaSqFt / 12); // 12" x 12' vented panel = 12 sq ft
+  const fasciaCoverPcs12ft = Math.ceil((totalPerimeterFt * (1 + waste / 100)) / 12);
+
+  const gutterLengthFt = Math.ceil(eaveFt * (1 + waste / 100));
+  const gutterHangers = Math.ceil(gutterLengthFt / 2) + 2; // every 24"
+  const downspoutCount = Number(input.downspoutCount) || Math.max(2, Math.ceil(eaveFt / 30));
+  const downspoutLengthFt = downspoutCount * (stories === 2 ? 21 : 11);
+
+  const gutterPrice = Number(input.gutterPricePerFt) || (input.gutterSizeIn === 6 ? 6.50 : 4.80);
+  const downspoutPrice = Number(input.downspoutKitPrice) || (stories === 2 ? 42.00 : 26.00);
+  const fasciaPrice = Number(input.fasciaCoverPricePer12ft) || (input.fasciaWidthIn === 8 ? 22.00 : 17.50);
+  const soffitPrice = Number(input.soffitPanelPricePer12ft) || 19.50;
+  const guardPrice = Number(input.gutterGuardPricePerFt) || 2.85;
+  const laborRate = Number(input.laborRatePerHour) || 50.00;
+  const laborHours = Number(input.estimatedLaborHours) || Math.max(6, Math.round(totalPerimeterFt * 0.12));
+
+  const gutterCost = Math.round(gutterLengthFt * gutterPrice);
+  const downspoutCost = Math.round(downspoutCount * downspoutPrice);
+  const fasciaCost = Math.round(fasciaCoverPcs12ft * fasciaPrice);
+  const soffitCost = Math.round(soffitPanels12ft * soffitPrice);
+  const guardCost = input.gutterGuard ? Math.round(gutterLengthFt * guardPrice) : 0;
+
+  const materialsSubtotal = gutterCost + downspoutCost + fasciaCost + soffitCost + guardCost;
+  const laborCost = Math.round(laborHours * laborRate);
+  const totalEstimatedCost = materialsSubtotal + laborCost;
+
+  return {
+    valid: true,
+    soffitAreaSqFt,
+    soffitPanels12ft,
+    fasciaCoverPcs12ft,
+    gutterLengthFt,
+    gutterHangers,
+    downspoutCount,
+    downspoutLengthFt,
+    gutterSizeIn: input.gutterSizeIn,
+    gutterCost,
+    downspoutCost,
+    fasciaCost,
+    soffitCost,
+    guardCost,
+    materialsSubtotal,
+    laborHours,
+    laborCost,
+    totalEstimatedCost,
+  };
+}
+
+// ============================================================================
+// 23. Fence Material & Post Spacing Calculator
+// ============================================================================
+export interface FenceInput {
+  totalLengthFt: number;
+  fenceHeightFt: 4 | 6 | 8;
+  postSpacingFt: 6 | 8;
+  railCount: 2 | 3 | 4;
+  picketWidthIn: number;
+  picketSpacingIn: number;
+  cornerPostCount: number;
+  gateCount: number;
+  wastePct: number;
+  postPrice?: number;
+  railPrice?: number;
+  picketPrice?: number;
+  concreteBagPrice?: number;
+  gateKitPrice?: number;
+  laborRatePerHour?: number;
+  estimatedLaborHours?: number;
+}
+
+export function calculateFence(input: FenceInput) {
+  const lengthFt = Math.max(10, Number(input.totalLengthFt) || 150);
+  const heightFt = Number(input.fenceHeightFt) || 6;
+  const spacingFt = Number(input.postSpacingFt) || 8;
+  const railLines = Number(input.railCount) || (heightFt >= 8 ? 4 : heightFt >= 6 ? 3 : 2);
+  const picketWidth = Number(input.picketWidthIn) || 5.5;
+  const picketGap = Number(input.picketSpacingIn) || 0;
+  const corners = Math.max(0, Number(input.cornerPostCount) || 4);
+  const gates = Math.max(0, Number(input.gateCount) || 1);
+  const waste = Math.max(0, Number(input.wastePct) || 8);
+
+  const sections = Math.ceil(lengthFt / spacingFt);
+  const totalPosts = Math.max(2, sections + 1 + (gates * 2));
+  const concreteBags50lb = Math.ceil(totalPosts * (heightFt >= 6 ? 2 : 1.5));
+
+  const totalRails = Math.ceil(sections * railLines * (1 + waste / 100));
+  const picketsTotal = Math.ceil(((lengthFt * 12) / (picketWidth + picketGap)) * (1 + waste / 100));
+  const screwBoxes5lb = Math.max(1, Math.ceil((picketsTotal * railLines * 2) / 750));
+
+  const postPrice = Number(input.postPrice) || (heightFt >= 8 ? 24.00 : 14.50);
+  const railPrice = Number(input.railPrice) || 8.25;
+  const picketPrice = Number(input.picketPrice) || (heightFt >= 8 ? 3.95 : 2.45);
+  const concretePrice = Number(input.concreteBagPrice) || 5.25;
+  const gateKitPrice = Number(input.gateKitPrice) || 65.00;
+  const laborRate = Number(input.laborRatePerHour) || 45.00;
+  const laborHours = Number(input.estimatedLaborHours) || Math.max(8, Math.round(lengthFt * 0.18));
+
+  const postsCost = Math.round(totalPosts * postPrice);
+  const concreteCost = Math.round(concreteBags50lb * concretePrice);
+  const railsCost = Math.round(totalRails * railPrice);
+  const picketsCost = Math.round(picketsTotal * picketPrice);
+  const hardwareCost = Math.round((gates * gateKitPrice) + (screwBoxes5lb * 32));
+
+  const materialsSubtotal = postsCost + concreteCost + railsCost + picketsCost + hardwareCost;
+  const laborCost = Math.round(laborHours * laborRate);
+  const totalEstimatedCost = materialsSubtotal + laborCost;
+
+  return {
+    valid: true,
+    totalLengthFt: lengthFt,
+    fenceHeightFt: heightFt,
+    totalPosts,
+    concreteBags50lb,
+    totalRails,
+    picketsTotal,
+    screwBoxes5lb,
+    gateCount: gates,
+    postsCost,
+    concreteCost,
+    railsCost,
+    picketsCost,
+    hardwareCost,
+    materialsSubtotal,
+    laborHours,
+    laborCost,
+    totalEstimatedCost,
+    costPerLinFt: Math.round((totalEstimatedCost / lengthFt) * 100) / 100,
+  };
+}
+
+// ============================================================================
+// 24. Insulation R-Value & Batt/Blow Calculator
+// ============================================================================
+export interface InsulationInput {
+  applicationArea: 'attic_ceiling' | 'wall_2x4' | 'wall_2x6' | 'crawlspace_rim';
+  surfaceAreaSqFt: number;
+  insulationType: 'fiberglass_batts' | 'mineral_wool' | 'blown_cellulose' | 'blown_fiberglass' | 'rigid_xps';
+  targetRValue: 13 | 15 | 19 | 21 | 30 | 38 | 49 | 60;
+  studSpacingIn: 16 | 24;
+  wastePct: number;
+  battBundlePrice?: number;
+  blownBagPrice?: number;
+  rigidSheetPrice?: number;
+  blowerMachineRentalPrice?: number;
+  laborRatePerHour?: number;
+  estimatedLaborHours?: number;
+}
+
+export function calculateInsulation(input: InsulationInput) {
+  const areaSqFt = Math.max(50, Number(input.surfaceAreaSqFt) || 1200);
+  const rVal = Number(input.targetRValue) || 38;
+  const waste = Math.max(0, Number(input.wastePct) || 5);
+
+  const isAttic = input.applicationArea === 'attic_ceiling';
+  const framingDeduction = isAttic ? 0.93 : 0.85;
+  const netAreaSqFt = Math.round(areaSqFt * framingDeduction);
+
+  // Batt Bundle Coverage
+  const battCoverageByR: Record<number, number> = {
+    13: 88,
+    15: 70,
+    19: 60,
+    21: 52,
+    30: 48,
+    38: 38,
+    49: 30,
+    60: 24,
+  };
+  const bundleCoverage = battCoverageByR[rVal] || 40;
+  const battBundles = Math.ceil((netAreaSqFt * (1 + waste / 100)) / bundleCoverage);
+
+  // Blown Cellulose (R-3.7/in) vs Blown Fiberglass (R-2.5/in)
+  const isCellulose = input.insulationType === 'blown_cellulose';
+  const rPerInch = isCellulose ? 3.7 : 2.6;
+  const thicknessInches = Math.round((rVal / rPerInch) * 10) / 10;
+  // Coverage: standard 25lb cellulose bag covers ~35 sq ft at R-38
+  const blownBags = Math.ceil((netAreaSqFt * (rVal / 38) * (1 + waste / 100)) / 35);
+
+  // Rigid XPS 4x8 sheet = 32 sqft (R-5/in)
+  const rigidSheets4x8 = Math.ceil((areaSqFt * (1 + waste / 100)) / 32);
+
+  const bundlePrice = Number(input.battBundlePrice) || (input.insulationType === 'mineral_wool' ? 68.00 : 42.00);
+  const bagPrice = Number(input.blownBagPrice) || 16.50;
+  const rigidPrice = Number(input.rigidSheetPrice) || 34.00;
+  const rentalPrice = Number(input.blowerMachineRentalPrice) || (input.insulationType.startsWith('blown') ? 75.00 : 0);
+  const laborRate = Number(input.laborRatePerHour) || 45.00;
+  const laborHours = Number(input.estimatedLaborHours) || Math.max(4, Math.round(areaSqFt * 0.008 * 10) / 10);
+
+  let materialCost = 0;
+  if (input.insulationType === 'fiberglass_batts' || input.insulationType === 'mineral_wool') {
+    materialCost = Math.round(battBundles * bundlePrice);
+  } else if (input.insulationType === 'rigid_xps') {
+    materialCost = Math.round(rigidSheets4x8 * rigidPrice);
+  } else {
+    materialCost = Math.round((blownBags * bagPrice) + rentalPrice);
+  }
+
+  const laborCost = Math.round(laborHours * laborRate);
+  const totalEstimatedCost = materialCost + laborCost;
+
+  return {
+    valid: true,
+    applicationArea: input.applicationArea,
+    insulationType: input.insulationType,
+    targetRValue: rVal,
+    netAreaSqFt,
+    thicknessInches,
+    battBundles,
+    blownBags,
+    rigidSheets4x8,
+    materialCost,
+    laborHours,
+    laborCost,
+    totalEstimatedCost,
+    costPerSqFt: Math.round((totalEstimatedCost / areaSqFt) * 100) / 100,
   };
 }

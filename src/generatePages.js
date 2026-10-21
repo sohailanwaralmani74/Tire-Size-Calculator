@@ -203,6 +203,24 @@ const FAQ_DATA = {
       q: 'How many linear feet of casing molding are needed to trim a door?',
       a: 'Trimming one side of a standard 36″ × 80″ door requires two 84-inch side legs and one 42-inch head casing, totaling 17.5 linear feet (allowing for 45-degree miter cuts). Trimming both sides of the door (interior passage) requires approximately 35 to 36 linear feet of casing.'
     }
+  ],
+  'siding-material': [
+    {
+      q: 'How many squares of siding do I need for my house?',
+      a: 'In exterior siding, one "square" equals 100 square feet of finished wall surface area. To calculate siding squares: determine gross exterior wall surface area (length × height of all walls plus gable triangular areas), subtract total window and door opening areas to get net wall area, and divide by 100. Add 10% to 15% waste for trimming and gable angle cuts. For example, a 1,800 sq ft net wall with 10% waste requires 19.8 (or 20) squares of siding.'
+    },
+    {
+      q: 'Why must vinyl siding nails not be driven tight?',
+      a: 'Vinyl siding expands and contracts significantly with seasonal temperature swings (up to 1/2 inch over a 12-foot panel). IRC R703 and ASTM D3679 standards mandate driving nails into the center of the pre-punched slots, leaving approximately 1/16-inch (1.6 mm) gap between the nail head and siding flange. Nailing too tightly causes severe panel warping, buckling, and rippling on hot sunny days.'
+    },
+    {
+      q: 'How much housewrap (weather-resistive barrier) do I need?',
+      a: 'A standard commercial roll of housewrap (such as DuPont Tyvek HomeWrap) measures 9 feet wide by 100 feet long, covering 900 square feet. When wrapping exterior walls, factor in a 15% allowance for the code-required 6-inch horizontal overlaps and 12-inch vertical laps. A 1,800 sq ft gross wall envelope requires 3 rolls of 9x100ft housewrap, plus 2 rolls of approved acrylic seam tape.'
+    },
+    {
+      q: 'What is J-Channel used for in siding installation?',
+      a: 'J-Channel is a universal trim profile with a 3/4-inch to 1-inch receiving channel used to conceal and protect cut siding edges around window frames, exterior door casings, soffit transitions, and along raked gable rooflines. It provides a clean finished edge while allowing panels room to expand and contract freely.'
+    }
   ]
 };
 
@@ -569,4 +587,5 @@ export function generateAllStaticPages() {
 if (process.argv[1] && process.argv[1].endsWith('generatePages.js')) {
   generateAllStaticPages();
   console.log('Successfully generated clean URL static calculator pages.');
+  process.exit(0);
 }

@@ -128,9 +128,9 @@ export const CALCULATOR_CATEGORIES = [
   },
   {
     id: 'roofing-flooring',
-    name: 'Roofing & Flooring',
-    shortName: 'Roof & Floor',
-    description: 'Shingles, pitch multiplier, tile layout, and grout weight',
+    name: 'Roofing, Siding & Flooring',
+    shortName: 'Roof & Siding',
+    description: 'Shingles, exterior siding, house wrap, and tile layout',
     calculators: [
       {
         id: 'roofing',
@@ -140,6 +140,15 @@ export const CALCULATOR_CATEGORIES = [
         badge: 'Squares & Bundles',
         summary: 'Calculate roofing squares, architectural bundles, pitch multipliers, felt, and ridge caps.',
         lastmod: '2026-10-06',
+      },
+      {
+        id: 'siding-material',
+        slug: 'siding-material-calculator',
+        name: 'Siding Material & House Wrap Calculator',
+        shortTitle: 'Siding Material',
+        badge: 'Squares, Trim & Tyvek',
+        summary: 'Calculate siding squares (vinyl, fiber cement, cedar, board & batten), starter strips, J-channels, corner posts, and housewrap.',
+        lastmod: '2026-10-21',
       },
       {
         id: 'flooring-tile',
@@ -1083,5 +1092,107 @@ export function calculateDoorFrame(input) {
     materialsSubtotal,
     laborCost,
     totalEstimatedCost,
+  };
+}
+
+// ============================================================================
+// 15. Siding Material & House Wrap Calculator
+// ============================================================================
+export function calculateSidingMaterial(input) {
+  const grossArea = Math.max(100, Number(input.grossWallAreaSqFt) || 1800);
+  const winCount = Math.max(0, Number(input.windowCount) || 8);
+  const winAvg = Math.max(0, Number(input.windowAvgSqFt) || 15);
+  const doorCount = Math.max(0, Number(input.doorCount) || 2);
+  const doorAvg = Math.max(0, Number(input.doorAvgSqFt) || 21);
+  const waste = Math.max(0, Number(input.wastePct) || 10);
+  const sidingType = input.sidingType || 'vinyl_double_4';
+
+  const windowArea = winCount * winAvg;
+  const doorArea = doorCount * doorAvg;
+  const deductionsAreaSqFt = windowArea + doorArea;
+  const netWallAreaSqFt = Math.max(50, grossArea - deductionsAreaSqFt);
+  const sidingSquares = Math.round(((netWallAreaSqFt * (1 + waste / 100)) / 100) * 10) / 10;
+
+  let cartonOrBoardCount = 0;
+  let unitLabel = 'Cartons (2 Squares each)';
+  if (sidingType === 'vinyl_double_4') {
+    cartonOrBoardCount = Math.ceil(sidingSquares / 2);
+    unitLabel = 'Cartons (2 Squares each)';
+  } else if (sidingType === 'fiber_cement_hardie') {
+    cartonOrBoardCount = Math.ceil((netWallAreaSqFt * (1 + waste / 100)) / 7.0);
+    unitLabel = '12-ft Planks (7 sq ft exposure)';
+  } else if (sidingType === 'wood_cedar_lap') {
+    cartonOrBoardCount = Math.ceil((netWallAreaSqFt * (1 + waste / 100)) / 4.5);
+    unitLabel = '12-ft Bevel Planks (4.5 sq ft exposure)';
+  } else {
+    cartonOrBoardCount = Math.ceil((netWallAreaSqFt * (1 + waste / 100)) / 10.0);
+    unitLabel = 'Boards (12″) + Battens (2.5″)';
+  }
+
+  const houseWrapRolls = Math.ceil((grossArea * 1.15) / 900);
+  const seamTapeRolls = Math.max(1, Math.ceil(grossArea / 600));
+  const perimeterTrim = Number(input.perimeterTrimFt) || 140;
+  const starterPcs10ft = Math.ceil(perimeterTrim / 10);
+  const jChannelPcs12ft = Math.ceil(((winCount * 18) + (doorCount * 17) + (perimeterTrim * 0.4)) / 12);
+  const outsideCorners = Math.ceil((Number(input.outsideCornerFt) || 40) / 10);
+  const insideCorners = Math.ceil((Number(input.insideCornerFt) || 20) / 10);
+  const nailBoxes = Math.max(1, Math.ceil(sidingSquares / 2.5));
+
+  const defaultPrices = {
+    vinyl_double_4: 135.00,
+    fiber_cement_hardie: 245.00,
+    wood_cedar_lap: 285.00,
+    board_and_batten: 195.00,
+  };
+  const squarePrice = Number(input.sidingSquarePrice) || defaultPrices[sidingType] || 135.00;
+  const wrapPrice = Number(input.houseWrapRollPrice) || 110.00;
+  const starterPrice = Number(input.starterPricePer10ft) || 7.50;
+  const jChannelPrice = Number(input.jChannelPricePer12ft) || 9.20;
+  const cornerPrice = Number(input.cornerPostPrice) || 19.50;
+  const nailBoxPrice = Number(input.sidingNailBoxPrice) || 26.00;
+  const laborRate = Number(input.laborRatePerHour) || 52.00;
+  const laborHours = Number(input.estimatedLaborHours) || Math.max(12, Math.round(sidingSquares * 2.4));
+
+  const sidingCost = Math.round(sidingSquares * squarePrice);
+  const wrapCost = Math.round((houseWrapRolls * wrapPrice) + (seamTapeRolls * 14.50));
+  const starterCost = Math.round(starterPcs10ft * starterPrice);
+  const jChannelCost = Math.round(jChannelPcs12ft * jChannelPrice);
+  const cornersCost = Math.round((outsideCorners + insideCorners) * cornerPrice);
+  const fastenersCost = Math.round(nailBoxes * nailBoxPrice);
+
+  const materialsSubtotal = sidingCost + wrapCost + starterCost + jChannelCost + cornersCost + fastenersCost;
+  const laborCost = Math.round(laborHours * laborRate);
+  const totalEstimatedCost = materialsSubtotal + laborCost;
+  const costPerSqFt = Math.round((totalEstimatedCost / netWallAreaSqFt) * 100) / 100;
+
+  return {
+    valid: true,
+    grossWallAreaSqFt: grossArea,
+    windowArea,
+    doorArea,
+    deductionsAreaSqFt,
+    netWallAreaSqFt,
+    sidingSquares,
+    cartonOrBoardCount,
+    unitLabel,
+    sidingType,
+    houseWrapRolls,
+    seamTapeRolls,
+    starterPcs10ft,
+    jChannelPcs12ft,
+    outsideCorners,
+    insideCorners,
+    nailBoxes,
+    sidingCost,
+    wrapCost,
+    starterCost,
+    jChannelCost,
+    cornersCost,
+    fastenersCost,
+    materialsSubtotal,
+    laborHours,
+    laborCost,
+    totalEstimatedCost,
+    costPerSqFt,
   };
 }

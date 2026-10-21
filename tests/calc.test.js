@@ -20,13 +20,14 @@ import {
   calculateVaporBarrier,
   calculateGarageDoorSize,
   calculateDoorFrame,
+  calculateSidingMaterial,
   ALL_CALCULATORS,
   CALCULATOR_CATEGORIES,
 } from '../src/calc/buildingMath.js';
 
 test('Directory & Categories verification', () => {
   assert.equal(CALCULATOR_CATEGORIES.length, 5);
-  assert.equal(ALL_CALCULATORS.length, 14);
+  assert.equal(ALL_CALCULATORS.length, 15);
   const stairCalc = ALL_CALCULATORS.find((c) => c.slug === 'stair-handrail-calculator');
   assert.ok(stairCalc, 'stair-handrail-calculator exists');
   const vaporCalc = ALL_CALCULATORS.find((c) => c.slug === 'vapor-barrier-calculator');
@@ -35,6 +36,8 @@ test('Directory & Categories verification', () => {
   assert.ok(garageCalc, 'garage-door-size-calculator exists');
   const doorFrameCalc = ALL_CALCULATORS.find((c) => c.slug === 'door-frame-material-calculator');
   assert.ok(doorFrameCalc, 'door-frame-material-calculator exists');
+  const sidingCalc = ALL_CALCULATORS.find((c) => c.slug === 'siding-material-calculator');
+  assert.ok(sidingCalc, 'siding-material-calculator exists');
 });
 
 test('Calculator 1: Concrete Slab 12x12 at 4" with 10% waste', () => {
@@ -380,6 +383,43 @@ test('Calculator 14: Door Frame Material Calculator (36x80 Entry Door in 2x4 Wal
   assert.equal(res.hingeCount, 4);
   assert.ok(res.totalCasingLinFt > 30);
   assert.ok(res.totalEstimatedCost > 200);
+});
+
+test('Calculator 15: Siding Material & House Wrap Calculator (1800 sq ft wall, 8 windows, 2 doors)', () => {
+  const res = calculateSidingMaterial({
+    grossWallAreaSqFt: 1800,
+    windowCount: 8,
+    windowAvgSqFt: 15,
+    doorCount: 2,
+    doorAvgSqFt: 21,
+    sidingType: 'vinyl_double_4',
+    outsideCornerFt: 40,
+    insideCornerFt: 20,
+    perimeterTrimFt: 140,
+    wastePct: 10,
+    sidingSquarePrice: 135,
+    houseWrapRollPrice: 110,
+    laborRatePerHour: 52,
+  });
+
+  assert.equal(res.valid, true);
+  // Deductions: 8*15 + 2*21 = 120 + 42 = 162 sq ft
+  assert.equal(res.deductionsAreaSqFt, 162);
+  // Net wall area: 1800 - 162 = 1638 sq ft
+  assert.equal(res.netWallAreaSqFt, 1638);
+  // With 10% waste: 1638 * 1.10 = 1801.8 sq ft -> 18.0 squares
+  assert.equal(res.sidingSquares, 18.0);
+  // 18 squares / 2 per carton = 9 cartons
+  assert.equal(res.cartonOrBoardCount, 9);
+  // Housewrap: (1800 * 1.15) / 900 = 2.3 -> 3 rolls
+  assert.equal(res.houseWrapRolls, 3);
+  // Outside corners: 40 / 10 = 4 pcs
+  assert.equal(res.outsideCorners, 4);
+  // Inside corners: 20 / 10 = 2 pcs
+  assert.equal(res.insideCorners, 2);
+  assert.ok(res.materialsSubtotal > 1500);
+  assert.ok(res.totalEstimatedCost > 2500);
+  assert.ok(res.costPerSqFt > 1.0);
 });
 
 
